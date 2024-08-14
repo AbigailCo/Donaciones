@@ -19,6 +19,14 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/campaign', function () {
+    return Inertia::render('Campaign/Campaign'); // Asegúrate de usar el path correcto
+})->middleware(['auth', 'verified'])->name('campaign');
+
+Route::get('/CreateCampaignForm', function () {
+    return Inertia::render('Campaign/CreateCampaignForm'); // Asegúrate de usar el path correcto
+})->middleware(['auth', 'verified'])->name('CreateCampaignForm');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

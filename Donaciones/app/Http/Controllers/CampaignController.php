@@ -6,13 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class CampaignController extends Controller
 {
     public function index()
     {
         // Retornar todas las campañas
-        return Campaign::all();
+        $campaigns = Campaign::all();
+        return response()->json($campaigns);
     }
     
     public function show($id)
@@ -45,7 +49,7 @@ class CampaignController extends Controller
             'goal' => $request->goal,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'user_id' => auth()->user()->id,
+           'user_id' => Auth::id(),
         ]);
 
         return response()->json($campaign, 201);
