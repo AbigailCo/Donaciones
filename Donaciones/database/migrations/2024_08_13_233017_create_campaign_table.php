@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('goal', 10, 2);
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('image')->nullable(); 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

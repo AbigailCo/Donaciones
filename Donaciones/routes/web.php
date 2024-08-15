@@ -23,10 +23,10 @@ Route::get('/campaign', function () {
     return Inertia::render('Campaign/Campaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('campaign');
 
-Route::get('/CreateCampaignForm', function () {
-    return Inertia::render('Campaign/CreateCampaignForm'); // Asegúrate de usar el path correcto
-})->middleware(['auth', 'verified'])->name('CreateCampaignForm');
-
+Route::get('/CreateCampaign', function () {
+    return Inertia::render('Campaign/CreateCampaign'); // Asegúrate de usar el path correcto
+})->middleware(['auth', 'verified'])->name('CreateCampaign');
+Route::get('/campaign-count', [CampaignController::class, 'count'])->name('campaign.count');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/campaigns', [CampaignController::class, 'index']);
-    Route::post('/campaigns', [CampaignController::class, 'store']);
+    Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaign.store');
     Route::get('/campaigns/{id}', [CampaignController::class, 'show']);
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);

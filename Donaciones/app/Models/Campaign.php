@@ -11,7 +11,7 @@ class Campaign extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title', 'description', 'goal', 'start_date', 'end_date', 'user_id',
+        'title', 'description', 'goal','image', 'start_date', 'end_date', 'user_id',
     ];
 
     public function user()

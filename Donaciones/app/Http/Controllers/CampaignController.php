@@ -18,7 +18,11 @@ class CampaignController extends Controller
         $campaigns = Campaign::all();
         return response()->json($campaigns);
     }
-    
+    public function count()
+    {
+        $campaigntsCount = Campaign::count();
+        return response()->json(['count' => $campaigntsCount]);
+    }
     public function show($id)
     {
         // Buscar una campaña específica por ID
@@ -28,31 +32,27 @@ class CampaignController extends Controller
 
     public function store(Request $request)
     {
-        // Validaciones de los datos de entrada
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'goal' => 'required|numeric|min:1',
+            'goal' => 'required|numeric',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
 
-        // Si la validación falla, retornar los errores
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    // Maneja el archivo de imagen si está presente
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('images', 'public');
+        $validated['image'] = $imagePath;
+    }
 
-        // Crear una nueva campaña
-        $campaign = Campaign::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'goal' => $request->goal,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-           'user_id' => Auth::id(),
-        ]);
-
-        return response()->json($campaign, 201);
+    // Crea la campaña
+    $campaign = Campaign::create($validated);
+        return response()->json([
+            'message' => 'Campaign created successfully!',
+            'campaign' => $campaign,
+        ], 201);
     }
 
     public function update(Request $request, $id)

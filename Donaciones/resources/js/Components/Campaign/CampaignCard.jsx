@@ -7,7 +7,7 @@ const CampaignCard = ({ campaign }) => (
     <CardMedia
       component="img"
       height="140"
-      image="https://via.placeholder.com/150" // Puedes agregar una imagen relevante
+      image={campaign.image} 
       alt={campaign.title}
     />
     <CardContent>

@@ -1,19 +1,21 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import CreateForm from '../../Components/Campaign/CreateCampaignForm';
+import FormCreateCampaign from '../../Components/Campaign/CreateCampaign';
+import ImageUpload from '../../Components/ImageUpload';
 
-export default function CreateCampaignForm({ auth }) {
+export default function CreateCampaign({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Crear campaña</h2>}
         >
-            <Head title="CreateCampaignForm" />
+            <Head title="CreateCampaign" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                       <CreateForm/>
+                       <FormCreateCampaign/>
+                       
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-
+import CampaignCard from '../Components/Campaign/CardPanel.jsx'
 export default function Dashboard({ auth }) {
     return (
         <AuthenticatedLayout
@@ -14,7 +14,10 @@ export default function Dashboard({ auth }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">ACA UN PANEL CON TODAS LAS FUNCIONALIDADES</div>
                     </div>
+                    
+                    
                 </div>
+                <CampaignCard/>
             </div>
         </AuthenticatedLayout>
     );
