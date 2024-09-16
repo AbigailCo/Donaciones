@@ -9,6 +9,8 @@ const CreateCampaign = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
   const onSubmit = async (data) => {
+    console.log(data); 
+    console.log(data.image)
     try {
       const formData = new FormData();
         formData.append('title', data.title);
@@ -20,7 +22,7 @@ const CreateCampaign = () => {
         if (data.image[0]) {
             formData.append('image', data.image[0]);
         }
-        
+       
         await axios.post('/campaigns', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',

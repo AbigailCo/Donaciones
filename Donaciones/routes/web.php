@@ -5,6 +5,10 @@ use App\Http\Controllers\CampaignController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Auth\SocialAuthController;
+
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -43,16 +44,27 @@ class CampaignController extends Controller
 
     // Maneja el archivo de imagen si está presente
     if ($request->hasFile('image')) {
+        // Almacena la imagen en la carpeta 'images' dentro del sistema de archivos público
         $imagePath = $request->file('image')->store('images', 'public');
         $validated['image'] = $imagePath;
+    } else {
+        $validated['image'] = null; // o un valor por defecto
     }
-
+    Log::info($validated);
     // Crea la campaña
     $campaign = Campaign::create($validated);
-        return response()->json([
+    try{
+         return response()->json([
             'message' => 'Campaign created successfully!',
             'campaign' => $campaign,
         ], 201);
+    }catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error creating campaign',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+       
     }
 
     public function update(Request $request, $id)
