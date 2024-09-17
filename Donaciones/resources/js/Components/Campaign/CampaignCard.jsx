@@ -32,7 +32,7 @@ const CampaignCards = () => {
 
   useEffect(() => {
     // Fetch campaigns from the API
-    axios.defaults.baseURL = 'http://127.0.0.1:8000/'  // Cambia esto si tu backend está en otro dominio o puerto
+    axios.defaults.baseURL = 'http://localhost:8000/'  // Cambia esto si tu backend está en otro dominio o puerto
     axios.get('/campaigns',  { withCredentials: true })
       .then(response => {
         setCampaigns(response.data);

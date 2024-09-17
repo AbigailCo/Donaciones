@@ -8,7 +8,7 @@ const CardPanel = () => {
   const [campaignCount, setCampaignCount] = useState(0);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/campaign-count')
+    axios.get('http://localhost:8000/campaign-count')
       .then(response => {
         setCampaignCount(response.data.count);
       })
