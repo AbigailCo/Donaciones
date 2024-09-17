@@ -32,40 +32,36 @@ class CampaignController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'goal' => 'required|numeric',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'goal' => 'required|numeric|min:1',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+    ]);
 
-    // Maneja el archivo de imagen si está presente
     if ($request->hasFile('image')) {
-        // Almacena la imagen en la carpeta 'images' dentro del sistema de archivos público
         $imagePath = $request->file('image')->store('images', 'public');
         $validated['image'] = $imagePath;
-    } else {
-        $validated['image'] = null; // o un valor por defecto
     }
-    Log::info($validated);
-    // Crea la campaña
-    $campaign = Campaign::create($validated);
-    try{
-         return response()->json([
+
+    $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
+
+    try {
+        $campaign = Campaign::create($validated);
+        return response()->json([
             'message' => 'Campaign created successfully!',
             'campaign' => $campaign,
         ], 201);
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
         return response()->json([
             'message' => 'Error creating campaign',
             'error' => $e->getMessage(),
         ], 500);
     }
-       
-    }
+}
 
     public function update(Request $request, $id)
     {

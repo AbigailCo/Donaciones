@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { Form, Image } from 'react-bootstrap';
+import React from 'react';
+import { Form } from 'react-bootstrap';
 
-const ImageUpload = ({ register, errors }) => {
-  const [imagePreview, setImagePreview] = useState(null);
-
+const ImageUpload = ({ register, errors, setImagePreview }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -12,30 +10,22 @@ const ImageUpload = ({ register, errors }) => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
-    } else {
-      setImagePreview(null);
     }
   };
 
   return (
-    <div>
-      <Form.Label>Imagen:</Form.Label>
+    <Form.Group controlId="imageUpload">
+      <Form.Label>Subir imagen:</Form.Label>
       <Form.Control
         type="file"
         {...register('image')}
         onChange={handleImageChange}
+        isInvalid={!!errors.image}
       />
-      {errors.image && (
-        <Form.Control.Feedback type="invalid">
-          {'Imagen es requerida'}
-        </Form.Control.Feedback>
-      )}
-      {imagePreview && (
-        <div className="mt-3">
-          <Image src={imagePreview} alt="Vista previa" fluid />
-        </div>
-      )}
-    </div>
+      <Form.Control.Feedback type="invalid">
+        {errors.image && 'Error en la carga de la imagen'}
+      </Form.Control.Feedback>
+    </Form.Group>
   );
 };
 

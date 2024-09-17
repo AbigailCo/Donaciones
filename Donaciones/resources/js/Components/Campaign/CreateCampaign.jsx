@@ -1,42 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Col, Row, Card } from 'react-bootstrap';
-import ImageUpload from '../ImageUpload'; 
+import ImageUpload from '@/Components/ImageUpload';  // Asegúrate que la ruta esté correcta
 
 const CreateCampaign = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const [imagePreview, setImagePreview] = useState(null);
 
   const onSubmit = async (data) => {
-    console.log(data); 
-    console.log(data.image)
     try {
       const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('goal', data.goal);
-        formData.append('start_date', data.start_date);
-        formData.append('end_date', data.end_date);
-        
-        if (data.image[0]) {
-            formData.append('image', data.image[0]);
-        }
-       
-        await axios.post('/campaigns', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('goal', data.goal);
+      formData.append('start_date', data.start_date);
+      formData.append('end_date', data.end_date);
+      
+      if (data.image[0]) {
+        formData.append('image', data.image[0]);
+      }
 
-        alert('Campaña creada exitosamente');
-        reset();
-        setImagePreview(null);
+      const response = await axios.post('/api/campaigns', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert('Campaña creada exitosamente');
+      reset();
+      setImagePreview(null);
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error('Errores de validación:', error.response.data.errors);
         alert('Hay un error en los datos enviados.');
       } else {
+        console.error('Error al crear la campaña', error);
         alert('Error al crear la campaña');
       }
     }
@@ -117,9 +117,8 @@ const CreateCampaign = () => {
                 </Form.Control.Feedback>
               </Col>
 
-              {/* Aquí se integra el componente ImageUpload */}
               <Col md={6}>
-                <ImageUpload register={register} errors={errors} />
+                <ImageUpload register={register} errors={errors} setImagePreview={setImagePreview} />
               </Col>
             </Row>
           </Card.Body>
