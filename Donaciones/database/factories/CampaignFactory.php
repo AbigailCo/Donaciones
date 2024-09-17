@@ -15,7 +15,7 @@ class CampaignFactory extends Factory
     public function definition()
     {
         // Usa public_path() para obtener los archivos de la carpeta public/images
-        $imageDirectory = public_path('images/imagePrueba');
+        $imageDirectory = public_path('storage/images');
         $images = File::files($imageDirectory);
 
         // Obtén una imagen aleatoria

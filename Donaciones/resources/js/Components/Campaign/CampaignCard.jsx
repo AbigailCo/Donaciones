@@ -7,7 +7,7 @@ const CampaignCard = ({ campaign }) => (
     <CardMedia
       component="img"
       height="200" // Ajuste para hacer la imagen un poco más grande
-      image={`/images/imagePrueba/${campaign.image}`}
+      image={`/storage/images/${campaign.image}`}
       alt={campaign.title}
     />
     <CardContent>

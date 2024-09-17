@@ -44,7 +44,8 @@ class CampaignController extends Controller
 
     if ($request->hasFile('image')) {
         $imagePath = $request->file('image')->store('images', 'public');
-        $validated['image'] = $imagePath;
+        $imageName = basename($imagePath);
+        $validated['image'] = $imageName;
     }
 
     $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
