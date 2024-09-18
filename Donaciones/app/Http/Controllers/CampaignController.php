@@ -66,7 +66,9 @@ class CampaignController extends Controller
             'message' => 'Error creating campaign',
             'error' => $e->getMessage(),
         ], 500);
+        return redirect()->route('myCampaigns');
     }
+    
 }
 
     public function update(Request $request, $id)
@@ -110,4 +112,16 @@ class CampaignController extends Controller
 
         return response()->json(['message' => 'Campaign deleted successfully']);
     }
+
+    public function myCampaigns()
+{
+    // Obtener todas las campañas del usuario autenticado
+    $campaigns = Campaign::where('user_id', auth()->id())->get();
+
+    // Retornar la vista de MyCampaigns con los datos
+    return Inertia::render('MyCampaigns', [
+        'campaigns' => $campaigns,
+    ]);
+}
+
 }

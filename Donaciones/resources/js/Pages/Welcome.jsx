@@ -11,9 +11,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         document.getElementById("docs-card-content")?.classList.add("!flex-row");
         document.getElementById("background")?.classList.add("!hidden");
     };
+    
     const images = [
-        { src: '/images/campaign1.jpg', alt: 'Banner de la campaña 1' },
+        { src: '/images/darvuelve.png', alt: 'Banner de la campaña 1' },
         { src: '/images/campaign.jpg', alt: 'Banner de la campaña 2' },
+        { src: '/images/campaign1.jpg', alt: 'Banner de la campaña 3' },
         /* { src: '/images/campaign3.jpg', alt: 'Banner de la campaña 3' }, */
     ];
 
@@ -29,9 +31,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 />
 
                 <div className="relative flex flex-col items-center justify-center min-h-screen selection:bg-[#FF2D20] selection:text-white">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <header className="grid grid-cols-2 items-center gap-4 py-6 lg:grid-cols-3 bg-blue-900 shadow-md">
-                       
+                    {/* Aquí eliminamos el max-w para que el header no esté limitado */}
+                    <div className="relative w-full px-0"> 
+                        <header className="w-full grid grid-cols-2 items-center gap-4 py-6 lg:grid-cols-3 bg-blue-900 shadow-md">
                             <div className="flex justify-start lg:justify-center lg:col-start-2">
                                 <Logo />
                             </div>
