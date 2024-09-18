@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Grid, CircularProgress } from '@mui/material';
 import axios from 'axios';
+import { Link } from '@inertiajs/react';
+
 
 const CampaignCard = ({ campaign }) => (
-  <Card>
+ 
+  <Card style={{ cursor: 'pointer' }}>
+     <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
     <CardMedia
       component="img"
       height="200" // Ajuste para hacer la imagen un poco más grande
@@ -24,6 +28,7 @@ const CampaignCard = ({ campaign }) => (
         Dates: {campaign.start_date} to {campaign.end_date}
       </Typography>
     </CardContent>
+    </Link>
   </Card>
 );
 

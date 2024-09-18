@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 
 
@@ -25,11 +26,15 @@ class CampaignController extends Controller
         return response()->json(['count' => $campaigntsCount]);
     }
     public function show($id)
-    {
-        // Buscar una campaña específica por ID
-        $campaign = Campaign::findOrFail($id);
-        return response()->json($campaign);
-    }
+{
+    // Buscar una campaña específica por ID
+    $campaign = Campaign::findOrFail($id);
+
+    // Devolver una vista Inertia
+    return Inertia::render('Campaign/CampaignDetails', [
+        'campaign' => $campaign
+    ]);
+}
 
     public function store(Request $request)
 {

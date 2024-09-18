@@ -32,6 +32,7 @@ Route::get('/CreateCampaign', function () {
 })->middleware(['auth', 'verified'])->name('CreateCampaign');
 
 
+
 //CONTROLADORES
 Route::get('/campaign-count', [CampaignController::class, 'count'])->name('campaign.count');
 Route::middleware('auth')->group(function () {
