@@ -40,7 +40,7 @@ const CreateCampaign = () => {
 
       // Redirige a my-campaigns después de 2 segundos de mostrar el toast
       setTimeout(() => {
-        navigate('/my-campaigns');
+        window.location.href = '/my-campaigns';
       }, 2000);
     } catch (error) {
       if (error.response && error.response.status === 422) {
