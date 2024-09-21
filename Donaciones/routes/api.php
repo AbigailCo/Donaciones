@@ -10,6 +10,7 @@ use Inertia\Inertia;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/campaigns', [CampaignController::class, 'store']);
+    route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
 });
 Route::get('/campaigns/{id}', function ($id) {
     $campaign = Campaign::findOrFail($id);

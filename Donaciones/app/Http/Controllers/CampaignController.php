@@ -55,20 +55,13 @@ class CampaignController extends Controller
 
     $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
 
-    try {
+    try  {
         $campaign = Campaign::create($validated);
-        return response()->json([
-            'message' => 'Campaign created successfully!',
-            'campaign' => $campaign,
-        ], 201);
+        // Redirigir a la página de "MyCampaigns" usando Inertia
+        return redirect()->route('myCampaigns')->with('success', 'Campaign created successfully!');
     } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error creating campaign',
-            'error' => $e->getMessage(),
-        ], 500);
-        return redirect()->route('myCampaigns');
+        return redirect()->back()->with('error', 'Error creating campaign');
     }
-    
 }
 
     public function update(Request $request, $id)
@@ -114,14 +107,13 @@ class CampaignController extends Controller
     }
 
     public function myCampaigns()
-{
-    // Obtener todas las campañas del usuario autenticado
-    $campaigns = Campaign::where('user_id', auth()->id())->get();
-
-    // Retornar la vista de MyCampaigns con los datos
-    return Inertia::render('MyCampaigns', [
-        'campaigns' => $campaigns,
-    ]);
-}
-
+    {
+        $userId = auth()->id();
+        $campaigns = Campaign::where('user_id', $userId)->get();
+    
+        // Envía las campañas a la vista usando Inertia
+        return Inertia::render('Campaign/MyCampaigns', [
+            'campaigns' => $campaigns
+        ]);
+    }
 }

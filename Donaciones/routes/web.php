@@ -30,7 +30,11 @@ Route::get('/campaign', function () {
 Route::get('/CreateCampaign', function () {
     return Inertia::render('Campaign/CreateCampaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('CreateCampaign');
-
+/*
+Route::get('/my-campaigns', function () {
+    return Inertia::render('Campaign/MyCampaigns'); // Asegúrate de usar el path correcto
+})->middleware(['auth', 'verified'])->name('myCampaigns');
+*/
 
 
 //CONTROLADORES
@@ -43,7 +47,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/campaigns', [CampaignController::class, 'index']);
     Route::post('/api/campaigns', [CampaignController::class, 'store'])->name('campaign.store');
-    Route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
+    route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
+    //  Route::get('/Campaign/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
     Route::get('/campaigns/{id}', [CampaignController::class, 'show']);
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);

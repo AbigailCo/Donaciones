@@ -3,13 +3,17 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Col, Row, Card } from 'react-bootstrap';
-import ImageUpload from '@/Components/ImageUpload';  // Asegúrate que la ruta esté correcta
+import ImageUpload from '@/Components/ImageUpload';  // Asegúrate de que la ruta esté correcta
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate
 
 const CreateCampaign = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();  // Usa useNavigate para redirigir
 
   const onSubmit = async (data) => {
+    
+    
     try {
       const formData = new FormData();
       formData.append('title', data.title);
@@ -18,7 +22,7 @@ const CreateCampaign = () => {
       formData.append('start_date', data.start_date);
       formData.append('end_date', data.end_date);
       
-      if (data.image[0]) {
+      if (data.image && data.image[0]) {
         formData.append('image', data.image[0]);
       }
 
@@ -31,16 +35,29 @@ const CreateCampaign = () => {
       alert('Campaña creada exitosamente');
       reset();
       setImagePreview(null);
+
+      // Redirigir a myCampaigns después de crear la campaña
+      navigate('/my-campaigns');
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error('Errores de validación:', error.response.data.errors);
         alert('Hay un error en los datos enviados.');
-      } else {
+      } /*else {
         console.error('Error al crear la campaña', error);
         alert('Error al crear la campaña');
       }
     }
-  };
+      
+  };*/
+  else if (error.response && error.response.status === 500) {
+    console.error('Error en el servidor:', error.response.data);
+    alert('Error en el servidor. Por favor, revisa los logs.');
+  } else {
+    console.error('Error al crear la campaña', error);
+    alert('Error al crear la campaña');
+  }
+}
+};
 
   return (
     <div className="container-fluid px-4">
@@ -133,3 +150,4 @@ const CreateCampaign = () => {
 };
 
 export default CreateCampaign;
+

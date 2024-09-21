@@ -14,6 +14,7 @@ export default function CreateCampaign({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                     {/* formcreatecampaign es el archivo que esta en Donaciones\Donaciones\resources\js\Components\Campaign\CreateCampaign.jsx */}   
                        <FormCreateCampaign/> 
                        {/* <Create/> */}
                        
