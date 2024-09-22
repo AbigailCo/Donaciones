@@ -5,6 +5,8 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
+import { Ziggy } from '@/ziggy';
+
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -36,6 +38,12 @@ export default function Authenticated({ user, header, children }) {
                                     Crear campaña
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink href={route('myCampaigns')} active={route().current('myCampaigns')}>
+                                     Mis Campañas
+                                </NavLink>
+</div>
+
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
