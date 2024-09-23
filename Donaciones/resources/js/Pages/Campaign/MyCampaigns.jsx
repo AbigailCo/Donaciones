@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
+import { Link } from '@inertiajs/react'; // Asegúrate de importar Link
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'; // Importa el layout
 
 const MyCampaigns = ({ campaigns, auth }) => {
@@ -13,15 +14,17 @@ const MyCampaigns = ({ campaigns, auth }) => {
               {campaigns.length > 0 ? (
                 campaigns.map((campaign) => (
                   <Col md={4} key={campaign.id} className="mb-4">
-                    <Card>
-                      <Card.Body>
-                        <Card.Title>{campaign.title}</Card.Title>
-                        <Card.Text>{campaign.description}</Card.Text>
-                        <Card.Text>Meta: {campaign.goal}</Card.Text>
-                        <Card.Text>Fecha de Inicio: {campaign.start_date}</Card.Text>
-                        <Card.Text>Fecha de Fin: {campaign.end_date}</Card.Text>
-                      </Card.Body>
-                    </Card>
+                    <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
+                      <Card>
+                        <Card.Body>
+                          <Card.Title>{campaign.title}</Card.Title>
+                          <Card.Text>{campaign.description}</Card.Text>
+                          <Card.Text>Meta: {campaign.goal}</Card.Text>
+                          <Card.Text>Fecha de Inicio: {campaign.start_date}</Card.Text>
+                          <Card.Text>Fecha de Fin: {campaign.end_date}</Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Link>
                   </Col>
                 ))
               ) : (

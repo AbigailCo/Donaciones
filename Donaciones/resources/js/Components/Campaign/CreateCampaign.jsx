@@ -66,28 +66,39 @@ const CreateCampaign = () => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Card.Body className="text-bg-light">
             <Row className="g-4">
-              <Col md={6}>
-                <Form.Label>Título:</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register('title', { required: true })}
-                  isInvalid={!!errors.title}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.title && 'Título es requerido'}
-                </Form.Control.Feedback>
-              </Col>
+            <Col md={6}>
+              <Form.Label>Título:</Form.Label>
+              <Form.Control
+                type="text"
+                  {...register('title', {
+                  required: 'El título es requerido',
+              validate: {
+                  notOnlyNumbers: (value) => !/^\d+$/.test(value) || 'El título no puede contener solo números',
+          },
+       })}
+            isInvalid={!!errors.title}
+      />
+  <Form.Control.Feedback type="invalid">
+    {errors.title?.message}
+  </Form.Control.Feedback>
+</Col>
 
               <Col xs={12}>
                 <Form.Label>Descripción:</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  {...register('description', { required: true })}
+                  {...register('description', {
+                    required: 'La descripción es requerida',
+                    minLength: {
+                      value: 100,
+                      message: 'La descripción debe tener al menos 100 caracteres',
+                    },
+                  })}
                   isInvalid={!!errors.description}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.description && 'Descripción es requerida'}
+                  {errors.description?.message}
                 </Form.Control.Feedback>
               </Col>
 
@@ -96,11 +107,17 @@ const CreateCampaign = () => {
                 <Form.Control
                   type="number"
                   step="0.01"
-                  {...register('goal', { required: true })}
+                  {...register('goal', {
+                    required: 'La meta es requerida',
+                    min: {
+                      value: 5000,
+                      message: 'La meta debe ser de al menos 5.000 pesos',
+                    },
+                  })}
                   isInvalid={!!errors.goal}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.goal && 'Meta es requerida'}
+                  {errors.goal?.message}
                 </Form.Control.Feedback>
               </Col>
 
@@ -108,11 +125,11 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de inicio:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register('start_date', { required: true })}
+                  {...register('start_date', { required: 'La fecha de inicio es requerida' })}
                   isInvalid={!!errors.start_date}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.start_date && 'Fecha de inicio es requerida'}
+                  {errors.start_date?.message}
                 </Form.Control.Feedback>
               </Col>
 
@@ -120,11 +137,11 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de finalización:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register('end_date', { required: true })}
+                  {...register('end_date', { required: 'La fecha de finalización es requerida' })}
                   isInvalid={!!errors.end_date}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.end_date && 'Fecha de finalización es requerida'}
+                  {errors.end_date?.message}
                 </Form.Control.Feedback>
               </Col>
 
@@ -147,5 +164,3 @@ const CreateCampaign = () => {
 };
 
 export default CreateCampaign;
-
-
