@@ -11,7 +11,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         document.getElementById("docs-card-content")?.classList.add("!flex-row");
         document.getElementById("background")?.classList.add("!hidden");
     };
-    
+
     const images = [
         { src: '/images/darvuelve.png', alt: 'Banner de la campaña 1' },
         { src: '/images/campaign.jpg', alt: 'Banner de la campaña 2' },
@@ -32,7 +32,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                 <div className="relative flex flex-col items-center justify-center min-h-screen selection:bg-[#FF2D20] selection:text-white">
                     {/* Aquí eliminamos el max-w para que el header no esté limitado */}
-                    <div className="relative w-full px-0"> 
+                    <div className="relative w-full px-0">
                         <header className="w-full grid grid-cols-2 items-center gap-4 py-6 lg:grid-cols-3 bg-blue-900 shadow-md">
                             <div className="flex justify-start lg:justify-center lg:col-start-2">
                                 <Logo />
@@ -70,9 +70,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             <Footer />
                         </main>
 
-                        <footer className="py-16 text-center text-sm text-black dark:text-white/70">
-                            Laravel v{laravelVersion} (PHP v{phpVersion})
-                        </footer>
+
                     </div>
                 </div>
             </div>
