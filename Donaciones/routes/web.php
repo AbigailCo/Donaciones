@@ -7,12 +7,16 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DonationController;
 
 //Session con google
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 //API mercado pago
-Route::post('/donations/create', [PaymentController::class, 'createPreference']);
+
+Route::get('/donations/success', [PaymentController::class, 'success'])->name('donations.success');
+Route::get('/donations/failure', [PaymentController::class, 'failure'])->name('donations.failure');
+Route::get('/donations/pending', [PaymentController::class, 'pending'])->name('donations.pending');
 //WELCOME Y DESHBOARD
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -53,5 +57,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/campaigns/{id}', [CampaignController::class, 'show']);
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
+});
+Route::post('/donations/create', [DonationController::class, 'create']);
+//prueba de ruta
+Route::get('/test', function () {
+    return response()->json(['message' => '¡Ruta funcionando!']);
 });
 require __DIR__.'/auth.php';

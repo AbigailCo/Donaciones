@@ -1,32 +1,14 @@
 import React, { useState } from 'react';
-import { usePage } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import { Card, CardContent, CardMedia, Typography, Box, Button } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import axios from 'axios';
+import DonateButton from '@/Components/Campaign/DonateButton';
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
-  const [preferenceId, setPreferenceId] = useState(null);
-
-  const handleDonation = async (amount) => {
-    try {
-      const response = await axios.post('/donations/create', {
-        campaign_title: campaign.title,
-        amount,
-      });
-      setPreferenceId(response.data.preference_id);
-    } catch (error) {
-      console.error('Error al crear la preferencia:', error);
-    }
-  };
-
-  // Si ya existe una preferencia, carga el widget de Mercado Pago
-  if (preferenceId) {
-    const script = document.createElement('script');
-    script.src = 'https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js';
-    script.setAttribute('data-preference-id', preferenceId);
-    document.getElementById('mercado-pago-btn').appendChild(script);
-  }
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   return (
     <div>
@@ -43,6 +25,7 @@ const CampaignDetails = () => {
             }}
           >
             <Card sx={{ maxWidth: 600, boxShadow: 3 }}>
+              {/* Imagen de la campaña */}
               <CardMedia
                 component="img"
                 height="300"
@@ -56,40 +39,34 @@ const CampaignDetails = () => {
                 <Typography variant="body1" color="text.secondary" align="justify" sx={{ marginBottom: 2 }}>
                   {campaign.description}
                 </Typography>
+
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                  {/* Meta de la campaña */}
                   <Typography variant="body1" color="text.primary">
                     <strong>Meta:</strong> ${campaign.goal}
                   </Typography>
+                  {/* Fechas de la campaña */}
                   <Typography variant="body1" color="text.secondary">
-                    <strong>Fecha de comienzo:</strong> {campaign.start_date} <br /> 
-                    <strong>Fecha de finalización:</strong>  {campaign.end_date}
+                    <strong>Comienza:</strong> {campaign.start_date} <br />
+                    <strong>Finaliza:</strong> {campaign.end_date}
                   </Typography>
                 </Box>
 
-                {/* Botón para donar */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleDonation(100)} // Puedes personalizar el monto
-                >
-                  Donar $100
-                </Button>
-
-                {/* Contenedor para el botón de Mercado Pago */}
-                <div id="mercado-pago-btn" style={{ marginTop: '20px' }}></div>
+                <DonateButton campaignId={campaign.id} amount={100} />
               </CardContent>
             </Card>
           </Box>
         </AuthenticatedLayout>
       ) : (
-        <Box 
+        // Mostrar mensaje de sesión expirada si el usuario no está autenticado
+        <Box
           sx={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
             flexDirection: 'column',
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           <Typography variant="h5" color="error" gutterBottom>

@@ -16,7 +16,7 @@ export default function CreateCampaign({ auth }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                      {/* formcreatecampaign es el archivo que esta en Donaciones\Donaciones\resources\js\Components\Campaign\CreateCampaign.jsx */}   
                        <FormCreateCampaign/> 
-                       {/* <Create/> */}
+                     
                        
                     </div>
                 </div>
