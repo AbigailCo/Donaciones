@@ -3,39 +3,37 @@ import { Card, CardContent, CardMedia, Typography, Grid, CircularProgress } from
 import axios from 'axios';
 import { Link } from '@inertiajs/react';
 
-
 const CampaignCard = ({ campaign }) => (
- 
   <Card style={{ cursor: 'pointer' }}>
-     <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
-    <CardMedia
-      component="img"
-      height="200" // Ajuste para hacer la imagen un poco más grande
-      image={`/storage/images/${campaign.image}`}
-      alt={campaign.title}
-    />
-    <CardContent>
-      <Typography gutterBottom variant="h5" component="div">
-        {campaign.title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {campaign.description}
-      </Typography>
-      <Typography variant="body1" color="text.primary">
-        Goal: ${campaign.goal}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Dates: {campaign.start_date} to {campaign.end_date}
-      </Typography>
-    </CardContent>
+    <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
+      <CardMedia
+        component="img"
+        height="200"
+        image={`/storage/images/${campaign.image}`}
+        alt={campaign.title}
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {campaign.title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {campaign.description}
+        </Typography>
+        <Typography variant="body1" color="text.primary">
+          Meta: ${campaign.goal}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Fechas: {campaign.start_date} a {campaign.end_date}
+        </Typography>
+      </CardContent>
     </Link>
   </Card>
 );
 
 const CampaignCards = () => {
   const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para el loading
-  const [error, setError] = useState(null); // Estado para el manejo de errores
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios.defaults.baseURL = 'http://localhost:8000/';
@@ -43,11 +41,11 @@ const CampaignCards = () => {
       .get('/campaigns', { withCredentials: true })
       .then(response => {
         setCampaigns(response.data);
-        setLoading(false); // Detenemos el loading cuando obtenemos los datos
+        setLoading(false);
       })
       .catch(error => {
-        setError('Error fetching campaigns');
-        setLoading(false); // Detenemos el loading en caso de error
+        setError('Error al obtener las campañas');
+        setLoading(false);
       });
   }, []);
 
@@ -63,9 +61,12 @@ const CampaignCards = () => {
     return <Typography variant="h6" color="error">{error}</Typography>;
   }
 
+  // Ordenar las campañas por la fecha de creación (created_at) en orden descendente
+  const sortedCampaigns = [...campaigns].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
     <Grid container spacing={2}>
-      {campaigns.map(campaign => (
+      {sortedCampaigns.map(campaign => (
         <Grid item xs={12} sm={6} md={4} key={campaign.id}>
           <CampaignCard campaign={campaign} />
         </Grid>
@@ -75,3 +76,4 @@ const CampaignCards = () => {
 };
 
 export default CampaignCards;
+

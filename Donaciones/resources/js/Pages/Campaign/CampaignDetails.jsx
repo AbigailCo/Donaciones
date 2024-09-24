@@ -42,7 +42,7 @@ const CampaignDetails = () => {
               <strong>Meta:</strong> ${campaign.goal}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              <strong>Fecha de comienzo:</strong> {campaign.start_date} <br></br> <strong>Fecha de finalización:</strong>  {campaign.end_date}
+              <strong>Fecha de comienzo:</strong> {campaign.start_date} <br/> <strong>Fecha de finalización:</strong>  {campaign.end_date}
             </Typography>
           </Box>
         </CardContent>
