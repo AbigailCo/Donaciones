@@ -6,9 +6,13 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\PaymentController;
 
+//Session con google
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+//API mercado pago
+Route::post('/donations/create', [PaymentController::class, 'createPreference']);
 //WELCOME Y DESHBOARD
 Route::get('/', function () {
     return Inertia::render('Welcome', [
