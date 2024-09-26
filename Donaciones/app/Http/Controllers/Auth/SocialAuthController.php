@@ -23,10 +23,10 @@ class SocialAuthController extends Controller
             'email' => $googleUser->getEmail(),
         ], [
             'name' => $googleUser->getName(),
-            'password' => bcrypt('password'), // O puedes generar una contraseña aleatoria
+            'password' => bcrypt('password'), 
         ]);
 
-        // Iniciar sesión con el usuario
+       
         Auth::login($user);
 
         return redirect('/dashboard'); // Redirige a donde prefieras después de iniciar sesión

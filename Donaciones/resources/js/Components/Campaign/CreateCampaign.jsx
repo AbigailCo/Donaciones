@@ -152,6 +152,13 @@ const CreateCampaign = () => {
               <Col md={6}>
                 <ImageUpload register={register} errors={errors} setImagePreview={setImagePreview} />
               </Col>
+
+              {/* Mostrar la imagen previsualizada si existe */}
+              {imagePreview && (
+                <Col md={6}>
+                  <img src={imagePreview} alt="Previsualización" style={{ maxWidth: '100%', height: 'auto' }} />
+                </Col>
+              )}
             </Row>
           </Card.Body>
 

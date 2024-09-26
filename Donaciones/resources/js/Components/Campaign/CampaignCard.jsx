@@ -3,6 +3,7 @@ import { Card, CardContent, CardMedia, Typography, Grid, CircularProgress } from
 import axios from 'axios';
 import { Link } from '@inertiajs/react';
 
+//CampaignCard toma una campaign como prop y muestra sus detalles en una tarjeta.
 const CampaignCard = ({ campaign }) => (
   <Card style={{ cursor: 'pointer' }}>
     <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
@@ -31,9 +32,9 @@ const CampaignCard = ({ campaign }) => (
 );
 
 const CampaignCards = () => {
-  const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [campaigns, setCampaigns] = useState([]); //compañas obtenidas
+  const [loading, setLoading] = useState(true); //indica si se están cargando los datos.
+  const [error, setError] = useState(null); //guarda errores 
 
   useEffect(() => {
     axios.defaults.baseURL = 'http://localhost:8000/';
