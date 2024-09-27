@@ -117,16 +117,18 @@ class CampaignController extends Controller
         ]);
     }
 
-    public function createPaymentPreference($id)
+    public function createPaymentPreference(Request $request, $id)
     {
         $campaign = Campaign::findOrFail($id);
-    
+        
+        $amount = $request->input('amount'); // Recibir el monto que el usuario quiere donar
+        
         $preferenceData = [
             'items' => [
                 [
                     'title' => $campaign->title,
                     'quantity' => 1,
-                    'unit_price' => (float)$campaign->goal, 
+                    'unit_price' => (float)$amount,  // Usar el monto que el usuario ingresa
                 ]
             ],
             'back_urls' => [
@@ -134,8 +136,8 @@ class CampaignController extends Controller
                 'failure' => 'http://localhost:8000/',
                 'pending' => 'http://tu_dominio/pending',
             ],
-            'auto_return' => 'approved', // Esto redirige automáticamente al usuario después de un pago aprobado
-            'currency_id' => 'ARS', 
+            'auto_return' => 'approved',
+            'currency_id' => 'ARS',
         ];
     
         try {
@@ -152,6 +154,7 @@ class CampaignController extends Controller
     
             return response()->json([
                 'preference_id' => $preference->id,
+                'init_point' => $preference->init_point,  // Devolver la URL para abrir el popup
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

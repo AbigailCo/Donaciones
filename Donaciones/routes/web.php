@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/api/campaigns', [CampaignController::class, 'store'])->name('campaign.store');
     Route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
     //  Route::get('/Campaign/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
-    Route::get('/campaigns/{id}/payment-preference', [CampaignController::class, 'createPaymentPreference']);
+    Route::post('/campaigns/{id}/payment-preference', [CampaignController::class, 'createPaymentPreference']);
 
     Route::get('/campaigns/{id}', [CampaignController::class, 'show']);
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
