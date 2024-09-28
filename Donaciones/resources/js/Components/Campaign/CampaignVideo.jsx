@@ -15,7 +15,7 @@ const CampaignVideo = ({ youtubeId }) => {
                     title="YouTube Video"
                 ></iframe>
             ) : (
-                <p>No video available.</p>
+                <p>Esta campaña no posee ningun video.</p>
             )}
         </div>
     );
