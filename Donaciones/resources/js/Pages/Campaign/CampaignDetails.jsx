@@ -1,35 +1,68 @@
-import React, { useState } from 'react';
-import { usePage, Link } from '@inertiajs/react';
-import { Card, CardContent, CardMedia, Typography, Box, Button } from '@mui/material';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import React, { useState, useEffect } from 'react';
+import { usePage } from '@inertiajs/react';
 import axios from 'axios';
-import DonateButton from '@/Components/Campaign/DonateButton';
+import { initMercadoPago } from '@mercadopago/sdk-react';
+import { Card, CardContent, CardMedia, Typography, Box, TextField, Button } from '@mui/material';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
+  const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [donationAmount, setDonationAmount] = useState(''); // Estado para el monto de donación
+
+  useEffect(() => {
+    initMercadoPago('TEST-ca5184c7-731c-4a71-9887-b5a5e97cd506'); // Public Key
+  }, []);
+
+  const openPopup = (url) => {
+    const width = 600;
+    const height = 800;
+    const left = (window.innerWidth / 2) - (width / 2);
+    const top = (window.innerHeight / 2) - (height / 2);
+
+    window.open(
+      url,
+      'MercadoPago',
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+  };
+
+  const handleDonation = () => {
+    if (!donationAmount) {
+      setError('Por favor, ingresa un monto.');
+      return;
+    }
+
+    axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount })
+      .then(response => {
+        openPopup(response.data.init_point); // Abrir la URL de pago en un popup
+      })
+      .catch(error => {
+        console.error('Error al generar la preferencia:', error);
+        setError('No se pudo generar la preferencia de pago.');
+      });
+  };
 
   return (
     <div>
       {auth.user ? (
         <AuthenticatedLayout user={auth.user}>
-          <Box
+          <Box 
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               minHeight: '100vh',
               padding: '20px',
-              backgroundColor: '#f5f5f5',
+              backgroundColor: '#f5f5f5'
             }}
           >
             <Card sx={{ maxWidth: 600, boxShadow: 3 }}>
-              {/* Imagen de la campaña */}
               <CardMedia
                 component="img"
                 height="300"
-                image={`/storage/images/${campaign.image}`}
+                image={`/storage/images/${campaign.image}`} // Verifica que el enlace esté funcionando
                 alt={campaign.title}
               />
               <CardContent>
@@ -39,46 +72,54 @@ const CampaignDetails = () => {
                 <Typography variant="body1" color="text.secondary" align="justify" sx={{ marginBottom: 2 }}>
                   {campaign.description}
                 </Typography>
-
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  {/* Meta de la campaña */}
                   <Typography variant="body1" color="text.primary">
                     <strong>Meta:</strong> ${campaign.goal}
                   </Typography>
-                  {/* Fechas de la campaña */}
                   <Typography variant="body1" color="text.secondary">
-                    <strong>Comienza:</strong> {campaign.start_date} <br />
-                    <strong>Finaliza:</strong> {campaign.end_date}
+                    <strong>Fecha de comienzo:</strong> {campaign.start_date} <br/>
+                    <strong>Fecha de finalización:</strong> {campaign.end_date}
                   </Typography>
                 </Box>
 
-                <DonateButton campaignId={campaign.id} amount={100} />
+                {/* Input para el monto de donación */}
+                <Box sx={{ mb: 2 }}>
+                  <TextField
+                    label="Monto a donar"
+                    variant="outlined"
+                    fullWidth
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                    placeholder="Ingresa el monto a donar"
+                  />
+                </Box>
+
+                {/* Botón para realizar la donación */}
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  fullWidth 
+                  onClick={handleDonation}
+                  disabled={!donationAmount || isNaN(donationAmount)}
+                >
+                  Donar a esta campaña
+                </Button>
+
+                {error && <p style={{ color: 'red' }}>{error}</p>}
               </CardContent>
             </Card>
           </Box>
         </AuthenticatedLayout>
       ) : (
-        // Mostrar mensaje de sesión expirada si el usuario no está autenticado
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            flexDirection: 'column',
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="h5" color="error" gutterBottom>
-            Sesión expirada
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Por favor, inicia sesión nuevamente.
-          </Typography>
-        </Box>
+        <div className="text-center mt-5">
+          <h2>Sesión expirada</h2>
+          <p>Por favor, inicia sesión nuevamente.</p>
+        </div>
       )}
     </div>
   );
 };
 
 export default CampaignDetails;
+
+

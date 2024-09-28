@@ -4,6 +4,8 @@ import Carrusel from '@/Components/Carrusel';
 import SeccionWelcome from '@/Components/SeccionWelcome';
 import Logo from '@/Components/Logo';
 
+
+
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
         document.getElementById("screenshot-container")?.classList.add("!hidden");

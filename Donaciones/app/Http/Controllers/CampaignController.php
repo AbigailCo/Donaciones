@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-
+use GuzzleHttp\Client;
 
 
 class CampaignController extends Controller
@@ -129,4 +129,50 @@ class CampaignController extends Controller
             'campaigns' => $campaigns
         ]);
     }
+
+    public function createPaymentPreference(Request $request, $id)
+    {
+        $campaign = Campaign::findOrFail($id);
+        
+        $amount = $request->input('amount'); // Recibir el monto que el usuario quiere donar
+        
+        $preferenceData = [
+            'items' => [
+                [
+                    'title' => $campaign->title,
+                    'quantity' => 1,
+                    'unit_price' => (float)$amount,  // Usar el monto que el usuario ingresa
+                ]
+            ],
+            'back_urls' => [
+                'success' => 'http://localhost:8000/campaign',
+                'failure' => 'http://localhost:8000/',
+                'pending' => 'http://tu_dominio/pending',
+            ],
+            'auto_return' => 'approved',
+            'currency_id' => 'ARS',
+        ];
+    
+        try {
+            $client = new Client();
+            $response = $client->post('https://api.mercadopago.com/checkout/preferences', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . env('MERCADO_PAGO_ACCESS_TOKEN'),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $preferenceData,
+            ]);
+    
+            $preference = json_decode($response->getBody());
+    
+            return response()->json([
+                'preference_id' => $preference->id,
+                'init_point' => $preference->init_point,  // Devolver la URL para abrir el popup
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    
 }

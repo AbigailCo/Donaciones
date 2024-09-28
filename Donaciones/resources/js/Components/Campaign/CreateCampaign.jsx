@@ -22,7 +22,7 @@ const CreateCampaign = () => {
   const [videoLink, setVideoLink] = useState(''); // Agregar el estado para el enlace de video
 
   const onSubmit = async (data) => {
-    console.log('Archivos de imagen:', data.images);
+    
     try {
       const formData = new FormData();
       formData.append('title', data.title);
@@ -30,9 +30,11 @@ const CreateCampaign = () => {
       formData.append('goal', data.goal);
       formData.append('start_date', data.start_date);
       formData.append('end_date', data.end_date);
-
-      if (data.images) {
-        data.images.forEach((image) => {
+   
+      console.log('ESTOS SON LOS ARCHIVO? :', imagePreviews);
+      
+      if (imagePreviews) {
+        imagePreviews.forEach((image) => {
           formData.append('images[]', image); // 'images[]' para el backend
         });
       }
@@ -42,9 +44,10 @@ const CreateCampaign = () => {
         formData.append('youtube_link', videoLink);
       }
       // Log para ver los datos
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value); // Ver las entradas del FormData
-      }
+    // Imprime el contenido de FormData
+for (var pair of formData.entries()) {
+  console.log(pair[0] + ', ' + pair[1]);
+}
       const response = await axios.post('/api/campaigns', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -56,9 +59,9 @@ const CreateCampaign = () => {
       setImagePreviews([]);
       setVideoLink(''); // Reiniciar el video link
 
-      setTimeout(() => {
+      /* setTimeout(() => {
         window.location.href = '/my-campaigns';
-      }, 2000);
+      }, 2000); */
     } catch (error) {
       if (error.response && error.response.status === 422) {
         toast.error('Hay un error en los datos enviados.');

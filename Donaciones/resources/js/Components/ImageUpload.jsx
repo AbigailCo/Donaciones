@@ -1,27 +1,19 @@
 import React, { useState } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 
-const ImageUpload = ({ register, errors, setImagePreviews }) => {
-  const [imageFiles, setImageFiles] = useState([]);
+const ImageUpload = ({ register, errors, setImageFiles }) => {
+  const [imageFiles, setImageFilesState] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [imageToRemove, setImageToRemove] = useState(null);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const newFiles = files.map((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviews((prev) => [...prev, reader.result]); // Agrega la imagen al estado
-      };
-      reader.readAsDataURL(file);
-      return file;
-    });
+    
+    // Actualiza el estado de imageFiles
+    setImageFilesState((prev) => [...prev, ...files]);
+    setImageFiles((prev) => [...prev, ...files]); // Actualiza el estado de archivos en el componente padre
 
-    setImageFiles((prev) => {
-      const updatedFiles = [...prev, ...newFiles]; // Actualiza el estado de los archivos
-      console.log('Archivos de imagen después de agregar:', updatedFiles); // Verifica los archivos después de agregar
-      return updatedFiles;
-    });
+    console.log('Archivos de imagen después de agregar:', [...imageFiles, ...files]); // Verifica los archivos después de agregar
   };
 
   const handleAddMoreImages = () => {
@@ -34,11 +26,12 @@ const ImageUpload = ({ register, errors, setImagePreviews }) => {
   };
 
   const handleRemoveImage = () => {
-    setImageFiles((prev) => {
+    setImageFilesState((prev) => {
       const updatedFiles = prev.filter((file, index) => index !== imageToRemove);
       console.log('Archivos de imagen después de eliminar:', updatedFiles); // Verifica los archivos después de eliminar
       return updatedFiles;
     });
+    setImageFiles((prev) => prev.filter((_, index) => index !== imageToRemove)); // Actualiza el estado en el componente padre
     setShowModal(false);
   };
 
@@ -46,7 +39,9 @@ const ImageUpload = ({ register, errors, setImagePreviews }) => {
     setImageToRemove(index);
     setShowModal(true);
   };
+
   console.log('Estado de imageFiles:', imageFiles);
+  
   return (
     <div>
       <Form.Label>Subir Imágenes:</Form.Label>
@@ -73,13 +68,6 @@ const ImageUpload = ({ register, errors, setImagePreviews }) => {
           </div>
         ))}
       </div>
-
-      {/* No requerir que se envíen imágenes */}
-     {/*  <input
-        type="hidden"
-        {...register('images')} // Quitar la validación de requerimiento
-        value={imageFiles.length > 0 ? JSON.stringify(imageFiles) : ''}
-      /> */}
 
       {errors.images && <div className="text-danger">{errors.images.message}</div>}
 
