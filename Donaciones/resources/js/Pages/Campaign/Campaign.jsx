@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import CampaignCards from '../../Components/Campaign/CampaignCard';
+import Campaigns from '../../Components/Campaign/Campaigns';
 
 export default function Campaign({ auth }) {
     return (
@@ -13,7 +13,7 @@ export default function Campaign({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <CampaignCards />
+                        <Campaigns />
                     </div>
                 </div>
             </div>

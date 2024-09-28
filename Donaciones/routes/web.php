@@ -34,7 +34,7 @@ Route::get('/dashboard', function () {
 Route::get('/campaign', function () {
     return Inertia::render('Campaign/Campaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('campaign');
-
+Route::get('/campaigns', [CampaignController::class, 'index']);
 Route::get('/CreateCampaign', function () {
     return Inertia::render('Campaign/CreateCampaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('CreateCampaign');

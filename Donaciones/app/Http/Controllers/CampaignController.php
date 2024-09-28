@@ -16,53 +16,66 @@ class CampaignController extends Controller
 {
     public function index()
     {
-        // Retornar todas las campañas
-        $campaigns = Campaign::all();
+        // Retornar todas las campañas con sus imágenes asociadas
+        $campaigns = Campaign::with('images')->get(); // Asegúrate de que 'campaignImages' sea la relación correcta
         return response()->json($campaigns);
     }
     public function count()
     {
-        $campaigntsCount = Campaign::count();
-        return response()->json(['count' => $campaigntsCount]);
+        $campaignsCount = Campaign::count(); // Corregido
+        return response()->json(['count' => $campaignsCount]);
     }
     public function show($id)
-{
-    // Buscar una campaña específica por ID
-    $campaign = Campaign::findOrFail($id);
+    {
+        // Buscar una campaña específica por ID
+        $campaign = Campaign::with('images')->findOrFail($id); // Traer también las imágenes
 
-    // Devolver una vista Inertia
-    return Inertia::render('Campaign/CampaignDetails', [
-        'campaign' => $campaign
-    ]);
-}
+        // Devolver una vista Inertia
+        return Inertia::render('Campaign/CampaignDetails', [
+            'campaign' => $campaign,
+            'youtube_link' => $campaign->youtube_link // Enviar el enlace de YouTube
+        ]);
+    }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'goal' => 'required|numeric|min:1',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-    ]);
+    {
+        // Validación
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'goal' => 'required|numeric|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
+            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+        ]);
 
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('images', 'public');
-        $imageName = basename($imagePath);
-        $validated['image'] = $imageName;
+        $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
+
+        try {
+            // Crear la campaña
+            $campaign = Campaign::create($validated);
+
+            // Si se suben imágenes, guardarlas
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('images', 'public'); // Asegúrate que la carpeta existe
+                    $imageName = basename($imagePath);
+
+                    // Crear registros de CampaignImage
+                    $campaign->images()->create([
+                        'path' => $imageName,
+                    ]);
+                }
+            }
+
+            // Redirigir a la página de "MyCampaigns" usando Inertia
+            return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
+        } catch (\Exception $e) {
+            Log::error('Error creando la campaña: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear la campaña');
+        }
     }
-
-    $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
-
-    try  {
-        $campaign = Campaign::create($validated);
-        // Redirigir a la página de "MyCampaigns" usando Inertia
-        return redirect()->route('myCampaigns')->with('success', 'Campaign created successfully!');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Error creating campaign');
-    }
-}
 
     public function update(Request $request, $id)
     {
@@ -110,7 +123,7 @@ class CampaignController extends Controller
     {
         $userId = auth()->id();
         $campaigns = Campaign::where('user_id', $userId)->get();
-    
+
         // Envía las campañas a la vista usando Inertia
         return Inertia::render('Campaign/MyCampaigns', [
             'campaigns' => $campaigns

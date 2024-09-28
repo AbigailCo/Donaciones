@@ -18,15 +18,24 @@ return new class extends Migration
             $table->decimal('goal', 10, 2);
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('image')->nullable(); 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('youtube_link')->nullable(); // Campo para el enlace de YouTube
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // Nueva tabla para almacenar múltiples imágenes relacionadas con campañas
+      Schema::create('campaign_images', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
+        $table->string('path');
+        $table->timestamps();
+    });
     }
 
     public function down()
     {
+        Schema::dropIfExists('campaign_images');
         Schema::dropIfExists('campaigns');
     }
 };

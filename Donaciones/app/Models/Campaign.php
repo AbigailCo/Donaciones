@@ -11,7 +11,7 @@ class Campaign extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title', 'description', 'goal','image', 'start_date', 'end_date', 'user_id',
+        'title', 'description', 'goal', 'start_date', 'end_date', 'user_id', 'youtube_link'
     ];
 
     public function user()
@@ -27,5 +27,9 @@ class Campaign extends Model
     public function rewards()
     {
         return $this->hasMany(Reward::class);
+    }
+    public function images()
+    {
+        return $this->hasMany(CampaignImage::class, 'campaign_id', 'id');
     }
 }

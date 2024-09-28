@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers; // Asegúrate de que la declaración del namespace esté presente
+namespace App\Http\Controllers; 
 
-use Illuminate\Http\Request; // Importa Request
-use App\Models\Donation; // Asegúrate de importar tu modelo Donation
-use MercadoPago\SDK; // Importa el SDK de Mercado Pago
-use MercadoPago\Preference; // Importa la clase Preference de Mercado Pago
-use MercadoPago\Item; // Importa la clase Item de Mercado Pago
+use Illuminate\Http\Request; 
+use App\Models\Donation;
+use MercadoPago\SDK; 
+use MercadoPago\Preference;
+use MercadoPago\Item; 
 
 class DonationController extends Controller
 {

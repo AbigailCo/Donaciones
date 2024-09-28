@@ -4,6 +4,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Col, Row, Card } from 'react-bootstrap';
 import ImageUpload from '@/Components/ImageUpload';
+import YouTubeLinkInput from '@/Components/YouTubeLinkInput';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,15 +14,15 @@ const CreateCampaign = () => {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
-    watch, // Agregar watch para monitorear cambios
     reset,
   } = useForm();
-  
+
   const navigate = useNavigate();
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [videoLink, setVideoLink] = useState(''); // Agregar el estado para el enlace de video
 
   const onSubmit = async (data) => {
+    console.log('Archivos de imagen:', data.images);
     try {
       const formData = new FormData();
       formData.append('title', data.title);
@@ -30,10 +31,20 @@ const CreateCampaign = () => {
       formData.append('start_date', data.start_date);
       formData.append('end_date', data.end_date);
 
-      if (data.image[0]) {
-        formData.append('image', data.image[0]);
+      if (data.images) {
+        data.images.forEach((image) => {
+          formData.append('images[]', image); // 'images[]' para el backend
+        });
       }
 
+      // Agregar el enlace de video al FormData
+      if (videoLink) {
+        formData.append('youtube_link', videoLink);
+      }
+      // Log para ver los datos
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value); // Ver las entradas del FormData
+      }
       const response = await axios.post('/api/campaigns', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -42,7 +53,8 @@ const CreateCampaign = () => {
 
       toast.success('Campaña creada exitosamente');
       reset();
-      setImagePreview(null);
+      setImagePreviews([]);
+      setVideoLink(''); // Reiniciar el video link
 
       setTimeout(() => {
         window.location.href = '/my-campaigns';
@@ -55,10 +67,6 @@ const CreateCampaign = () => {
       }
     }
   };
-
-  // Observar los valores de las fechas de inicio y fin
-  const startDate = watch('start_date');
-  const endDate = watch('end_date');
 
   return (
     <div className="container-fluid px-4">
@@ -115,14 +123,7 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de inicio:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register('start_date', {
-                    required: 'Fecha de inicio es requerida',
-                    validate: (value) => {
-                      const endDate = new Date(getValues('end_date'));
-                      const startDate = new Date(value);
-                      return startDate <= endDate || 'La fecha de inicio no puede ser mayor que la fecha de finalización';
-                    },
-                  })}
+                  {...register('start_date', { required: 'Fecha de inicio es requerida' })}
                   isInvalid={!!errors.start_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -134,14 +135,7 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de finalización:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register('end_date', {
-                    required: 'Fecha de finalización es requerida',
-                    validate: (value) => {
-                      const startDate = new Date(getValues('start_date'));
-                      const endDate = new Date(value);
-                      return startDate <= endDate || 'La fecha de finalización no puede ser menor que la fecha de inicio';
-                    },
-                  })}
+                  {...register('end_date', { required: 'Fecha de finalización es requerida' })}
                   isInvalid={!!errors.end_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -150,15 +144,13 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <ImageUpload register={register} errors={errors} setImagePreview={setImagePreview} />
+                <ImageUpload register={register} errors={errors} setImagePreviews={setImagePreviews} />
               </Col>
 
-              {/* Mostrar la imagen previsualizada si existe */}
-              {imagePreview && (
-                <Col md={6}>
-                  <img src={imagePreview} alt="Previsualización" style={{ maxWidth: '100%', height: 'auto' }} />
-                </Col>
-              )}
+
+              <Col md={6}>
+                <YouTubeLinkInput register={register} errors={errors} setVideoLink={setVideoLink} />
+              </Col>
             </Row>
           </Card.Body>
 

@@ -1,11 +1,11 @@
 <?php
 
-// database/factories/CampaignFactory.php
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Campaign;
 use App\Models\User;
+use App\Models\CampaignImage;
 use Illuminate\Support\Facades\File;
 
 class CampaignFactory extends Factory
@@ -14,16 +14,6 @@ class CampaignFactory extends Factory
 
     public function definition()
     {
-        // Usa public_path() para obtener los archivos de la carpeta public/images
-        $imageDirectory = public_path('storage/images');
-        $images = File::files($imageDirectory);
-
-        // Obtén una imagen aleatoria
-        $imagePath = $this->faker->randomElement($images);
-
-        // Obtén el nombre de archivo sin la ruta completa
-        $imageName = basename($imagePath);
-
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->text,
@@ -31,7 +21,27 @@ class CampaignFactory extends Factory
             'start_date' => $this->faker->date,
             'end_date' => $this->faker->date,
             'user_id' => User::factory(), // Asocia una campaña a un usuario
-            'image' => $imageName, // Guarda solo el nombre de la imagen
+            'youtube_link' => $this->faker->optional()->url, // Link de YouTube opcional
         ];
+    }
+
+    // Generar múltiples imágenes para la campaña
+    public function configure()
+    {
+        return $this->afterCreating(function (Campaign $campaign) {
+            $imageDirectory = public_path('storage/images');
+            $images = File::files($imageDirectory);
+
+            // Limitar a 3 imágenes como máximo, ajusta según tus necesidades
+            $randomImages = $this->faker->randomElements($images, 3);
+
+            foreach ($randomImages as $image) {
+                $imageName = basename($image);
+                CampaignImage::create([
+                    'campaign_id' => $campaign->id,
+                    'path' => $imageName, // Solo almacena el nombre de la imagen
+                ]);
+            }
+        });
     }
 }

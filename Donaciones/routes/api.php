@@ -7,14 +7,14 @@ use App\Models\Campaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\MercadoPagoController;
 
 
 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/campaigns', [CampaignController::class, 'store']);
-   
+    
     Route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
 });
 Route::get('/campaigns/{id}', function ($id) {
@@ -28,3 +28,6 @@ Route::get('/campaigns/{id}', function ($id) {
 Route::get('/test', function () {
     return response()->json(['message' => '¡Ruta funcionando!']);
 });
+
+
+Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
