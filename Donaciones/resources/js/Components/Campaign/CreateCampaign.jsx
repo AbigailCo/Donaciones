@@ -18,9 +18,9 @@ const CreateCampaign = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const [imagePreviews, setImagePreviews] = useState([]);
+ /*  const [imagePreviews, setImagePreviews] = useState([]); */
   const [videoLink, setVideoLink] = useState(''); // Agregar el estado para el enlace de video
-
+  const [imageFiles, setImageFiles] = useState([]);
   const onSubmit = async (data) => {
     
     try {
@@ -31,10 +31,10 @@ const CreateCampaign = () => {
       formData.append('start_date', data.start_date);
       formData.append('end_date', data.end_date);
    
-      console.log('ESTOS SON LOS ARCHIVO? :', imagePreviews);
+      console.log('ESTOS SON LOS ARCHIVO? :', imageFiles);
       
-      if (imagePreviews) {
-        imagePreviews.forEach((image) => {
+      if (imageFiles) {
+        imageFiles.forEach((image) => {
           formData.append('images[]', image); // 'images[]' para el backend
         });
       }
@@ -147,7 +147,7 @@ for (var pair of formData.entries()) {
               </Col>
 
               <Col md={6}>
-                <ImageUpload register={register} errors={errors} setImagePreviews={setImagePreviews} />
+                <ImageUpload register={register} errors={errors} /* setImagePreviews={setImagePreviews} */ setImageFiles={setImageFiles}  />
               </Col>
 
 

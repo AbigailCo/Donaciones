@@ -9,7 +9,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { BrowserRouter as Router } from 'react-router-dom'; 
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Dar Vuelve';
 
 // Inicializa Mercado Pago // aca va el access token de mercado pago 
 initMercadoPago('TEST-367218081422021-092321-3629b0eee6131454c4b8e4ade60c39c4-219544919');

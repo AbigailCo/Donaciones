@@ -31,3 +31,4 @@ Route::get('/test', function () {
 
 
 Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
+Route::get('/campaigns/search', [CampaignController::class, 'search']);

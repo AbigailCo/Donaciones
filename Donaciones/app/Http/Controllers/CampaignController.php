@@ -38,44 +38,48 @@ class CampaignController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Validación
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'goal' => 'required|numeric|min:1',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
-            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
-        ]);
+{
+    // Validación
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'goal' => 'required|numeric|min:1',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
+        'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+    ]);
 
-        $validated['user_id'] = Auth::id(); // Asegura que el creador es el usuario autenticado
+    // Asegura que el creador es el usuario autenticado
+    $validated['user_id'] = Auth::id();
 
-        try {
-            // Crear la campaña
-            $campaign = Campaign::create($validated);
+    try {
+        // Crear la campaña
+        $campaign = Campaign::create($validated);
 
-            // Si se suben imágenes, guardarlas
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('images', 'public'); // Asegúrate que la carpeta existe
-                    $imageName = basename($imagePath);
+        // Si se suben imágenes, guardarlas
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                // Almacenar la imagen en el disco público
+                $imagePath = $image->store('images', 'public');
+                $imageName = basename($imagePath); // Obtener solo el nombre del archivo
 
-                    // Crear registros de CampaignImage
-                    $campaign->images()->create([
-                        'path' => $imageName,
-                    ]);
-                }
+                // Crear registros de CampaignImage
+                $campaign->images()->create([
+                    'path' => $imageName, // Guardar el nombre de la imagen
+                ]);
             }
-
-            // Redirigir a la página de "MyCampaigns" usando Inertia
-            return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
-        } catch (\Exception $e) {
-            Log::error('Error creando la campaña: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al crear la campaña');
         }
+
+        // Redirigir a la página de "MyCampaigns" usando Inertia
+        return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
+    } catch (\Exception $e) {
+        // Registrar el error en los logs
+        Log::error('Error creando la campaña: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Error al crear la campaña');
     }
+}
+
 
     public function update(Request $request, $id)
     {
@@ -133,9 +137,9 @@ class CampaignController extends Controller
     public function createPaymentPreference(Request $request, $id)
     {
         $campaign = Campaign::findOrFail($id);
-        
+
         $amount = $request->input('amount'); // Recibir el monto que el usuario quiere donar
-        
+
         $preferenceData = [
             'items' => [
                 [
@@ -152,7 +156,7 @@ class CampaignController extends Controller
             'auto_return' => 'approved',
             'currency_id' => 'ARS',
         ];
-    
+
         try {
             $client = new Client();
             $response = $client->post('https://api.mercadopago.com/checkout/preferences', [
@@ -162,9 +166,9 @@ class CampaignController extends Controller
                 ],
                 'json' => $preferenceData,
             ]);
-    
+
             $preference = json_decode($response->getBody());
-    
+
             return response()->json([
                 'preference_id' => $preference->id,
                 'init_point' => $preference->init_point,  // Devolver la URL para abrir el popup
@@ -174,5 +178,11 @@ class CampaignController extends Controller
         }
     }
 
-    
+    public function search(Request $request)
+    {
+        $term = $request->input('term');
+        $campaigns = Campaign::where('title', 'LIKE', "%{$term}%")->get();
+
+        return response()->json($campaigns);
+    }
 }
