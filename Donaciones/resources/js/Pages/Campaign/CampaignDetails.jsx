@@ -8,10 +8,12 @@ import { Card, CardContent, CardMedia, Typography, Box, TextField, Button } from
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 const CampaignDetails = () => {
+  
   const { auth, campaign } = usePage().props;
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
   const [donationAmount, setDonationAmount] = useState(''); // Estado para el monto de donación
+
   const getYouTubeId = (url) => {
     if (!url) return null; // Verifica si url es nulo o indefinido
   
@@ -39,20 +41,39 @@ const CampaignDetails = () => {
   };
 
   const handleDonation = () => {
+    console.log('Iniciando donación...'); // Log inicial
+
     if (!donationAmount) {
-      setError('Por favor, ingresa un monto.');
-      return;
+        setError('Por favor, ingresa un monto.');
+        console.log('Monto no ingresado.'); // Log adicional
+        return;
     }
 
-    axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount })
-      .then(response => {
-        openPopup(response.data.init_point); // Abrir la URL de pago en un popup
-      })
-      .catch(error => {
-        console.error('Error al generar la preferencia:', error);
-        setError('No se pudo generar la preferencia de pago.');
-      });
-  };
+    console.log('Monto a donar:', donationAmount); // Verificar el valor del monto
+
+    // 1. Registramos la donación en la base de datos
+    axios.post('/donations', {
+        amount: donationAmount,
+        campaign_id: campaign.id,
+        user_id: auth.user.id,
+        payment_status: 'pending',
+    })
+    .then(response => {
+        console.log('Donación registrada:', response.data);
+        // 2. Generamos la preferencia de pago en Mercado Pago
+        return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
+    })
+    .then(response => {
+        // Abrir la URL de pago en un popup
+        openPopup(response.data.init_point);
+    })
+    .catch(error => {
+        console.error('Error al procesar la donación:', error);
+        console.log('Error Response:', error.response); // Log de la respuesta de error
+        setError('No se pudo completar la donación.');
+    });
+};
+
 
   return (
     <div>
@@ -105,8 +126,8 @@ const CampaignDetails = () => {
                     <strong>Meta:</strong> ${campaign.goal}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    <strong>Fecha de comienzo:</strong> {campaign.start_date} <br />
-                    <strong>Fecha de finalización:</strong> {campaign.end_date}
+                    <strong>Fecha de comiddddenzo:</strong> {campaign.start_date} <br />
+                    <strong>Fecha de finalizaciónnnnn:</strong> {campaign.end_date}
                   </Typography>
                 </Box>
 
