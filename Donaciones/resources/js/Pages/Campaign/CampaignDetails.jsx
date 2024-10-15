@@ -105,8 +105,8 @@ const CampaignDetails = () => {
                     <strong>Meta:</strong> ${campaign.goal}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    <strong>Fecha de comienzo:</strong> {campaign.start_date} <br />
-                    <strong>Fecha de finalización:</strong> {campaign.end_date}
+                    <strong>Fecha de comienzo:</strong> {new Date(campaign.start_date).toLocaleDateString('es-ES')} <br />
+                    <strong>Fecha de finalización:</strong> {new Date(campaign.end_date).toLocaleDateString('es-ES')}
                   </Typography>
                 </Box>
 

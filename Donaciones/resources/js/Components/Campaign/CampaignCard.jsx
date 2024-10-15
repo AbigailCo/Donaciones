@@ -52,10 +52,10 @@ const CampaignCard = ({ campaign }) => {
             Meta: ${campaign.goal}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Fechas: {campaign.start_date} a {campaign.end_date}
+            Fechas: {new Date(campaign.start_date).toLocaleDateString('es-ES')} a {new Date(campaign.end_date).toLocaleDateString('es-ES')}
           </Typography>
-          
-          <CampaignVideo youtubeId={youtubeId}/>
+
+          <CampaignVideo youtubeId={youtubeId} />
         </CardContent>
       </Link>
     </Card>
