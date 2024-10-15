@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Auth\SocialAuthController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\DonationController;
+
 
 //Session con google
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
@@ -39,7 +41,7 @@ Route::get('/CreateCampaign', function () {
     return Inertia::render('Campaign/CreateCampaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('CreateCampaign');
 Route::get('/campaigns/search', [CampaignController::class, 'search']);
-
+Route::get('/categories', [CategoryController::class, 'index']);
 
 
 //CONTROLADORES

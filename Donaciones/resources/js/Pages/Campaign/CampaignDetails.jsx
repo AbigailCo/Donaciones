@@ -106,7 +106,7 @@ const CampaignDetails = () => {
                   <Carousel.Item>
                     <img
                       className="d-block w-100"
-                      src="/path/to/default/image.jpg" // Cambia esta ruta a una imagen por defecto
+                      src="/storage/images/defecto.jpg" // Cambia esta ruta a una imagen por defecto
                       alt="Imagen por defecto"
                       style={{ height: '300px', objectFit: 'cover' }} // Ajusta el estilo de la imagen por defecto
                     />
@@ -114,6 +114,9 @@ const CampaignDetails = () => {
                 )}
               </Carousel>
               <CardContent>
+                 <Typography variant="body1" color="text.primary">
+                 Categoria: {campaign.category?.name}
+          </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}
                 </Typography>

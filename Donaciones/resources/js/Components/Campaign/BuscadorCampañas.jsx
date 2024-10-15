@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { searchCampaigns } from "../../../services/api";
+import React, { useState, useEffect } from 'react';
+import { searchCampaigns, getCategories } from "../../../services/api"; // Suponiendo que tienes una función para obtener las categorías
 import { Spinner, Modal, Button, Card, Container, Row, Col, Form } from 'react-bootstrap';
 
 const BuscadorCampañas = () => {
@@ -9,16 +9,31 @@ const BuscadorCampañas = () => {
     const [error, setError] = useState('');
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
+
+    useEffect(() => {
+        // Obtener las categorías al cargar el componente
+        const fetchCategories = async () => {
+            try {
+                const categoriesList = await getCategories(); // Obtén las categorías de tu API
+                setCategories(categoriesList);
+            } catch (error) {
+                console.error('Error al obtener categorías:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleSearchChange = async (e) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
-
-        if (term.length >= 3) {
+        if (term.length >= 3 || selectedCategory) {
             setLoading(true);
             setError('');
             try {
-                const result = await searchCampaigns(term);
+                // Enviar el término de búsqueda y la categoría seleccionada
+                const result = await searchCampaigns(term, selectedCategory);
                 if (result.length > 0) {
                     setCampaigns(result);
                 } else {
@@ -37,6 +52,12 @@ const BuscadorCampañas = () => {
         }
     };
 
+    const handleCategoryChange = async (e) => {
+        const category = e.target.value;
+        setSelectedCategory(category);
+        await handleSearchChange({ target: { value: searchTerm } }); // Actualizar los resultados cuando cambie la categoría
+    };
+
     const handleCampaignClick = (campaign) => {
         setSelectedCampaign(campaign);
         setShowModal(true);
@@ -50,6 +71,7 @@ const BuscadorCampañas = () => {
     return (
         <Container>
             <h2 className="text-center my-4">Buscar Campañas</h2>
+
             <Form.Group className="mb-3">
                 <Form.Control
                     type="text"
@@ -58,6 +80,17 @@ const BuscadorCampañas = () => {
                     onChange={handleSearchChange}
                     className="form-control"
                 />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+                <Form.Select value={selectedCategory} onChange={handleCategoryChange}>
+                    <option value="">Todas las Categorías</option>
+                    {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                            {category.name}
+                        </option>
+                    ))}
+                </Form.Select>
             </Form.Group>
 
             {loading && <Spinner animation="border" role="status"><span className="sr-only">Cargando...</span></Spinner>}
@@ -91,6 +124,7 @@ const BuscadorCampañas = () => {
                             <Modal.Title>Campaña: {selectedCampaign.title}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
+                        <p><strong>Descripción:</strong> {selectedCampaign.category?.name || 'No hay categoria disponible.'}</p>
                             <p><strong>Descripción:</strong> {selectedCampaign.description || 'No hay descripción disponible.'}</p>
                             <p><strong>Meta:</strong> ${selectedCampaign.goal || 'No especificada'}</p>
                             <p><strong>Inicio:</strong> {selectedCampaign.start_date || 'No especificado'}</p>

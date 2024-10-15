@@ -49,6 +49,12 @@ const CampaignCard = ({ campaign }) => {
             {campaign.description}
           </Typography>
           <Typography variant="body1" color="text.primary">
+           {/*  categoria: {campaign.category.name} */}
+            {campaign?.category?.name
+                    ? `Categoria: ${campaign.category.name}`
+                    : 'No category selected'}
+          </Typography>
+          <Typography variant="body1" color="text.primary">
             Meta: ${campaign.goal}
           </Typography>
           <Typography variant="body2" color="text.secondary">

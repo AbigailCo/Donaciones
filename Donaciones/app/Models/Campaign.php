@@ -11,7 +11,14 @@ class Campaign extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title', 'description', 'goal', 'start_date', 'end_date', 'user_id', 'youtube_link'
+        'title',
+        'description',
+        'goal',
+        'start_date',
+        'end_date',
+        'user_id',
+        'youtube_link',
+        'category_id'
     ];
 
     public function user()
@@ -31,5 +38,9 @@ class Campaign extends Model
     public function images()
     {
         return $this->hasMany(CampaignImage::class, 'campaign_id', 'id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

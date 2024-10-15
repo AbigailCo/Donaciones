@@ -15,9 +15,11 @@ class DatabaseSeeder extends Seeder
     {
        User::factory(10)->create();
        $this->call([
+        CategorySeeder::class,
         CampaignsTableSeeder::class,
         DonationsTableSeeder::class,
         RewardsTableSeeder::class,
+        
     ]);
     }
 }

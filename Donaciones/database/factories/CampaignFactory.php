@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Campaign;
-use App\Models\User;
 use App\Models\CampaignImage;
+use App\Models\Category;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\File;
 
 class CampaignFactory extends Factory
@@ -22,6 +23,7 @@ class CampaignFactory extends Factory
             'end_date' => $this->faker->date,
             'user_id' => User::factory(), // Asocia una campaña a un usuario
             'youtube_link' => $this->faker->optional()->url, // Link de YouTube opcional
+            'category_id' => Category::inRandomOrder()->first()->id, // Asignar una categoría aleatoria
         ];
     }
 

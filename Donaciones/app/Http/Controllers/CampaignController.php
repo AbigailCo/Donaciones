@@ -10,14 +10,19 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
-
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 class CampaignController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Campaign::with(['images', 'category']);
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
         // Retornar todas las campañas con sus imágenes asociadas
-        $campaigns = Campaign::with('images')->paginate(9); // Asegúrate de que 'campaignImages' sea la relación correcta
+        $campaigns = $query->paginate(9); // Asegúrate de que 'campaignImages' sea la relación correcta
         return response()->json($campaigns);
     }
     public function count()
@@ -28,57 +33,59 @@ class CampaignController extends Controller
     public function show($id)
     {
         // Buscar una campaña específica por ID
-        $campaign = Campaign::with('images')->findOrFail($id); // Traer también las imágenes
-
+        $campaign = Campaign::with('images', 'category')->findOrFail($id); // Traer también las imágenes
+        $categoryName = $campaign->category->name ?? 'Sin categoría';
         // Devolver una vista Inertia
         return Inertia::render('Campaign/CampaignDetails', [
             'campaign' => $campaign,
+            'categoryName' => $categoryName,
             'youtube_link' => $campaign->youtube_link // Enviar el enlace de YouTube
         ]);
     }
 
     public function store(Request $request)
-{
-    // Validación
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'goal' => 'required|numeric|min:1',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
-        'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
-    ]);
+    {
+        // Validación
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'goal' => 'required|numeric|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
+            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+            'category_id' => 'required|exists:categories,id',
+        ]);
 
-    // Asegura que el creador es el usuario autenticado
-    $validated['user_id'] = Auth::id();
+        // Asegura que el creador es el usuario autenticado
+        $validated['user_id'] = Auth::id();
 
-    try {
-        // Crear la campaña
-        $campaign = Campaign::create($validated);
+        try {
+            // Crear la campaña
+            $campaign = Campaign::create($validated);
 
-        // Si se suben imágenes, guardarlas
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                // Almacenar la imagen en el disco público
-                $imagePath = $image->store('images', 'public');
-                $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+            // Si se suben imágenes, guardarlas
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    // Almacenar la imagen en el disco público
+                    $imagePath = $image->store('images', 'public');
+                    $imageName = basename($imagePath); // Obtener solo el nombre del archivo
 
-                // Crear registros de CampaignImage
-                $campaign->images()->create([
-                    'path' => $imageName, // Guardar el nombre de la imagen
-                ]);
+                    // Crear registros de CampaignImage
+                    $campaign->images()->create([
+                        'path' => $imageName, // Guardar el nombre de la imagen
+                    ]);
+                }
             }
-        }
 
-        // Redirigir a la página de "MyCampaigns" usando Inertia
-        return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
-    } catch (\Exception $e) {
-        // Registrar el error en los logs
-        Log::error('Error creando la campaña: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error al crear la campaña');
+            // Redirigir a la página de "MyCampaigns" usando Inertia
+            return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
+        } catch (\Exception $e) {
+            // Registrar el error en los logs
+            Log::error('Error creando la campaña: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear la campaña');
+        }
     }
-}
 
 
     public function update(Request $request, $id)
