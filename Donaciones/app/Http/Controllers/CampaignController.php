@@ -17,7 +17,7 @@ class CampaignController extends Controller
     public function index()
     {
         // Retornar todas las campañas con sus imágenes asociadas
-        $campaigns = Campaign::with('images')->get(); // Asegúrate de que 'campaignImages' sea la relación correcta
+        $campaigns = Campaign::with('images')->paginate(9); // Asegúrate de que 'campaignImages' sea la relación correcta
         return response()->json($campaigns);
     }
     public function count()
