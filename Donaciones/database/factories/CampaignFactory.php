@@ -31,17 +31,19 @@ class CampaignFactory extends Factory
         return $this->afterCreating(function (Campaign $campaign) {
             $imageDirectory = public_path('storage/images');
             $images = File::files($imageDirectory);
-
+            if (!empty($images)) {
             // Limitar a 3 imágenes como máximo, ajusta según tus necesidades
-            $randomImages = $this->faker->randomElements($images, 3);
+            $randomImages = $this->faker->randomElements($images, min(3, count($images)));
 
-            foreach ($randomImages as $image) {
-                $imageName = basename($image);
-                CampaignImage::create([
-                    'campaign_id' => $campaign->id,
-                    'path' => $imageName, // Solo almacena el nombre de la imagen
-                ]);
+                foreach ($randomImages as $image) {
+                    $imageName = basename($image);
+                    CampaignImage::create([
+                        'campaign_id' => $campaign->id,
+                        'path' => $imageName, // Solo almacena el nombre de la imagen
+                    ]);
+                }
             }
-        });
+            
+            });
     }
 }
