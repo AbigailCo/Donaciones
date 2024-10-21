@@ -141,6 +141,8 @@ class CampaignController extends Controller
         ]);
     }
 
+    
+
     public function createPaymentPreference(Request $request, $id)
     {
         $campaign = Campaign::findOrFail($id);
@@ -191,5 +193,22 @@ class CampaignController extends Controller
         $campaigns = Campaign::where('title', 'LIKE', "%{$term}%")->get();
 
         return response()->json($campaigns);
+    }
+
+    public function showMyCampaignDetails($id)
+    {
+        // Busca la campaña por ID, asegurándote de que pertenezca al usuario autenticado
+        $userId = auth()->id();
+        $campaign = Campaign::where('id', $id)->where('user_id', $userId)->first();
+    
+        // Si no se encuentra la campaña, puedes manejar el error (ej. redirigir o lanzar un 404)
+        if (!$campaign) {
+            return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
+        }
+    
+        // Envía la campaña a la vista usando Inertia
+        return Inertia::render('Campaign/MyCampaignDetails', [
+            'campaign' => $campaign
+        ]);
     }
 }

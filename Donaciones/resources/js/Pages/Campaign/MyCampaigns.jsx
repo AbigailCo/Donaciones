@@ -14,7 +14,7 @@ const MyCampaigns = ({ campaigns, auth }) => {
               {campaigns.length > 0 ? (
                 campaigns.map((campaign) => (
                   <Col md={4} key={campaign.id} className="mb-4">
-                    <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
+                      <Link href={`/my-campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
                       <Card>
                         <Card.Body>
                           <Card.Title>{campaign.title}</Card.Title>

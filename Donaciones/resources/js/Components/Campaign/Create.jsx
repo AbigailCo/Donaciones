@@ -18,7 +18,7 @@ const Create = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="title">Title</label>
+      <label htmlFor="title">TitleEEEEEEEEEEEE</label>
       <input id="title" {...register('title', { required: true })} />
       {errors.title && <span>This field is required</span>}
 

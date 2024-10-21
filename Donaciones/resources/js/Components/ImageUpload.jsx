@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
+
+
 
 const ImageUpload = ({ register, errors, setImageFiles }) => {
   const [imageFiles, setImageFilesState] = useState([]);
@@ -13,7 +15,9 @@ const ImageUpload = ({ register, errors, setImageFiles }) => {
     setImageFilesState((prev) => [...prev, ...files]);
     setImageFiles((prev) => [...prev, ...files]); // Actualiza el estado de archivos en el componente padre
 
-    console.log('Archivos de imagen después de agregar:', [...imageFiles, ...files]); // Verifica los archivos después de agregar
+    useEffect(() => {
+      console.log('Estado de imageFiles después de agregar:', imageFiles);
+    }, [imageFiles]);
   };
 
   const handleAddMoreImages = () => {
