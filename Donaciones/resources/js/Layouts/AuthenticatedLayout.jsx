@@ -6,10 +6,19 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import { Ziggy } from '@/ziggy';
-
+import Notifications from '@/Pages/Notifications'; // Importa el componente de notificaciones
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false); // Estado para el modal de notificaciones
+
+    const openNotificationsModal = () => {
+        setShowNotifications(true);
+    };
+
+    const closeNotificationsModal = () => {
+        setShowNotifications(false);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -18,9 +27,7 @@ export default function Authenticated({ user, header, children }) {
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
-                               
-                                <Logo/>
-                              
+                                <Logo />
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -40,10 +47,9 @@ export default function Authenticated({ user, header, children }) {
                             </div>
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('myCampaigns')} active={route().current('myCampaigns')}>
-                                     Mis Campañas
+                                    Mis Campañas
                                 </NavLink>
-</div>
-
+                            </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -75,6 +81,8 @@ export default function Authenticated({ user, header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        {/* Cambia esta línea para abrir el modal */}
+                                        <Dropdown.Link onClick={openNotificationsModal}>Notifications</Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
                                             Log Out
                                         </Dropdown.Link>
@@ -124,6 +132,8 @@ export default function Authenticated({ user, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            {/* Cambia esta línea para abrir el modal */}
+                            <ResponsiveNavLink onClick={openNotificationsModal}>Notifications</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>
@@ -139,6 +149,9 @@ export default function Authenticated({ user, header, children }) {
             )}
 
             <main>{children}</main>
+
+            {/* Modal de Notificaciones */}
+            <Notifications show={showNotifications} onClose={closeNotificationsModal} />
         </div>
     );
 }

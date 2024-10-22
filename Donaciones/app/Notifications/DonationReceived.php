@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class DonationReceived extends Notification
+class DonationReceived extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -21,15 +21,18 @@ class DonationReceived extends Notification
 
     public function via($notifiable)
     {
-        return ['database']; // Cambia esto según cómo quieras enviar la notificación (email, SMS, etc.)
+        return ['database', 'mail']; // Ajusta los canales que necesites
     }
 
     public function toArray($notifiable)
     {
         return [
-            'message' => "¡Has recibido una donación de {$this->amount} para '{$this->campaignTitle}'! ¡Cada vez falta menos para llegar a la meta!",
-            'amount' => $this->amount,
+            'message' => "¡Hey! Recibiste una donación de {$this->amount}! Cada vez falta menos para tu meta, ¡felicitaciones!",
+            'donation_amount' => $this->amount,
             'campaign_title' => $this->campaignTitle,
         ];
     }
+
+    // aca se puede implementar tomail
 }
+

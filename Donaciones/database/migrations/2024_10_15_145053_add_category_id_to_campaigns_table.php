@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
         });
     }
 
@@ -22,7 +22,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            //
+            // Eliminar la relación de clave foránea si hacemos rollback
+            $table->dropForeign(['category_id']);
+            $table->dropColumn('category_id');
         });
     }
 };

@@ -28,9 +28,10 @@ class User extends Authenticatable
         ];
     }
 
-    // Agrega este método
     public function campaigns()
     {
         return $this->hasMany(Campaign::class);
     }
+
+   
 }

@@ -66,7 +66,17 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
 });
+
+Route::get('/notifications', function () {
+    $notifications = auth()->user()->notifications;
+
+    return Inertia::render('Notifications', [
+        'notifications' => $notifications
+    ]);
+})->middleware('auth')->name('notifications');
+
 Route::post('/donations', [DonationController::class, 'store']);
+
 //prueba de ruta
 Route::get('/test', function () {
     return response()->json(['message' => '¡Ruta funcionando!']);
