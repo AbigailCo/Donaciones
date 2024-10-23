@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class DonationReceived extends Notification implements ShouldQueue
 {
@@ -31,6 +32,15 @@ class DonationReceived extends Notification implements ShouldQueue
             'donation_amount' => $this->amount,
             'campaign_title' => $this->campaignTitle,
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->greeting('Hola!')
+                    ->line('Has recibido una nueva donación.')
+                    ->action('Ver Donación', url('/donations'))
+                    ->line('¡Gracias por tu apoyo!');
     }
 
     // aca se puede implementar tomail

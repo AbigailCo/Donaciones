@@ -68,12 +68,11 @@ Route::middleware('auth:sanctum')->group(function() {
 });
 
 Route::get('/notifications', function () {
-    $notifications = auth()->user()->notifications;
-
+    $notifications = auth()->check() ? auth()->user()->notifications : collect(); // Si el usuario no está autenticado, devuelve una colección vacía
     return Inertia::render('Notifications', [
         'notifications' => $notifications
     ]);
-})->middleware('auth')->name('notifications');
+})->name('notifications');
 
 Route::post('/donations', [DonationController::class, 'store']);
 

@@ -1,3 +1,5 @@
+//a este jsx lo incluye el jsx que esta en \resources\js\Pages\Campaign\CreateCampaign.jsx
+
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -19,6 +21,7 @@ const CreateCampaign = () => {
 
   const navigate = useNavigate();
   /*  const [imagePreviews, setImagePreviews] = useState([]); */
+  
   const [videoLink, setVideoLink] = useState(""); // Agregar el estado para el enlace de video
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request; 
 use App\Models\Donation;
 use App\Models\Campaign; 
-use App\Notifications\DonationReceived;
-
+// No es necesario importar la notificación si no la vas a usar
+// use App\Notifications\DonationReceived;
 
 class DonationController extends Controller
 {
@@ -37,7 +37,8 @@ class DonationController extends Controller
         $campaignTitle = $campaign->title;
         $campaignOwner = $campaign->user; // Asegúrate de que la relación esté definida en el modelo Campaign
 
-        // Enviar notificación al creador de la campaña
+        // Comentamos o eliminamos la parte de envío de notificación
+        /*
         if ($campaignOwner) {
             // Crear el mensaje de la notificación
             $notificationMessage = [
@@ -52,6 +53,7 @@ class DonationController extends Controller
                 $campaignOwner->notify(new DonationReceived($donation->amount, $campaignTitle));
             }
         }
+        */
 
         // Devolver una respuesta exitosa
         return response()->json(['donation' => $donation], 201);

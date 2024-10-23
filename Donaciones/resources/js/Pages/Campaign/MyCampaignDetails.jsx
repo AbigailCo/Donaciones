@@ -39,6 +39,7 @@ const MyCampaignDetails = () => {
       `width=${width},height=${height},top=${top},left=${left}`
     );
   };
+  console.log('Imágenes de la campaña:', campaign.images);
 
   const handleDonation = () => {
     console.log('Iniciando donación...'); // Log inicial
@@ -115,7 +116,7 @@ const MyCampaignDetails = () => {
               </Carousel>
               <CardContent>
                  <Typography variant="body1" color="text.primary">
-                 Categoriakkkkkkkkkkkkkkkkkkkkkk878787878: {campaign.category?.name}
+                 Categoria: {campaign.category?.name}
           </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}

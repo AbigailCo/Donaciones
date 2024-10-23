@@ -3,7 +3,7 @@ import { Card, CardContent, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import Carousel from 'react-bootstrap/Carousel';
 import CampaignVideo from './CampaignVideo';
-
+//este archivo es el que se muestra al acceder a la opcion de menu campañas (http://localhost:8000/campaign)
 const getYouTubeId = (url) => {
   if (!url) return null; // Verifica si url es nulo o indefinido
 
