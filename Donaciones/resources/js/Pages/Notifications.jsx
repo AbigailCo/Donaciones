@@ -1,46 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import axios from '../../../config/axiosConfig';
-import Modal from '@/Components/Modal'; // Asegúrate de que la ruta sea correcta
 
-const Notifications = ({ show, onClose }) => {
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+export default function Notifications({ show, onClose }) {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
-        if (show) { // Solo buscar notificaciones si el modal está abierto
-            const fetchNotifications = async () => {
-                try {
-                    const response = await axios.get('http://localhost:8000/api/notifications');
+        if (show) {
+            axios.get('/api/notifications')
+                .then((response) => {
                     setNotifications(response.data);
-                } catch (error) {
-                    console.error('Error fetching notifications:', error);
-                    setNotifications([]); // O podrías establecer un mensaje de error en el estado
-                }
-            };
-
-            fetchNotifications();
+                })
+                .catch((error) => {
+                    console.error("Error fetching notifications: ", error);
+                });
         }
-    }, [show]); // Dependencia para que se ejecute cuando 'show' cambie
+    }, [show]);
+
+    if (!show) {
+        return null;
+    }
 
     return (
-        <Modal show={show} onClose={onClose}>
-            <h3 className="text-lg font-medium">Notificaciones</h3>
-            {notifications.length === 0 ? (
-                <p>No hay notificaciones</p>
-            ) : (
-                notifications.map((notification) => {
-                    const data = JSON.parse(notification.data);
-                    return (
-                        <div key={notification.id} className="py-2">
-                            <p>{data.message}</p>
-                            <p>Monto de la donación: {data.donation_amount}</p>
-                            <p>Título de la campaña: {data.campaign_title}</p>
-                        </div>
-                    );
-                })
-            )}
-        </Modal>
+        <div className="modal">
+            <div className="modal-content">
+                <span className="close" onClick={onClose}>&times;</span>
+                <h2>Notifications</h2>
+                <ul>
+                    {notifications.map((notification) => (
+                        <li key={notification.id}>{notification.message}</li>
+                    ))}
+                </ul>
+            </div>
+        </div>
     );
-};
-
-export default Notifications;
-
+}

@@ -10,7 +10,7 @@ import Notifications from '@/Pages/Notifications'; // Importa el componente de n
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false); // Estado para el modal de notificaciones
+   /*const [showNotifications, setShowNotifications] = useState(false); // Estado para el modal de notificaciones
 
     const openNotificationsModal = () => {
         setShowNotifications(true);
@@ -19,7 +19,7 @@ export default function Authenticated({ user, header, children }) {
     const closeNotificationsModal = () => {
         setShowNotifications(false);
     };
-
+*/
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
@@ -81,8 +81,7 @@ export default function Authenticated({ user, header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        {/* Cambia esta línea para abrir el modal */}
-                                        <Dropdown.Link onClick={openNotificationsModal}>Notifications</Dropdown.Link>
+                                         {/*<Dropdown.Link onClick={openNotificationsModal}>Notifications</Dropdown.Link>*/}
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
                                             Log Out
                                         </Dropdown.Link>
@@ -133,7 +132,7 @@ export default function Authenticated({ user, header, children }) {
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
                             {/* Cambia esta línea para abrir el modal */}
-                            <ResponsiveNavLink onClick={openNotificationsModal}>Notifications</ResponsiveNavLink>
+                            {/*<ResponsiveNavLink onClick={openNotificationsModal}>Notifications</ResponsiveNavLink>*/}
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>
@@ -151,7 +150,7 @@ export default function Authenticated({ user, header, children }) {
             <main>{children}</main>
 
             {/* Modal de Notificaciones */}
-            <Notifications show={showNotifications} onClose={closeNotificationsModal} />
+           {/*  <Notifications show={showNotifications} onClose={closeNotificationsModal} />*/}
         </div>
     );
 }

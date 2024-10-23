@@ -30,13 +30,15 @@ Route::get('/campaigns/{id}', function ($id) {
 Route::get('/test', function () {
     return response()->json(['message' => '¡Ruta funcionando!']);
 });
-
+Route::middleware('auth:sanctum')->get('/api/notifications', function () {
+    return response()->json(auth()->user()->notifications);
+});
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/campaigns', [CampaignController::class, 'store']);
     Route::get('/categories', [CategoryController::class, 'index']);
     
     // Mantén solo esta línea para las notificaciones
-    Route::get('/notifications', [NotificationController::class, 'getNotifications']); 
+  //  Route::get('/notifications', [NotificationController::class, 'getNotifications']); 
 });
 Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
 Route::get('/campaigns/search', [CampaignController::class, 'search']);
