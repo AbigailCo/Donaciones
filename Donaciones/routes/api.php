@@ -40,5 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Mantén solo esta línea para las notificaciones
   //  Route::get('/notifications', [NotificationController::class, 'getNotifications']); 
 });
+
+Route::get('/notifications', [NotificationController::class, 'getNotifications']); 
 Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
 Route::get('/campaigns/search', [CampaignController::class, 'search']);

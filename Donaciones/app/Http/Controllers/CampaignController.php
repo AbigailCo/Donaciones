@@ -17,14 +17,18 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $query = Campaign::with(['images', 'category']);
-
+    
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-        // Retornar todas las campañas con sus imágenes asociadas
-        $campaigns = $query->paginate(9); // Asegúrate de que 'campaignImages' sea la relación correcta
+    
+        // Ordena las campañas por la fecha de creación, de más recientes a más antiguas
+        $campaigns = $query->orderBy('created_at', 'desc')->paginate(9);
+    
         return response()->json($campaigns);
     }
+
+
     public function count()
     {
         $campaignsCount = Campaign::count(); // Corregido

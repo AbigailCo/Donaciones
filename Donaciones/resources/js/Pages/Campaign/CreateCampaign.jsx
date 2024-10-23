@@ -1,3 +1,5 @@
+//este jsx INCLUYE al createcampaign que esta en \resources\js\Components\Campaign\CreateCampaign.jsx
+
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import FormCreateCampaign from '../../Components/Campaign/CreateCampaign';
@@ -7,7 +9,7 @@ export default function CreateCampaign({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Crear campañaHHHHHHHUUUU</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Crear campaña</h2>}
         >
             <Head title="CreateCampaign" />
 

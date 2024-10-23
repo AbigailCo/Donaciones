@@ -15,7 +15,9 @@ const Campaigns = () => {
         setLoading(true);
         axios.get(`/campaigns?page=${pageNumber}`)
             .then(response => {
-                setCampaigns(response.data.data); // Los datos paginados están en `data`
+                // Ordenar las campañas por 'created_at' en descendente
+                const sortedCampaigns = response.data.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                setCampaigns(sortedCampaigns); // Guardar las campañas ordenadas
                 setPage(response.data.current_page); // Actualiza la página actual
                 setLastPage(response.data.last_page); // Actualiza la última página
                 setLoading(false);
