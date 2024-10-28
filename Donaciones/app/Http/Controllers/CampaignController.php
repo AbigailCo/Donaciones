@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,7 @@ class CampaignController extends Controller
             $query->where('category_id', $request->category_id);
         }
     
-        // Ordena las campañas por la fecha de creación, de más recientes a más antiguas
+        // Ordeno las campañas por la fecha de creación, de más recientes a más antiguas
         $campaigns = $query->orderBy('created_at', 'desc')->paginate(9);
     
         return response()->json($campaigns);
@@ -61,7 +62,6 @@ class CampaignController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        // Asegura que el creador es el usuario autenticado
         $validated['user_id'] = Auth::id();
 
         try {
@@ -91,7 +91,7 @@ class CampaignController extends Controller
         }
     }
 
-
+/*
     public function update(Request $request, $id)
     {
         // Buscar la campaña por ID
@@ -118,7 +118,39 @@ class CampaignController extends Controller
         $campaign->update($request->all());
 
         return response()->json($campaign);
+    }*/
+    public function update(Request $request, $id)
+{
+    $campaign = Campaign::findOrFail($id);
+
+    $this->authorize('update', $campaign);
+
+    $validator = Validator::make($request->all(), [
+        'title' => 'sometimes|string|max:255',
+        'description' => 'sometimes|string',
+        'goal' => 'sometimes|numeric|min:1',
+        'start_date' => 'sometimes|date',
+        'end_date' => 'sometimes|date|after_or_equal:start_date',
+        'youtube_link' => 'nullable|url', // Validación de URL para YouTube
+        'images.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048' // Validación de imágenes
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
+
+    $campaign->update($request->except(['images']));
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+         
+            $path = $image->store('public/campaigns'); // Ajusta la ruta de almacenamiento
+            $campaign->images()->create(['path' => $path]);
+        }
+    }
+
+    return response()->json($campaign);
+}
 
     public function destroy($id)
     {
@@ -201,18 +233,20 @@ class CampaignController extends Controller
 
     public function showMyCampaignDetails($id)
     {
-        // Busca la campaña por ID, asegurándote de que pertenezca al usuario autenticado
         $userId = auth()->id();
         $campaign = Campaign::where('id', $id)->where('user_id', $userId)->first();
     
-        // Si no se encuentra la campaña, puedes manejar el error (ej. redirigir o lanzar un 404)
         if (!$campaign) {
             return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
         }
     
-        // Envía la campaña a la vista usando Inertia
         return Inertia::render('Campaign/MyCampaignDetails', [
             'campaign' => $campaign
         ]);
+    }
+
+    public function getDonations($id) {
+        $donations = Donation::where('campaign_id', $id)->get();
+        return response()->json($donations);
     }
 }

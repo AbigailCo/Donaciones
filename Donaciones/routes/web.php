@@ -64,20 +64,14 @@ Route::middleware('auth:sanctum')->group(function() {
 
 
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
+    Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaign.edit');
+
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
 });
-/*
-Route::get('/notifications', function () {
-    $notifications = auth()->user()->notifications;
-    dd($notifications);
 
-    return Inertia::render('Notifications', [
-        'notifications' => $notifications
-    ]);
-})->middleware('auth')->name('notifications');
-*/
 
 Route::post('/donations', [DonationController::class, 'store']);
+Route::get('/campaigns/{id}/donations', [CampaignController::class, 'getDonations']);
 
 //prueba de ruta
 Route::get('/test', function () {
