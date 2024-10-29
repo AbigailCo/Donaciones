@@ -18,14 +18,14 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         $query = Campaign::with(['images', 'category']);
-    
+
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-    
+
         // Ordeno las campañas por la fecha de creación, de más recientes a más antiguas
         $campaigns = $query->orderBy('created_at', 'desc')->paginate(9);
-    
+
         return response()->json($campaigns);
     }
 
@@ -91,7 +91,7 @@ class CampaignController extends Controller
         }
     }
 
-/*
+    /*
     public function update(Request $request, $id)
     {
         // Buscar la campaña por ID
@@ -120,37 +120,37 @@ class CampaignController extends Controller
         return response()->json($campaign);
     }*/
     public function update(Request $request, $id)
-{
-    $campaign = Campaign::findOrFail($id);
+    {
+        $campaign = Campaign::findOrFail($id);
 
-    $this->authorize('update', $campaign);
+        $this->authorize('update', $campaign);
 
-    $validator = Validator::make($request->all(), [
-        'title' => 'sometimes|string|max:255',
-        'description' => 'sometimes|string',
-        'goal' => 'sometimes|numeric|min:1',
-        'start_date' => 'sometimes|date',
-        'end_date' => 'sometimes|date|after_or_equal:start_date',
-        'youtube_link' => 'nullable|url', // Validación de URL para YouTube
-        'images.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048' // Validación de imágenes
-    ]);
+        $validator = Validator::make($request->all(), [
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'goal' => 'sometimes|numeric|min:1',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|date|after_or_equal:start_date',
+            'youtube_link' => 'nullable|url', // Validación de URL para YouTube
+            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048' // Validación de imágenes
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
-    }
-
-    $campaign->update($request->except(['images']));
-
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-         
-            $path = $image->store('public/campaigns'); // Ajusta la ruta de almacenamiento
-            $campaign->images()->create(['path' => $path]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
-    }
 
-    return response()->json($campaign);
-}
+        $campaign->update($request->except(['images']));
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+
+                $path = $image->store('public/campaigns'); // Ajusta la ruta de almacenamiento
+                $campaign->images()->create(['path' => $path]);
+            }
+        }
+
+        return response()->json($campaign);
+    }
 
     public function destroy($id)
     {
@@ -177,7 +177,7 @@ class CampaignController extends Controller
         ]);
     }
 
-    
+
 
     public function createPaymentPreference(Request $request, $id)
     {
@@ -223,30 +223,57 @@ class CampaignController extends Controller
         }
     }
 
-    public function search(Request $request)
-    {
-        $term = $request->input('term');
-        $campaigns = Campaign::where('title', 'LIKE', "%{$term}%")->get();
-
-        return response()->json($campaigns);
-    }
 
     public function showMyCampaignDetails($id)
     {
         $userId = auth()->id();
         $campaign = Campaign::where('id', $id)->where('user_id', $userId)->first();
-    
+
         if (!$campaign) {
             return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
         }
-    
+
         return Inertia::render('Campaign/MyCampaignDetails', [
             'campaign' => $campaign
         ]);
     }
 
-    public function getDonations($id) {
+    public function getDonations($id)
+    {
         $donations = Donation::where('campaign_id', $id)->get();
         return response()->json($donations);
+    }
+    public function search(Request $request)
+    {
+        // Prepara la consulta incluyendo las relaciones de imágenes y categoría
+        $query = Campaign::with(['images', 'category']);
+
+        // Filtra por categoría si 'category_id' está presente
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filtra por término de búsqueda si 'term' está presente
+        if ($request->filled('term')) {
+            $query->where('title', 'like', '' . $request->term . '%');
+        }
+
+        // Filtra por múltiples categorías si 'categories' está presente
+        if ($request->filled('categories')) {
+            $categories = is_array($request->categories) ? $request->categories : json_decode($request->categories, true);
+
+            if (!empty($categories) && is_array($categories)) {
+                $query->whereIn('category_id', $categories);
+            }
+        }
+
+        // Ejecuta la consulta y captura posibles errores
+        try {
+            $campaigns = $query->get();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching campaigns: ' . $e->getMessage()], 500);
+        }
+
+        return response()->json($campaigns);
     }
 }

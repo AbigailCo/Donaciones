@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CampaignCard from './CampaignCard';
 import { Grid, Button, Typography } from '@mui/material';
-import BuscadorCampañas from './BuscadorCampañas';
+import CampaignSearch from './CampaignSearch';
 
 const Campaigns = () => {
     const [campaigns, setCampaigns] = useState([]);
@@ -37,7 +37,7 @@ const Campaigns = () => {
 
     return (
         <div>
-            <BuscadorCampañas />
+            <CampaignSearch />
             <Grid container spacing={3}>
                 {campaigns.map(campaign => (
                     <Grid item xs={12} sm={6} md={4} key={campaign.id}>
