@@ -8,10 +8,13 @@ import YouTubeLinkInput from "@/Components/YouTubeLinkInput";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { usePage } from '@inertiajs/react';
 
 const EditCampaign = () => {
-  const { id } = useParams(); // Obtener el ID de la campaña de los parámetros de la URL
+  const { id } = usePage().props; // Obtener el ID de la campaña de los parámetros de la URL
   const navigate = useNavigate();
+  console.log("Campaign ID:", id);
+
   const {
     register,
     handleSubmit,

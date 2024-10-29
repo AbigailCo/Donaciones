@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePage } from '@inertiajs/react';
+import { usePage, router } from '@inertiajs/react';
 import Carousel from 'react-bootstrap/Carousel';
 import CampaignVideo from '../../Components/Campaign/CampaignVideo';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { Card, CardContent, Typography, Box, TextField, Button, CircularProgress
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+
 
 const MyCampaignDetails = ({ campaignId }) => {
   const { auth, campaign } = usePage().props;
@@ -19,7 +20,9 @@ const MyCampaignDetails = ({ campaignId }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    navigate(`/edit-campaign/${campaign.id}`);
+    console.log('Campaign Details:', campaign);
+    console.log('Navigating to edit campaign with ID:', campaign.id);
+    router.visit(`/edit-campaign/${campaign.id}`);
   };
 
   const totalDonado = donations.reduce((acc, donation) => acc + parseFloat(donation.amount), 0);
@@ -181,9 +184,9 @@ const MyCampaignDetails = ({ campaignId }) => {
                 </Typography>
 
                 {/* Botón de Editar */}
-      <button onClick={handleEditClick} className="btn btn-primary">
-        Editar campaña
-      </button>
+                <button onClick={handleEditClick} className="btn btn-primary">
+      Editar campaña
+    </button>
 
                 {error && <p style={{ color: 'red' }}>{error}</p>}
               </CardContent>

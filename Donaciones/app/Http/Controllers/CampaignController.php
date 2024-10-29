@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\Donation;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +41,6 @@ class CampaignController extends Controller
         // Buscar una campaña específica por ID
         $campaign = Campaign::with('images', 'category')->findOrFail($id); // Traer también las imágenes
         $categoryName = $campaign->category->name ?? 'Sin categoría';
-        // Devolver una vista Inertia
         return Inertia::render('Campaign/CampaignDetails', [
             'campaign' => $campaign,
             'categoryName' => $categoryName,
@@ -71,54 +71,23 @@ class CampaignController extends Controller
             // Si se suben imágenes, guardarlas
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    // Almacenar la imagen en el disco público
                     $imagePath = $image->store('images', 'public');
                     $imageName = basename($imagePath); // Obtener solo el nombre del archivo
 
-                    // Crear registros de CampaignImage
                     $campaign->images()->create([
                         'path' => $imageName, // Guardar el nombre de la imagen
                     ]);
                 }
             }
 
-            // Redirigir a la página de "MyCampaigns" usando Inertia
             return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
         } catch (\Exception $e) {
-            // Registrar el error en los logs
             Log::error('Error creando la campaña: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al crear la campaña');
         }
     }
 
-    /*
-    public function update(Request $request, $id)
-    {
-        // Buscar la campaña por ID
-        $campaign = Campaign::findOrFail($id);
 
-        // Autorizar la actualización de la campaña
-        $this->authorize('update', $campaign);
-
-        // Validaciones de los datos de entrada
-        $validator = Validator::make($request->all(), [
-            'title' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'goal' => 'sometimes|numeric|min:1',
-            'start_date' => 'sometimes|date',
-            'end_date' => 'sometimes|date|after_or_equal:start_date',
-        ]);
-
-        // Si la validación falla, retornar los errores
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        // Actualizar la campaña con los datos validados
-        $campaign->update($request->all());
-
-        return response()->json($campaign);
-    }*/
     public function update(Request $request, $id)
     {
         $campaign = Campaign::findOrFail($id);
@@ -152,12 +121,16 @@ class CampaignController extends Controller
         return response()->json($campaign);
     }
 
+
+    public function edit($id)
+    {
+        $campaign = Campaign::findOrFail($id);
+        return response()->json($campaign);
+    }
+
     public function destroy($id)
     {
-        // Buscar la campaña por ID
         $campaign = Campaign::findOrFail($id);
-
-        // Autorizar la eliminación de la campaña
         $this->authorize('delete', $campaign);
 
         // Eliminar la campaña
@@ -245,20 +218,16 @@ class CampaignController extends Controller
     }
     public function search(Request $request)
     {
-        // Prepara la consulta incluyendo las relaciones de imágenes y categoría
         $query = Campaign::with(['images', 'category']);
 
-        // Filtra por categoría si 'category_id' está presente
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filtra por término de búsqueda si 'term' está presente
         if ($request->filled('term')) {
             $query->where('title', 'like', '' . $request->term . '%');
         }
 
-        // Filtra por múltiples categorías si 'categories' está presente
         if ($request->filled('categories')) {
             $categories = is_array($request->categories) ? $request->categories : json_decode($request->categories, true);
 
@@ -267,7 +236,6 @@ class CampaignController extends Controller
             }
         }
 
-        // Ejecuta la consulta y captura posibles errores
         try {
             $campaigns = $query->get();
         } catch (\Exception $e) {

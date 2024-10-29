@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Campaign;
 
 
 //Session con google
@@ -64,10 +65,19 @@ Route::middleware('auth:sanctum')->group(function() {
 
 
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
-    Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaign.edit');
+   // Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaign.edit');
 
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
 });
+
+Route::get('/edit-campaign/{id}', function ($id) {
+    return Inertia::render('Campaign/EditCampaign', ['id' => $id]);
+})->middleware(['auth', 'verified'])->name('editCampaign');
+
+Route::get('/campaigns/{id}/edit', function ($id) {
+    $campaign = Campaign::findOrFail($id); // Asegúrate de importar el modelo Campaign
+    return response()->json($campaign);
+})->middleware(['auth', 'verified'])->name('campaign.edit');
 
 
 Route::post('/donations', [DonationController::class, 'store']);
