@@ -90,10 +90,11 @@ class CampaignController extends Controller
 
     public function update(Request $request, $id)
     {
+        dd($request->all());
+       
         $campaign = Campaign::findOrFail($id);
-
         $this->authorize('update', $campaign);
-
+        
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
@@ -117,6 +118,7 @@ class CampaignController extends Controller
                 $campaign->images()->create(['path' => $path]);
             }
         }
+       
 
         return response()->json($campaign);
     }
@@ -142,9 +144,10 @@ class CampaignController extends Controller
     public function myCampaigns()
     {
         $userId = auth()->id();
-        $campaigns = Campaign::where('user_id', $userId)->get();
-
-        // Envía las campañas a la vista usando Inertia
+        $campaigns = Campaign::where('user_id', $userId)
+            ->with('category') // Asegura cargar la relación de categoría
+            ->get();
+    
         return Inertia::render('Campaign/MyCampaigns', [
             'campaigns' => $campaigns
         ]);
@@ -200,12 +203,15 @@ class CampaignController extends Controller
     public function showMyCampaignDetails($id)
     {
         $userId = auth()->id();
-        $campaign = Campaign::where('id', $id)->where('user_id', $userId)->first();
-
+        $campaign = Campaign::where('id', $id)
+            ->where('user_id', $userId)
+            ->with('category') // Cargar la relación de categoría
+            ->first();
+    
         if (!$campaign) {
             return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
         }
-
+    
         return Inertia::render('Campaign/MyCampaignDetails', [
             'campaign' => $campaign
         ]);

@@ -10,7 +10,7 @@ import { PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
 
-const MyCampaignDetails = ({ campaignId }) => {
+const MyCampaignDetails = () => {
   const { auth, campaign } = usePage().props;
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
@@ -20,8 +20,7 @@ const MyCampaignDetails = ({ campaignId }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    console.log('Campaign Details:', campaign);
-    console.log('Navigating to edit campaign with ID:', campaign.id);
+
     router.visit(`/edit-campaign/${campaign.id}`);
   };
 
@@ -130,7 +129,9 @@ const MyCampaignDetails = ({ campaignId }) => {
               </Carousel>
               <CardContent>
                 <Typography variant="body1" color="text.primary">
-                  Categoria: {campaign.category?.name}
+                 {campaign?.category?.name
+              ? `Categoria: ${campaign.category.name}`
+              : 'No category selected'}
                 </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}
@@ -141,7 +142,7 @@ const MyCampaignDetails = ({ campaignId }) => {
                 <CampaignVideo youtubeId={youtubeId} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body1" color="text.primary">
-                    <strong>Meta:</strong> ${campaign.goal}
+                    <strong>Metyyyya:</strong> ${campaign.goal}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
                     <strong>Fecha de comienzo:</strong> {new Date(campaign.start_date).toLocaleDateString('es-ES')} <br />

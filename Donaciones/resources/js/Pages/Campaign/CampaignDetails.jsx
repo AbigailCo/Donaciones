@@ -115,7 +115,7 @@ const CampaignDetails = () => {
               </Carousel>
               <CardContent>
                  <Typography variant="body1" color="text.primary">
-                 Categoria: {campaign.category?.name}
+                 Categoriagggg: {campaign.category?.name}
           </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}

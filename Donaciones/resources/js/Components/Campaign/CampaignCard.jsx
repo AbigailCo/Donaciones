@@ -1,3 +1,4 @@
+//Esto es lo que veo cuando desde el nav bar ingreso a campañas
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';

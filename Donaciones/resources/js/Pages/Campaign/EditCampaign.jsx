@@ -13,7 +13,7 @@ import { usePage } from '@inertiajs/react';
 const EditCampaign = () => {
   const { id } = usePage().props; // Obtener el ID de la campaña de los parámetros de la URL
   const navigate = useNavigate();
-  console.log("Campaign ID:", id);
+ 
 
   const {
     register,
@@ -63,6 +63,7 @@ const EditCampaign = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
+      console.log(data);
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
@@ -86,6 +87,8 @@ const EditCampaign = () => {
       toast.success("Campaña actualizada exitosamente");
       setTimeout(() => {
         navigate("/my-campaigns");
+        //window.location.reload(); 
+       // console.log(campaign);
       }, 2000);
     } catch (error) {
       toast.error("Error al actualizar la campaña");
