@@ -8,7 +8,7 @@ import { Card, CardContent, CardMedia, Typography, Box, TextField, Button } from
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 const CampaignDetails = () => {
-  
+
   const { auth, campaign } = usePage().props;
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ const CampaignDetails = () => {
 
   const getYouTubeId = (url) => {
     if (!url) return null; // Verifica si url es nulo o indefinido
-  
+
     const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const matches = url.match(regex);
     return matches ? matches[1] : null;
@@ -60,12 +60,21 @@ const CampaignDetails = () => {
     })
     .then(response => {
         console.log('Donación registrada:', response.data);
+        console.log('ID de la campaña:', response.data.donation.campaign_id); // Verificar aquí
+        
         // 2. Generamos la preferencia de pago en Mercado Pago
         return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
     })
     .then(response => {
         // Abrir la URL de pago en un popup
+        console.log('URL de pago:', response.data.init_point);
         openPopup(response.data.init_point);
+        
+        // 3. Llama al evento de actualización de campaña utilizando campaign.id
+        return axios.post(`/campaigns/${campaign.id}/update-event`);
+    })
+    .then(response => {
+        console.log('Evento de actualización de campaña procesado:', response.data);
     })
     .catch(error => {
         console.error('Error al procesar la donación:', error);
@@ -73,6 +82,7 @@ const CampaignDetails = () => {
         setError('No se pudo completar la donación.');
     });
 };
+
 
 
   return (
@@ -114,16 +124,16 @@ const CampaignDetails = () => {
                 )}
               </Carousel>
               <CardContent>
-                 <Typography variant="body1" color="text.primary">
-                 Categoria: {campaign.category?.name}
-          </Typography>
+                <Typography variant="body1" color="text.primary">
+                  Categoria: {campaign.category?.name}
+                </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}
                 </Typography>
                 <Typography variant="body1" color="text.secondary" align="justify" sx={{ marginBottom: 2 }}>
                   {campaign.description}
                 </Typography>
-                <CampaignVideo youtubeId={youtubeId}/>
+                <CampaignVideo youtubeId={youtubeId} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body1" color="text.primary">
                     <strong>Meta:</strong> ${campaign.goal}

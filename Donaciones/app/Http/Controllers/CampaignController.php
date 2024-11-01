@@ -48,6 +48,26 @@ class CampaignController extends Controller
         ]);
     }
 
+     /*   // Método para calcular el progreso
+       private function calculateCampaignProgress($campaign)
+       {
+           $totalDonado = $campaign->donations()->sum('amount');
+           $goal = $campaign->goal;
+   
+           return ($goal > 0) ? ($totalDonado / $goal) * 100 : 0;
+       }
+   
+       public function showEmail($id)
+       {
+           $campaign = Campaign::findOrFail($id);
+           
+           // Calcular el progreso para mostrar en la vista
+           $progress = $this->calculateCampaignProgress($campaign);
+   
+           // Pasar el progreso a la vista
+           return view('campaigns.show', compact('campaign', 'progress'));
+       } */
+
     public function store(Request $request)
     {
         // Validación
@@ -276,4 +296,5 @@ class CampaignController extends Controller
 
         return response()->json($campaigns);
     }
+    
 }

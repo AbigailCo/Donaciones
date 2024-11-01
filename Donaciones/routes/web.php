@@ -1,14 +1,35 @@
 <?php
 
+use App\Events\CampaignUpdated;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Mail\CampaignUpdateNotification;
+use App\Mail\TestMail;
+use App\Models\Campaign;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+
+
+//EMAIL de notificaciones
+Route::get('/send-test-mail', function () {
+    Mail::to('darvuelvedonaciones@gmail.com')->send(new TestMail());
+    return 'Correo de prueba enviado!';
+});
+Route::post('/campaigns/{id}/update-event', function ($id) {
+    $campaign = Campaign::findOrFail($id); // Asegúrate de manejar el caso donde no se encuentre la campaña
+    event(new CampaignUpdated($campaign));
+
+    Mail::to('darvuelvedonaciones@gmail.com')->send(new CampaignUpdateNotification($campaign));
+
+    return response()->json(['message' => 'Evento de campaña actualizado y correo enviado.']);
+});
 
 
 //Session con google
