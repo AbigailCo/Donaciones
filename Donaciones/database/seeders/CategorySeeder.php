@@ -13,7 +13,7 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Educación', 'Salud', 'Medio Ambiente', 'Tecnología'];
+        $categories = ['Educación', 'Salud', 'Medio Ambiente', 'Tecnología', 'Animales', 'Otros'];
         foreach ($categories as $category) {
             Category::create(['name' => $category]);
         }

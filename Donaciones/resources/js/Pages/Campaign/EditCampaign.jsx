@@ -8,10 +8,13 @@ import YouTubeLinkInput from "@/Components/YouTubeLinkInput";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { usePage } from '@inertiajs/react';
 
 const EditCampaign = () => {
-  const { id } = useParams(); // Obtener el ID de la campaña de los parámetros de la URL
+  const { id } = usePage().props; // Obtener el ID de la campaña de los parámetros de la URL
   const navigate = useNavigate();
+ 
+
   const {
     register,
     handleSubmit,
@@ -60,6 +63,7 @@ const EditCampaign = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
+      console.log(data);
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
@@ -83,6 +87,8 @@ const EditCampaign = () => {
       toast.success("Campaña actualizada exitosamente");
       setTimeout(() => {
         navigate("/my-campaigns");
+        //window.location.reload(); 
+       // console.log(campaign);
       }, 2000);
     } catch (error) {
       toast.error("Error al actualizar la campaña");
