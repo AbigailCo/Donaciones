@@ -14,7 +14,7 @@ const getYouTubeId = (url) => {
 
 const CampaignCard = ({ campaign }) => {
   const youtubeId = getYouTubeId(campaign.youtube_link);
-
+  console.log(campaign);
   return (
     <Card style={{ cursor: 'pointer' }}>
       <Carousel>

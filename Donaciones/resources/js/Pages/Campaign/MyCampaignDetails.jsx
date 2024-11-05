@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const MyCampaignDetails = () => {
+  
   const { auth, campaign } = usePage().props;
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
@@ -18,7 +19,9 @@ const MyCampaignDetails = () => {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    console.log('Campaña:', campaign); // Verifica el contenido de campaign
+  }, [campaign]);
   const handleEditClick = () => {
 
     router.visit(`/edit-campaign/${campaign.id}`);
@@ -49,6 +52,10 @@ const MyCampaignDetails = () => {
       });
   }, [campaign.id]);
 
+  useEffect(() => {
+    console.log(campaign.images); // Para verificar que `campaign.images` contiene datos
+  }, [campaign.images]);
+
   const openPopup = (url) => {
     const width = 600;
     const height = 800;
@@ -71,16 +78,16 @@ const MyCampaignDetails = () => {
       user_id: auth.user.id,
       payment_status: 'paid',
     })
-    .then(response => {
-      return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
-    })
-    .then(response => {
-      openPopup(response.data.init_point);
-    })
-    .catch(error => {
-      console.error('Error al procesar la donación:', error);
-      setError('No se pudo completar la donación.');
-    });
+      .then(response => {
+        return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
+      })
+      .then(response => {
+        openPopup(response.data.init_point);
+      })
+      .catch(error => {
+        console.error('Error al procesar la donación:', error);
+        setError('No se pudo completar la donación.');
+      });
   };
 
   // Datos para el gráfico de progreso
@@ -110,9 +117,9 @@ const MyCampaignDetails = () => {
                     <Carousel.Item key={index}>
                       <img
                         className="d-block w-100"
-                        src={`/storage/images/${image.path}`}
+                        src={`/storage/images/${image.path}`} // Asegúrate de que `path` sea correcto
                         alt={`Imagen de la campaña ${index}`}
-                        style={{ height: '300px', objectFit: 'cover' }}
+                        style={{ height: '300px', objectFit: 'cover' }} // Puedes ajustar el estilo según lo necesario
                       />
                     </Carousel.Item>
                   ))
@@ -120,18 +127,18 @@ const MyCampaignDetails = () => {
                   <Carousel.Item>
                     <img
                       className="d-block w-100"
-                      src="/storage/images/defecto.jpg"
+                      src="/storage/images/defecto.jpg" // Cambia esta ruta a una imagen por defecto
                       alt="Imagen por defecto"
-                      style={{ height: '300px', objectFit: 'cover' }}
+                      style={{ height: '300px', objectFit: 'cover' }} // Ajusta el estilo de la imagen por defecto
                     />
                   </Carousel.Item>
                 )}
               </Carousel>
               <CardContent>
                 <Typography variant="body1" color="text.primary">
-                 {campaign?.category?.name
-              ? `Categoria: ${campaign.category.name}`
-              : 'No category selected'}
+                  {campaign?.category?.name
+                    ? `Categoria: ${campaign.category.name}`
+                    : 'No category selected'}
                 </Typography>
                 <Typography gutterBottom variant="h4" component="div" align="center">
                   {campaign.title}
@@ -186,13 +193,13 @@ const MyCampaignDetails = () => {
 
                 {/* Botón de Editar */}
                 <button onClick={handleEditClick} className="btn btn-primary">
-      Editar campaña
-    </button>
+                  Editar campaña
+                </button>
 
                 {error && <p style={{ color: 'red' }}>{error}</p>}
               </CardContent>
             </Card>
-            
+
           </Box>
         </AuthenticatedLayout>
       ) : (

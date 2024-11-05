@@ -1,47 +1,36 @@
 import React from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
-import { Link } from '@inertiajs/react'; // Asegúrate de importar Link
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'; // Importa el layout
+import { Grid } from '@mui/material';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import CampaignCard from '../../Components/Campaign/CampaignCard';
 
 const MyCampaigns = ({ campaigns, auth }) => {
+  if (!auth.user) {
+    return (
+      <div className="text-center mt-5">
+        <h2>Sesión expirada</h2>
+        <p>Por favor, inicia sesión nuevamente.</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {auth.user ? (  // Verifica si el usuario está logueado
-        <AuthenticatedLayout user={auth.user}>  {/* Pasa el usuario al layout */}
-          <div className="container mt-4">
-            <h1 className="text-center">Mis Campañas</h1>
-            <Row>
-              {campaigns.length > 0 ? (
-                campaigns.map((campaign) => (
-                  <Col md={4} key={campaign.id} className="mb-4">
-                      <Link href={`/my-campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
-                      <Card>
-                        <Card.Body>
-                          <Card.Title>{campaign.title}</Card.Title>
-                          <Card.Text>{campaign.description}</Card.Text>
-                          <Card.Text>Meta: {campaign.goal}</Card.Text>
-                          <Card.Text>Fecha de Inicio: {campaign.start_date}</Card.Text>
-                          <Card.Text>Fecha de Fin: {campaign.end_date}</Card.Text>
-                        </Card.Body>
-                      </Card>
-                    </Link>
-                  </Col>
-                ))
-              ) : (
-                <p className="text-center">No tienes campañas creadas.</p>
-              )}
-            </Row>
-          </div>
-        </AuthenticatedLayout>
-      ) : (
-        <div className="text-center mt-5">
-          <h2>Sesión expirada</h2>
-          <p>Por favor, inicia sesión nuevamente.</p>
-        </div>
-      )}
-    </div>
+    <AuthenticatedLayout user={auth.user}>
+      <div className="container mt-4">
+        <h1 className="text-center">Mis Campañas</h1>
+        {campaigns.length > 0 ? (
+          <Grid container spacing={3}>
+            {campaigns.map((campaign) => (
+              <Grid item xs={12} sm={6} md={4} key={campaign.id}>
+                <CampaignCard campaign={campaign} />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <p className="text-center">No tienes campañas creadas.</p>
+        )}
+      </div>
+    </AuthenticatedLayout>
   );
 };
 
 export default MyCampaigns;
-

@@ -36,37 +36,31 @@ class CampaignController extends Controller
         $campaignsCount = Campaign::count(); // Corregido
         return response()->json(['count' => $campaignsCount]);
     }
-    public function show($id)
+    public function show($id, $onlyUserCampaign = false)
     {
-        // Buscar una campaña específica por ID
-        $campaign = Campaign::with('images', 'category')->findOrFail($id); // Traer también las imágenes
+        // Obtener la campaña, aplicando el filtro de usuario si es necesario
+        $query = Campaign::with('images', 'category')->where('id', $id);
+        
+        if ($onlyUserCampaign) {
+            $userId = auth()->id();
+            $query->where('user_id', $userId);
+        }
+    
+        $campaign = $query->first();
+    
+        if (!$campaign) {
+            return redirect()->route('campaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
+        }
+    
         $categoryName = $campaign->category->name ?? 'Sin categoría';
+    
         return Inertia::render('Campaign/CampaignDetails', [
             'campaign' => $campaign,
             'categoryName' => $categoryName,
-            'youtube_link' => $campaign->youtube_link // Enviar el enlace de YouTube
+            'youtube_link' => $campaign->youtube_link
         ]);
     }
-
-     /*   // Método para calcular el progreso
-       private function calculateCampaignProgress($campaign)
-       {
-           $totalDonado = $campaign->donations()->sum('amount');
-           $goal = $campaign->goal;
-   
-           return ($goal > 0) ? ($totalDonado / $goal) * 100 : 0;
-       }
-   
-       public function showEmail($id)
-       {
-           $campaign = Campaign::findOrFail($id);
-           
-           // Calcular el progreso para mostrar en la vista
-           $progress = $this->calculateCampaignProgress($campaign);
-   
-           // Pasar el progreso a la vista
-           return view('campaigns.show', compact('campaign', 'progress'));
-       } */
+    
 
     public function store(Request $request)
     {
@@ -165,7 +159,7 @@ class CampaignController extends Controller
     {
         $userId = auth()->id();
         $campaigns = Campaign::where('user_id', $userId)
-            ->with('category') // Asegura cargar la relación de categoría
+            ->with(['images', 'category']) // Asegura cargar la relación de categoría
             ->get();
     
         return Inertia::render('Campaign/MyCampaigns', [
@@ -173,6 +167,23 @@ class CampaignController extends Controller
         ]);
     }
 
+    //YA NO USAMOS MAS ESTA FUNCION toda la logica la cambie a la funcion show
+    /* public function showMyCampaignDetails($id)
+{
+    $userId = auth()->id();
+    $campaign = Campaign::where('id', $id)
+        ->where('user_id', $userId)
+        ->with(['images', 'category']) // Asegúrate de cargar las imágenes aquí
+        ->first();
+
+    if (!$campaign) {
+        return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
+    }
+
+    return Inertia::render('Campaign/MyCampaignDetails', [
+        'campaign' => $campaign
+    ]);
+} */
 
 
     public function createPaymentPreference(Request $request, $id)
@@ -220,22 +231,7 @@ class CampaignController extends Controller
     }
 
 
-    public function showMyCampaignDetails($id)
-    {
-        $userId = auth()->id();
-        $campaign = Campaign::where('id', $id)
-            ->where('user_id', $userId)
-            ->with('category') // Cargar la relación de categoría
-            ->first();
     
-        if (!$campaign) {
-            return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
-        }
-    
-        return Inertia::render('Campaign/MyCampaignDetails', [
-            'campaign' => $campaign
-        ]);
-    }
 
     public function getDonations($id)
     {

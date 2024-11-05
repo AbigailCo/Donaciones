@@ -14,7 +14,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Campaign;
+
 
 
 
@@ -77,12 +77,17 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/campaigns', [CampaignController::class, 'index']);
     Route::post('/api/campaigns', [CampaignController::class, 'store'])->name('campaign.store');
     Route::get('/my-campaigns', [CampaignController::class, 'myCampaigns'])->name('myCampaigns');
-    Route::get('/my-campaigns/{id}', [CampaignController::class, 'showMyCampaignDetails'])->name('myCampaignDetails');
-
+    // Para mostrar solo las campañas del usuario
+Route::get('/my-campaigns/{id}', function($id) {
+    return app(CampaignController::class)->show($id, true);
+})->name('myCampaigns.show');
+//Para mostrar todas las campañas
+    Route::get('/campaigns/{id}', [CampaignController::class, 'show'])->name('campaigns.show');
   
     Route::post('/campaigns/{id}/payment-preference', [CampaignController::class, 'createPaymentPreference']);
 
-    Route::get('/campaigns/{id}', [CampaignController::class, 'show']);
+    /* Route::get('/campaigns/{id}', [CampaignController::class, 'show']); */
+
 
 
     Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
