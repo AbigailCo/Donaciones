@@ -36,31 +36,38 @@ class CampaignController extends Controller
         $campaignsCount = Campaign::count(); // Corregido
         return response()->json(['count' => $campaignsCount]);
     }
+    public function countUserCampaigns()
+    {
+        $userId = auth()->id(); // Obtiene el ID del usuario logueado
+        $userCampaignsCount = Campaign::where('user_id', $userId)->count(); // Cuenta las campañas del usuario
+
+        return response()->json(['count' => $userCampaignsCount]); // Retorna la cuenta en formato JSON
+    }
     public function show($id, $onlyUserCampaign = false)
     {
         // Obtener la campaña, aplicando el filtro de usuario si es necesario
         $query = Campaign::with('images', 'category')->where('id', $id);
-        
+
         if ($onlyUserCampaign) {
             $userId = auth()->id();
             $query->where('user_id', $userId);
         }
-    
+
         $campaign = $query->first();
-    
+
         if (!$campaign) {
             return redirect()->route('campaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
         }
-    
+
         $categoryName = $campaign->category->name ?? 'Sin categoría';
-    
+
         return Inertia::render('Campaign/CampaignDetails', [
             'campaign' => $campaign,
             'categoryName' => $categoryName,
             'youtube_link' => $campaign->youtube_link
         ]);
     }
-    
+
 
     public function store(Request $request)
     {
@@ -105,10 +112,10 @@ class CampaignController extends Controller
     public function update(Request $request, $id)
     {
         dd($request->all());
-       
+
         $campaign = Campaign::findOrFail($id);
         $this->authorize('update', $campaign);
-        
+
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
@@ -132,7 +139,7 @@ class CampaignController extends Controller
                 $campaign->images()->create(['path' => $path]);
             }
         }
-       
+
 
         return response()->json($campaign);
     }
@@ -161,7 +168,7 @@ class CampaignController extends Controller
         $campaigns = Campaign::where('user_id', $userId)
             ->with(['images', 'category']) // Asegura cargar la relación de categoría
             ->get();
-    
+
         return Inertia::render('Campaign/MyCampaigns', [
             'campaigns' => $campaigns
         ]);
@@ -231,7 +238,7 @@ class CampaignController extends Controller
     }
 
 
-    
+
 
     public function getDonations($id)
     {
@@ -266,5 +273,4 @@ class CampaignController extends Controller
 
         return response()->json($campaigns);
     }
-    
 }

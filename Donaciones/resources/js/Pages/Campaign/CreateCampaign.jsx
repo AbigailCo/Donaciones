@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import FormCreateCampaign from '../../Components/Campaign/CreateCampaign';
 import ImageUpload from '../../Components/ImageUpload';
-import Create from '@/Components/Campaign/Create';
+import Create from '@/Components/Campaign/CreatePanel';
 export default function CreateCampaign({ auth }) {
     return (
         <AuthenticatedLayout

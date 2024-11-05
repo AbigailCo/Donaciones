@@ -1,5 +1,6 @@
 //Esto es lo que veo cuando desde el nav bar ingreso a campañas
 import React from 'react';
+import { usePage } from '@inertiajs/react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import Carousel from 'react-bootstrap/Carousel';
@@ -11,8 +12,12 @@ const getYouTubeId = (url) => {
   const matches = url.match(regex);
   return matches ? matches[1] : null;
 };
+const handleEditClick = () => {
+  router.visit(`/edit-campaign/${campaign.id}`);
+};
 
 const CampaignCard = ({ campaign }) => {
+  const { auth } = usePage().props;
   const youtubeId = getYouTubeId(campaign.youtube_link);
   console.log(campaign);
   return (
@@ -64,6 +69,11 @@ const CampaignCard = ({ campaign }) => {
           <CampaignVideo youtubeId={youtubeId} />
         </CardContent>
       </Link>
+      {auth.user && auth.user.id === campaign.user_id && (
+                <button onClick={handleEditClick} className="btn btn-primary">
+                    Editar campaña
+                </button>
+            )}
     </Card>
   );
 };

@@ -68,6 +68,8 @@ Route::get('/categories', [CategoryController::class, 'index']);
 
 //CONTROLADORES
 Route::get('/campaign-count', [CampaignController::class, 'count'])->name('campaign.count');
+Route::get('/user-campaigns/count', [CampaignController::class, 'countUserCampaigns'])->middleware('auth');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
