@@ -24,7 +24,7 @@ const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
       <Form.Label>Link del video de YouTube:</Form.Label>
       <Form.Control
         type="text"
-        {...register('video')}
+        {...register('video', { required: 'Este campo es obligatorio' })} // Registrar el campo
         onChange={handleLinkChange}
         isInvalid={!isValidLink || !!errors.video}
         placeholder="https://www.youtube.com/..."

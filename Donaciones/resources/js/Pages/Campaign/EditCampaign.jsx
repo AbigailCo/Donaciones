@@ -4,24 +4,49 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Form, Col, Row, Card } from "react-bootstrap";
 import ImageUpload from "@/Components/ImageUpload";
-import YouTubeLinkInput from "@/Components/YouTubeLinkInput";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePage } from '@inertiajs/react';
 
+// Componente para el campo de YouTube Link
+const YouTubeLinkInput = ({ register, errors, setValue }) => {
+  const handleLinkChange = (e) => {
+    // Actualiza el valor del campo youtube_link en el formulario
+    setValue("youtube_link", e.target.value);
+  };
+
+  return (
+    <div>
+      <Form.Label>Link de YouTube:</Form.Label>
+      <Form.Control
+        type="text"
+        {...register("youtube_link")}
+        onChange={handleLinkChange}  // Maneja el cambio del campo
+        isInvalid={!!errors.youtube_link}  // Muestra el error si existe
+      />
+      {errors.youtube_link && (
+        <Form.Control.Feedback type="invalid">{errors.youtube_link.message}</Form.Control.Feedback>
+      )}
+    </div>
+  );
+};
+
 const EditCampaign = () => {
   const { id } = usePage().props; // Obtener el ID de la campaña de los parámetros de la URL
   const navigate = useNavigate();
- 
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm();
-  
+  } = useForm({
+    defaultValues: {
+      youtube_link: "",  // Asegúrate de que el campo youtube_link esté vacío al inicio
+    },
+  });
+
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -62,36 +87,40 @@ const EditCampaign = () => {
   const onSubmit = async (data) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+
+    // Si youtube_link está vacío, no lo agregamos a formData
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("goal", data.goal);
+    formData.append("start_date", data.start_date);
+    formData.append("end_date", data.end_date);
+    formData.append("category_id", data.category_id);
+
+    // Agregar imagenes si las hay
+    if (data.imageFiles) {
+      data.imageFiles.forEach((image) => formData.append("images[]", image));
+    }
+
+    // Solo agregar youtube_link si no es vacío
+    if (data.youtube_link) {
+      formData.append("youtube_link", data.youtube_link);
+    }
+
     try {
-      console.log(data);
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("description", data.description);
-      formData.append("goal", data.goal);
-      formData.append("start_date", data.start_date);
-      formData.append("end_date", data.end_date);
-      formData.append("category_id", data.category_id);
-
-      if (data.imageFiles) {
-        data.imageFiles.forEach((image) => formData.append("images[]", image));
-      }
-
-      if (data.youtube_link) {
-        formData.append("youtube_link", data.youtube_link);
-      }
+      console.log("Campos en formData antes de enviar:", Object.fromEntries(formData.entries()));
 
       await axios.put(`/campaigns/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      
+
       toast.success("Campaña actualizada exitosamente");
       setTimeout(() => {
         navigate("/my-campaigns");
-        //window.location.reload(); 
-       // console.log(campaign);
       }, 2000);
     } catch (error) {
       toast.error("Error al actualizar la campaña");
+      console.error(error);  // Asegúrate de ver el error para más detalles
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +145,11 @@ const EditCampaign = () => {
             <Row className="g-4">
               <Col md={6}>
                 <Form.Label>Título:</Form.Label>
-                <Form.Control type="text" {...register("title", { required: true })} isInvalid={!!errors.title} />
+                <Form.Control
+                  type="text"
+                  {...register("title", { required: true })}
+                  isInvalid={!!errors.title}
+                />
                 <Form.Control.Feedback type="invalid">{errors.title?.message}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
@@ -131,29 +164,55 @@ const EditCampaign = () => {
               </Col>
               <Col xs={12}>
                 <Form.Label>Descripción:</Form.Label>
-                <Form.Control as="textarea" rows={3} {...register("description", { required: true })} isInvalid={!!errors.description} />
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  {...register("description", { required: true })}
+                  isInvalid={!!errors.description}
+                />
                 <Form.Control.Feedback type="invalid">{errors.description?.message}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
                 <Form.Label>Meta:</Form.Label>
-                <Form.Control type="number" step="0.01" {...register("goal", { required: true })} isInvalid={!!errors.goal} />
+                <Form.Control
+                  type="number"
+                  step="0.01"
+                  {...register("goal", { required: true })}
+                  isInvalid={!!errors.goal}
+                />
                 <Form.Control.Feedback type="invalid">{errors.goal?.message}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
                 <Form.Label>Fecha de inicio:</Form.Label>
-                <Form.Control type="date" {...register("start_date", { required: true })} isInvalid={!!errors.start_date} />
+                <Form.Control
+                  type="date"
+                  {...register("start_date", { required: true })}
+                  isInvalid={!!errors.start_date}
+                />
                 <Form.Control.Feedback type="invalid">{errors.start_date?.message}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
                 <Form.Label>Fecha de finalización:</Form.Label>
-                <Form.Control type="date" {...register("end_date", { required: true })} isInvalid={!!errors.end_date} />
+                <Form.Control
+                  type="date"
+                  {...register("end_date", { required: true })}
+                  isInvalid={!!errors.end_date}
+                />
                 <Form.Control.Feedback type="invalid">{errors.end_date?.message}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
-                <ImageUpload register={register} errors={errors} setImageFiles={(files) => setValue("imageFiles", files)} />
+                <ImageUpload
+                  register={register}
+                  errors={errors}
+                  setImageFiles={(files) => setValue("imageFiles", files)}
+                />
               </Col>
               <Col md={6}>
-                <YouTubeLinkInput register={register} errors={errors} setVideoLink={(link) => setValue("youtube_link", link)} />
+                <YouTubeLinkInput
+                  register={register}
+                  errors={errors}
+                  setValue={setValue}  // Este prop es necesario para actualizar el valor del youtube_link
+                />
               </Col>
             </Row>
           </Card.Body>

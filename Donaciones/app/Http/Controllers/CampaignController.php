@@ -36,6 +36,8 @@ class CampaignController extends Controller
         $campaignsCount = Campaign::count(); // Corregido
         return response()->json(['count' => $campaignsCount]);
     }
+
+
     public function countUserCampaigns()
     {
         $userId = auth()->id(); // Obtiene el ID del usuario logueado
@@ -43,6 +45,7 @@ class CampaignController extends Controller
 
         return response()->json(['count' => $userCampaignsCount]); // Retorna la cuenta en formato JSON
     }
+    
     public function show($id, $onlyUserCampaign = false)
     {
         // Obtener la campaña, aplicando el filtro de usuario si es necesario
@@ -110,10 +113,12 @@ class CampaignController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        dd($request->all());
-
+{
+    \Log::info('Prueba de log');
+    dd($request->all());
+    try {
         $campaign = Campaign::findOrFail($id);
+        \Log::info('Campaña encontrada:', $campaign->toArray());
         $this->authorize('update', $campaign);
 
         $validator = Validator::make($request->all(), [
@@ -122,27 +127,35 @@ class CampaignController extends Controller
             'goal' => 'sometimes|numeric|min:1',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after_or_equal:start_date',
-            'youtube_link' => 'nullable|url', // Validación de URL para YouTube
-            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048' // Validación de imágenes
+            'youtube_link' => 'nullable|url',
+            'images.*' => 'nullable|sometimes|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validator->fails()) {
+            dd('Error en validación:', $validator->errors());
             return response()->json($validator->errors(), 422);
+            
         }
-
+        
+        \Log::error('Antes de actualizar:', $request->all());
         $campaign->update($request->except(['images']));
+        \Log::error('Después de actualizar:', $campaign->toArray());
+       
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-
-                $path = $image->store('public/campaigns'); // Ajusta la ruta de almacenamiento
+                $path = $image->store('public/campaigns');
                 $campaign->images()->create(['path' => $path]);
             }
         }
 
-
         return response()->json($campaign);
+        dd($campaign->toArray());
+    } catch (\Exception $e) {
+        \Log::error('Error al actualizar la campaña: ' . $e->getMessage());
+        return response()->json(['error' => 'Error al actualizar la campaña'], 500);
     }
+}
 
 
     public function edit($id)

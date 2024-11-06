@@ -1,6 +1,5 @@
-//Esto es lo que veo cuando desde el nav bar ingreso a campañas
 import React from 'react';
-import { usePage } from '@inertiajs/react';
+import { usePage, router } from '@inertiajs/react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import Carousel from 'react-bootstrap/Carousel';
@@ -12,16 +11,17 @@ const getYouTubeId = (url) => {
   const matches = url.match(regex);
   return matches ? matches[1] : null;
 };
-const handleEditClick = () => {
-  router.visit(`/edit-campaign/${campaign.id}`);
-};
 
 const CampaignCard = ({ campaign }) => {
   const { auth } = usePage().props;
   const youtubeId = getYouTubeId(campaign.youtube_link);
-  console.log(campaign);
+
+  const handleEditClick = () => {
+    router.visit(`/edit-campaign/${campaign.id}`);
+  };
+
   return (
-    <Card style={{ cursor: 'pointer' }}>
+    <Card style={{ cursor: 'pointer', marginBottom: '20px' }}>
       <Carousel>
         {Array.isArray(campaign.images) && campaign.images.length > 0 ? (
           campaign.images.map((image, index) => (
@@ -45,7 +45,7 @@ const CampaignCard = ({ campaign }) => {
           </Carousel.Item>
         )}
       </Carousel>
-      
+
       <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
@@ -69,11 +69,14 @@ const CampaignCard = ({ campaign }) => {
           <CampaignVideo youtubeId={youtubeId} />
         </CardContent>
       </Link>
+      
       {auth.user && auth.user.id === campaign.user_id && (
-                <button onClick={handleEditClick} className="btn btn-primary">
-                    Editar campaña
-                </button>
-            )}
+        <button onClick={handleEditClick} className="btn btn-primary">
+          Editar campaña
+        </button>
+      )}
+
+     
     </Card>
   );
 };
