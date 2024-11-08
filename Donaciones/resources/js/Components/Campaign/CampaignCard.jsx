@@ -1,9 +1,10 @@
-import React from 'react';
-import { usePage, router } from '@inertiajs/react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { Link } from '@inertiajs/react';
-import Carousel from 'react-bootstrap/Carousel';
-import CampaignVideo from './CampaignVideo';
+import React, { useState, useEffect } from "react";
+import { usePage, router } from "@inertiajs/react";
+import { Card, CardContent, Typography } from "@mui/material";
+import { Link } from "@inertiajs/react";
+import Carousel from "react-bootstrap/Carousel";
+import CampaignVideo from "./CampaignVideo";
+import FavoriteButton from './FavoriteButton';
 
 const getYouTubeId = (url) => {
   if (!url) return null;
@@ -15,13 +16,29 @@ const getYouTubeId = (url) => {
 const CampaignCard = ({ campaign }) => {
   const { auth } = usePage().props;
   const youtubeId = getYouTubeId(campaign.youtube_link);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleEditClick = () => {
     router.visit(`/edit-campaign/${campaign.id}`);
   };
 
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+        try {
+            const response = await axios.get(`/favorites/${campaign.id}`);
+            setIsFavorite(response.data.isFavorite);
+        } catch (error) {
+            console.error("Error fetching favorite status:", error);
+        }
+    };
+
+    fetchFavoriteStatus();
+}, [campaign.id]);;
+  const handleToggleFavorite = (newStatus) => {
+    setIsFavorite(newStatus);
+  };
   return (
-    <Card style={{ cursor: 'pointer', marginBottom: '20px' }}>
+    <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
       <Carousel>
         {Array.isArray(campaign.images) && campaign.images.length > 0 ? (
           campaign.images.map((image, index) => (
@@ -30,7 +47,7 @@ const CampaignCard = ({ campaign }) => {
                 className="d-block w-100"
                 src={`/storage/images/${image.path}`}
                 alt={`Imagen de la campaña ${index}`}
-                style={{ height: '200px', objectFit: 'cover' }}
+                style={{ height: "200px", objectFit: "cover" }}
               />
             </Carousel.Item>
           ))
@@ -40,40 +57,48 @@ const CampaignCard = ({ campaign }) => {
               className="d-block w-100"
               src="/storage/images/defecto.jpg"
               alt="Imagen por defecto"
-              style={{ height: '200px', objectFit: 'cover' }}
+              style={{ height: "200px", objectFit: "cover" }}
             />
           </Carousel.Item>
         )}
       </Carousel>
 
-      <Link href={`/campaigns/${campaign.id}`} style={{ textDecoration: 'none' }}>
+      <Link
+        href={`/campaigns/${campaign.id}`}
+        style={{ textDecoration: "none" }}
+      >
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {campaign.title}
           </Typography>
-         
+
           <Typography variant="body1" color="text.primary">
             {campaign?.category?.name
               ? `Categoria: ${campaign.category.name}`
-              : 'No category selected'}
+              : "No category selected"}
           </Typography>
           <Typography variant="body1" color="text.primary">
             Meta: ${campaign.goal}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Fechas: {new Date(campaign.start_date).toLocaleDateString('es-ES')} al {new Date(campaign.end_date).toLocaleDateString('es-ES')}
+            Fechas: {new Date(campaign.start_date).toLocaleDateString("es-ES")}{" "}
+            al {new Date(campaign.end_date).toLocaleDateString("es-ES")}
           </Typography>
-
         </CardContent>
       </Link>
-      
+
+      {auth.user && auth.user.id !== campaign.user_id && (
+        <FavoriteButton
+          campaignId={campaign.id}
+          isFavorite={isFavorite}
+          onToggle={handleToggleFavorite}
+        />
+      )}
       {auth.user && auth.user.id === campaign.user_id && (
         <button onClick={handleEditClick} className="btn btn-primary">
           Editar campaña
         </button>
       )}
-
-     
     </Card>
   );
 };

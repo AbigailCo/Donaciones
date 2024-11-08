@@ -114,11 +114,11 @@ class CampaignController extends Controller
 
     public function update(Request $request, $id)
 {
-    \Log::info('Prueba de log');
+    Log::info('Prueba de log');
     dd($request->all());
     try {
         $campaign = Campaign::findOrFail($id);
-        \Log::info('Campaña encontrada:', $campaign->toArray());
+        Log::info('Campaña encontrada:', $campaign->toArray());
         $this->authorize('update', $campaign);
 
         $validator = Validator::make($request->all(), [
@@ -137,9 +137,9 @@ class CampaignController extends Controller
             
         }
         
-        \Log::error('Antes de actualizar:', $request->all());
+        Log::error('Antes de actualizar:', $request->all());
         $campaign->update($request->except(['images']));
-        \Log::error('Después de actualizar:', $campaign->toArray());
+        Log::error('Después de actualizar:', $campaign->toArray());
        
 
         if ($request->hasFile('images')) {
@@ -152,7 +152,7 @@ class CampaignController extends Controller
         return response()->json($campaign);
         dd($campaign->toArray());
     } catch (\Exception $e) {
-        \Log::error('Error al actualizar la campaña: ' . $e->getMessage());
+        Log::error('Error al actualizar la campaña: ' . $e->getMessage());
         return response()->json(['error' => 'Error al actualizar la campaña'], 500);
     }
 }

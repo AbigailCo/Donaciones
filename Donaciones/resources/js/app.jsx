@@ -4,6 +4,7 @@ import '../css/styles.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+
 import { initMercadoPago } from '@mercadopago/sdk-react'; 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
@@ -24,6 +25,7 @@ createInertiaApp({
     root.render(
       <Router>
         <App {...props} />
+
       </Router>
     );
   },

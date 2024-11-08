@@ -2,14 +2,12 @@
 
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DonationController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MercadoPagoController;
-use App\Http\Controllers\PaymentController;
 use App\Models\Campaign;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\NotificationController; 
+
 
 
 
@@ -43,3 +41,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
 Route::get('/campaigns/search', [CampaignController::class, 'search']);
+
+

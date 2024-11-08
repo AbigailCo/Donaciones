@@ -4,7 +4,9 @@ use App\Events\CampaignUpdated;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Mail\CampaignUpdateNotification;
@@ -14,7 +16,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\CommentController;
+
 
 
 
@@ -97,6 +99,15 @@ Route::get('/my-campaigns/{id}', function($id) {
 
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
 });
+
+//RUTAS DE FAVORITOS
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/favorites/{id}', [FavoriteController::class, 'store']); // Para agregar a favoritos
+    Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']); // Para eliminar de favoritos
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favoritos');
+    Route::get('/favorites/{id}', [FavoriteController::class, 'show']); // Para verificar si es favorito
+});
+Route::middleware('auth:sanctum')->get('/favorites', [FavoriteController::class, 'index'])->name('favoritos');
 
 Route::get('/edit-campaign/{id}', function ($id) {
     return Inertia::render('Campaign/EditCampaign', ['id' => $id]);

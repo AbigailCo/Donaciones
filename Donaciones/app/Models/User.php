@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,13 +21,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     public function campaigns()
     {
@@ -38,5 +36,15 @@ class User extends Authenticatable
         return $this->hasMany(Donation::class);
     }
 
-   
+    // Cambia este método para referirse a las campañas favoritas directamente
+    public function favoritedCampaigns()
+    {
+        return $this->belongsToMany(Campaign::class, 'favorites');
+    }
+
+    // Mantén esta relación si necesitas acceder a la tabla `favorites` a través del modelo `Favorite`
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }

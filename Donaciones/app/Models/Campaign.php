@@ -18,7 +18,7 @@ class Campaign extends Model
         'end_date',
         'user_id',
         'youtube_link',
-        'category_id'
+        'category_id',
     ];
 
     public function user()
@@ -35,12 +35,19 @@ class Campaign extends Model
     {
         return $this->hasMany(Reward::class);
     }
+
     public function images()
     {
         return $this->hasMany(CampaignImage::class, 'campaign_id', 'id');
     }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
     }
 }
