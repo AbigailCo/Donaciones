@@ -51,9 +51,7 @@ const CampaignCard = ({ campaign }) => {
           <Typography gutterBottom variant="h5" component="div">
             {campaign.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {campaign.description}
-          </Typography>
+         
           <Typography variant="body1" color="text.primary">
             {campaign?.category?.name
               ? `Categoria: ${campaign.category.name}`
@@ -63,10 +61,9 @@ const CampaignCard = ({ campaign }) => {
             Meta: ${campaign.goal}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Fechas: {new Date(campaign.start_date).toLocaleDateString('es-ES')} a {new Date(campaign.end_date).toLocaleDateString('es-ES')}
+            Fechas: {new Date(campaign.start_date).toLocaleDateString('es-ES')} al {new Date(campaign.end_date).toLocaleDateString('es-ES')}
           </Typography>
 
-          <CampaignVideo youtubeId={youtubeId} />
         </CardContent>
       </Link>
       

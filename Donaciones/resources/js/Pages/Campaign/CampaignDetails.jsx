@@ -73,7 +73,8 @@ const CampaignDetails = () => {
                 </Typography>
 
                 {/* Sección de comentarios */}
-                <CampaignComments campaign={campaign} user={auth.user} />
+                <CampaignComments campaign={campaign} currentUser={auth.user} />
+
 
                 <ProgressChart campaign={campaign} donations={donations} />
                 <CampaignVideo youtubeId={youtubeId} />

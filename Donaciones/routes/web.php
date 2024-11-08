@@ -110,11 +110,14 @@ Route::get('/campaigns/{id}/edit', function ($id) {
 
 Route::post('/donations', [DonationController::class, 'store']);
 Route::get('/campaigns/{id}/donations', [CampaignController::class, 'getDonations']);
-
+/*
 Route::middleware('auth')->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::get('/campaigns/{campaign_id}/comments', [CommentController::class, 'index']);
-});
+}); */
+
+Route::get('/campaigns/{campaign}/comments', [CommentController::class, 'index']);
+Route::post('/comments', [CommentController::class, 'store']);
 
 //prueba de ruta
 Route::get('/test', function () {

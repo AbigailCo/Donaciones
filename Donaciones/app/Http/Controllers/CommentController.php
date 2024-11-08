@@ -8,20 +8,23 @@ class CommentController extends Controller
 {
     // Guardar un nuevo comentario
     public function store(Request $request)
-    {
-        $request->validate([
-            'comment' => 'required|string|max:500',
-            'campaign_id' => 'required|exists:campaigns,id',
-        ]);
+{
+    $validatedData = $request->validate([
+        'comment' => 'required|string',
+        'campaign_id' => 'required|exists:campaigns,id',
+    ]);
 
-        $comment = Comment::create([
-            'comment' => $request->comment,
-            'user_id' => auth()->id(),
-            'campaign_id' => $request->campaign_id,
-        ]);
+    $comment = Comment::create([
+        'comment' => $validatedData['comment'],
+        'campaign_id' => $validatedData['campaign_id'],
+        'user_id' => auth()->id(), // Asegura que se asigne el usuario actual
+    ]);
 
-        return response()->json($comment, 201);
-    }
+    // Recarga la relación con el usuario
+    $comment->load('user');
+
+    return response()->json($comment);
+}
 
     // Obtener los comentarios de una campaña
     public function index($campaign_id)

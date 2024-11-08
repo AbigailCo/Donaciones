@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Card, CardContent, Typography, TextField, Button, Box } from '@mui/material';
 
-const CampaignComments = ({ campaign }) => {
+const CampaignComments = ({ campaign, currentUser }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  
+
   useEffect(() => {
-    // Cargar los comentarios de la campaña
     axios.get(`/campaigns/${campaign.id}/comments`)
       .then(response => setComments(response.data))
       .catch(error => console.error(error));
@@ -21,40 +21,51 @@ const CampaignComments = ({ campaign }) => {
       campaign_id: campaign.id,
     })
     .then(response => {
-      setComments([response.data, ...comments]);
+      setComments([{ ...response.data, user: currentUser }, ...comments]);
       setNewComment('');
     })
     .catch(error => console.error(error));
   };
 
   return (
-    <div>
-      <h2>Comentarios</h2>
-      <div>
+    <Card sx={{ marginTop: 3, padding: 2, boxShadow: 3 }}>
+      <Typography variant="h5" gutterBottom>Comentarios</Typography>
+      
+      <Box sx={{ maxHeight: '300px', overflowY: 'auto', marginBottom: 2 }}>
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <div key={comment.id} style={{ marginBottom: '15px' }}>
-              <strong>{comment.user.name}</strong>
-              <p>{comment.comment}</p>
-            </div>
+            <Card key={comment.id} sx={{ marginBottom: 1.5, padding: 1.5 }}>
+              <Typography variant="subtitle2" color="text.primary">
+                {comment.user?.name || "Usuario desconocido"}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {comment.comment}
+              </Typography>
+            </Card>
           ))
         ) : (
-          <p>No hay comentarios aún.</p>
+          <Typography variant="body2" color="text.secondary">No hay comentarios aún.</Typography>
         )}
-      </div>
+      </Box>
 
       <form onSubmit={handleCommentSubmit}>
-        <textarea
+        <TextField
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Deja tu comentario"
-          required
-          style={{ width: '100%', minHeight: '100px' }}
+          fullWidth
+          multiline
+          rows={4}
+          variant="outlined"
+          sx={{ marginBottom: 2 }}
         />
-        <button type="submit">Comentar</button>
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          Comentar
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 
 export default CampaignComments;
+
