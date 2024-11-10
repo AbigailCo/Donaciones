@@ -14,14 +14,14 @@ const FavoriteButton = ({ campaignId, isFavorite, onToggle }) => {
         try {
             if (isFavorite) {
                 await axios.delete(`/favorites/${campaignId}`);
-                toast.success("Removed from favorites");
+                toast.success("La campaña dejo de ser tu favorita");
             } else {
                 await axios.post(`/favorites/${campaignId}`);
-                toast.success("Added to favorites");
+                toast.success("Campaña añadida a favoritos");
             }
             onToggle(!isFavorite); // Actualizar el estado en el componente padre
         } catch (error) {
-            toast.error("Error updating favorite");
+            toast.error("Error");
         } finally {
             setLoading(false);
         }

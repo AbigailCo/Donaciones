@@ -1,13 +1,14 @@
+// Components/Footer.js
 import React from "react";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="bg-blue-600 text-center text-white">
-      <div className="container p-4 pb-0">
-        <section className="mb-4">
-          {/* Github */}
+    <footer className="py-5 bg-black text-white">
+      <div className="container px-5">
+        <section className="mb-4 flex items-center justify-center gap-2">
+          {/* Github Icon */}
           <a
-            className="btn btn-outline-light btn-floating m-1 hover:bg-fuchsia-500"
+            className="btn btn-outline-light btn-floating m-1 hover:bg-fuchsia-500 transition-colors duration-300 ease-in-out"
             href="https://github.com/AbigailCo/Donaciones"
             role="button"
             target="_blank"
@@ -15,8 +16,8 @@ const Footer = () => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="24"
+              height="24"
               fill="currentColor"
               className="bi bi-github"
               viewBox="0 0 16 16"
@@ -25,12 +26,10 @@ const Footer = () => {
             </svg>
           </a>
           <span className="font-semibold text-lg">
-            REPOSITORIO DEL PROYECTO
+            Repositorio del Proyecto
           </span>
         </section>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

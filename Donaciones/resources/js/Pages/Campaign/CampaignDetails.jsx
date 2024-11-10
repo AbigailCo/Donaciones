@@ -7,7 +7,8 @@ import { Card, CardContent, Typography, Box, TextField, Button } from '@mui/mate
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CarouselComponent from '../../Components/Campaign/CarouselComponent';
 import ProgressChart from '../../Components/Campaign/ProgressChart';
-import CampaignComments from '../../Components/Campaign/CampaignComments'; // Importa el componente de comentarios
+import CampaignComments from '../../Components/Campaign/CampaignComments'; 
+
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;

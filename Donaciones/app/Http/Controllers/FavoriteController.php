@@ -24,13 +24,13 @@ class FavoriteController extends Controller
     {
         $user = $request->user();
         $user->favoritedCampaigns()->attach($campaignId);
-        return response()->json(['message' => 'Campaña añadida a favoritos'], 200);
+        return response()->json(['message' => 'Esta campaña es favorita'], 200);
     }
     public function destroy(Request $request, $campaignId)
     {
         $user = $request->user();
         $user->favoritedCampaigns()->detach($campaignId);
-        return response()->json(['message' => 'Campaña removida de favoritos'], 200);
+        return response()->json(['message' => 'Campaña eliminada de favoritos'], 200);
     }
     public function show($id)
     {

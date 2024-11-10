@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import { Typography } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CampaignCard from '../../Components/Campaign/CampaignCard';
 
@@ -26,9 +27,12 @@ const MyCampaigns = ({ campaigns, auth }) => {
             ))}
           </Grid>
         ) : (
-          <p className="text-center">No tienes campañas creadas.</p>
+          <Typography className="text-center" variant="h4" gutterBottom>
+            Todavia no creaste ninguna campaña en esta aplicacion
+          </Typography>
         )}
       </div>
+      
     </AuthenticatedLayout>
   );
 };
