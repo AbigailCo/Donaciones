@@ -31,7 +31,7 @@ export default function Welcome({ auth }) {
 
   return (
     <>
-      <Head title="Welcome" />
+      <Head title="Bienvenidos" />
       <div className="relative min-h-screen bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
           <div className="relative w-full px-0">
             <NavBar auth={auth} />

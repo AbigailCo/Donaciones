@@ -8,7 +8,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CarouselComponent from '../../Components/Campaign/CarouselComponent';
 import ProgressChart from '../../Components/Campaign/ProgressChart';
 import CampaignComments from '../../Components/Campaign/CampaignComments'; 
-
+import { Head } from '@inertiajs/react';
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -62,7 +62,8 @@ const CampaignDetails = () => {
     <div>
       {auth.user ? (
         <AuthenticatedLayout user={auth.user}>
-          <Box sx={{ padding: '20px', backgroundColor: '#f5f5f5', width: '100%' }}>
+           <Head title="Detalles campaña" />
+          <Box  className="mt-20"  sx={{ padding: '20px', backgroundColor: '#f5f5f5', width: '100%' }}>
             <Card sx={{ maxWidth: '100%', boxShadow: 3, borderRadius: 2 }}>
               <CarouselComponent images={campaign.images} />
               <CardContent>

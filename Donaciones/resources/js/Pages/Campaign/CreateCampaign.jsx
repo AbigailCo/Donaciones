@@ -11,7 +11,7 @@ export default function CreateCampaign({ auth }) {
             user={auth.user}
            
         >
-            <Head title="CreateCampaign" />
+            <Head title="Crear campaña" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

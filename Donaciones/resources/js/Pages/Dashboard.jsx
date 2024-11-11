@@ -12,7 +12,7 @@ export default function Dashboard({ auth }) {
             user={auth.user}
             
         >
-            <Head title="Dashboard" />
+            <Head title="Panel" />
 
             <div className="d-flex h-100">
                 {/* Sidebar ocupa 20% del ancho */}

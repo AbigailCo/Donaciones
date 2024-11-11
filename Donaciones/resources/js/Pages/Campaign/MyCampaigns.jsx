@@ -3,6 +3,7 @@ import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CampaignCard from '../../Components/Campaign/CampaignCard';
+import { Head } from '@inertiajs/react';
 
 const MyCampaigns = ({ campaigns, auth }) => {
   if (!auth.user) {
@@ -15,8 +16,11 @@ const MyCampaigns = ({ campaigns, auth }) => {
   }
 
   return (
+    
     <AuthenticatedLayout user={auth.user}>
+      <Head title="Mis campañas" />
       <div className="container mt-20" >
+      
       <h1 className="mt-4 text-center">Mis Campañas</h1>
         {campaigns.length > 0 ? (
           <Grid container spacing={3}>
