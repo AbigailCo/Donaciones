@@ -37,7 +37,7 @@ const Campaigns = () => {
 
     return (
         <div>
-            <CampaignSearch />
+            
             <Grid container spacing={3}>
                 {campaigns.map(campaign => (
                     <Grid item xs={12} sm={6} md={4} key={campaign.id}>

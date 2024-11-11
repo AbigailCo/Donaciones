@@ -14,7 +14,8 @@ export default function Authenticated({ user, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top w-full z-50">
+     
+            <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top w-full ">
                 <div className="container px-5">
                     <div className="flex justify-start lg:justify-center lg:col-start-2">
                         <Logo />
@@ -96,6 +97,7 @@ export default function Authenticated({ user, header, children }) {
                 </div>
             </nav>
 
+            {/* Contenido principal */}
             <div className="pt-16">
                 {header && (
                     <header className="bg-white shadow">

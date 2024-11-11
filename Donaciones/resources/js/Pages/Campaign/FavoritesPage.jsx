@@ -12,7 +12,7 @@ const FavoritesPage = ({ favorites, auth }) => {
         return (
             <AuthenticatedLayout
                 user={auth.user}
-                header={<h1 className="text-center">Mis Favoritos</h1>}
+                
             >
                 <Head title="Favorite" />
     
@@ -35,7 +35,7 @@ const FavoritesPage = ({ favorites, auth }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Mis favoritos</h2>}
+          
         >
             <Head title="Favorite" />
 
@@ -43,9 +43,7 @@ const FavoritesPage = ({ favorites, auth }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div>
-                            <Typography variant="h4" gutterBottom>
-                                Tus favoritos
-                            </Typography>
+                        <h1 className="mt-4 text-center">Mis favoritos</h1>
                             {favorites.map((favorite) => (
                                 <CampaignCard key={favorite.id} campaign={favorite.campaign} />
                             ))}

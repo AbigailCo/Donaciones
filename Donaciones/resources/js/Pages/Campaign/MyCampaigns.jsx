@@ -16,8 +16,8 @@ const MyCampaigns = ({ campaigns, auth }) => {
 
   return (
     <AuthenticatedLayout user={auth.user}>
-      <div className="container mt-4">
-        <h1 className="text-center">Mis Campañas</h1>
+      <div className="container mt-20" >
+      <h1 className="mt-4 text-center">Mis Campañas</h1>
         {campaigns.length > 0 ? (
           <Grid container spacing={3}>
             {campaigns.map((campaign) => (

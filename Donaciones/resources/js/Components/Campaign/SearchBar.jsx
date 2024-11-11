@@ -17,7 +17,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSearch }) => {
             </InputGroup.Text>
             <Form.Control
                 type="text"
-                placeholder="Buscar por título..."
+                placeholder="Nombre de la campaña"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}

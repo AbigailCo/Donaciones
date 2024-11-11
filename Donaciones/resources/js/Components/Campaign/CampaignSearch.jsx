@@ -61,7 +61,7 @@ const CampaignSearch = () => {
 
     return (
         <Container className="my-5">
-            <h2 className="text-center mb-4">Buscar Campañas</h2>
+            <h2 className="text-center mb-4">¿A quien ayudaras hoy?</h2>
 
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             <CategoryFilter

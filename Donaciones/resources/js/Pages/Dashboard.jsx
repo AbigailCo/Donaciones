@@ -4,6 +4,7 @@ import CampaignCard from '../Components/Campaign/CardPanel.jsx';
 import MyCampPanel from '../Components/Campaign/MyCampPanel.jsx';
 import CreatePanel from '../Components/Campaign/CreatePanel.jsx';
 import Sidebar from '../Components/Dashboard/Sidebar.jsx';
+import CampaignSearch from '../Components/Campaign/CampaignSearch.jsx';
 
 export default function Dashboard({ auth }) {
     return (
@@ -28,7 +29,7 @@ export default function Dashboard({ auth }) {
                                 <p className="mt-2 text-lg">¡Tu plataforma para hacer la diferencia!</p>
                             </div>
                         </div>
-                        
+                        <CampaignSearch />
                         {/* Componentes específicos del Dashboard */}
                        {/*  <CreatePanel />
                         <CampaignCard />
