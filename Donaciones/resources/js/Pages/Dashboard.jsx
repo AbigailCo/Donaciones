@@ -5,6 +5,7 @@ import MyCampPanel from '../Components/Campaign/MyCampPanel.jsx';
 import CreatePanel from '../Components/Campaign/CreatePanel.jsx';
 import Sidebar from '../Components/Dashboard/Sidebar.jsx';
 import CampaignSearch from '../Components/Campaign/CampaignSearch.jsx';
+import CampaignsPage from '@/Components/Dashboard/CampaignsPage.jsx';
 
 export default function Dashboard({ auth }) {
     return (
@@ -30,10 +31,8 @@ export default function Dashboard({ auth }) {
                             </div>
                         </div>
                         <CampaignSearch />
-                        {/* Componentes específicos del Dashboard */}
-                       {/*  <CreatePanel />
-                        <CampaignCard />
-                        <MyCampPanel /> */}
+                        
+                        <CampaignsPage/>
                     </div>
                 </div>
             </div>
