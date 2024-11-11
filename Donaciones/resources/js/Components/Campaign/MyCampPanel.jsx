@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaRegFolder } from "react-icons/fa"; // Cambié el icono
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const MyCampPanel = () => {
@@ -17,11 +17,12 @@ const MyCampPanel = () => {
   }, []);
 
   return (
-    <div className="col-xl-3 col-md-6">
-      <div className="card bg-info text-white mb-4 shadow-sm"> {/* Cambié el color a bg-info */}
+    <div className="">
+      <div className="card mb-4 shadow-sm" style={{ backgroundColor: 'rgba(135, 206, 250, 0.5)', color: 'black' }}>
         <div className="card-body d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-            <FaRegFolder size={40} className="me-3" /> {/* Usé un nuevo icono */}
+          <div className="sb-nav-link-icon mr-3"><i className="fa-solid fa-user"></i></div>
+          
             <span className="h5 mb-0">Mis Campañas</span>
           </div>
           <p className="text-center fw-bold fs-4 mb-0">{myCampaignCount}</p>

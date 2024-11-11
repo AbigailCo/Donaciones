@@ -7,59 +7,58 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import { Ziggy } from '@/ziggy';
 import Notifications from '@/Pages/Notifications'; // Importa el componente de notificaciones
+import Sidebar from '@/Components/Dashboard/Sidebar';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-   /*const [showNotifications, setShowNotifications] = useState(false); // Estado para el modal de notificaciones
 
-    const openNotificationsModal = () => {
-        setShowNotifications(true);
-    };
-
-    const closeNotificationsModal = () => {
-        setShowNotifications(false);
-    };
-*/
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <Logo />
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
+            <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top w-full z-50">
+                <div className="container px-5">
+                    <div className="flex justify-start lg:justify-center lg:col-start-2">
+                        <Logo />
+                    </div>
+                    
+                    <button
+                        className="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarResponsive"
+                        aria-controls="navbarResponsive"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="navbar-collapse" id="navbarResponsive">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item">
+                                <NavLink href={route('dashboard')} active={route().current('dashboard')} className="nav-link px-3 py-2 text-white bg-fuchsia-600 rounded-md transition hover:bg-fuchsia-700 focus:ring-2 focus:ring-fuchsia-400">
                                     Panel
                                 </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('campaign')} active={route().current('campaign')}>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink href={route('campaign')} active={route().current('campaign')} className="nav-link px-3 py-2 text-white bg-fuchsia-600 rounded-md transition hover:bg-fuchsia-700 focus:ring-2 focus:ring-fuchsia-400">
                                     Campañas
                                 </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('CreateCampaign')} active={route().current('CreateCampaign')}>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink href={route('CreateCampaign')} active={route().current('CreateCampaign')} className="nav-link px-3 py-2 text-white bg-fuchsia-600 rounded-md transition hover:bg-fuchsia-700 focus:ring-2 focus:ring-fuchsia-400">
                                     Crear campaña
                                 </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('myCampaigns')} active={route().current('myCampaigns')}>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink href={route('myCampaigns')} active={route().current('myCampaigns')} className="nav-link px-3 py-2 text-white bg-fuchsia-600 rounded-md transition hover:bg-fuchsia-700 focus:ring-2 focus:ring-fuchsia-400">
                                     Mis Campañas
                                 </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('favoritos')} active={route().current('favoritos')}>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink href={route('favoritos')} active={route().current('favoritos')} className="nav-link px-3 py-2 text-white bg-fuchsia-600 rounded-md transition hover:bg-fuchsia-700 focus:ring-2 focus:ring-fuchsia-400">
                                     Mis Favoritos
                                 </NavLink>
-                            </div>
-                            
-                        </div>
-
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <div className="ms-3 relative">
+                            </li>
+                            <li className="nav-item">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -68,7 +67,6 @@ export default function Authenticated({ user, header, children }) {
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {user.name}
-
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -86,77 +84,27 @@ export default function Authenticated({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                         {/*<Dropdown.Link onClick={openNotificationsModal}>Notifications</Dropdown.Link>*/}
+                                        <Dropdown.Link href={route('profile.edit')}>Perfil</Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
+                                            Salir
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                            >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">{user.name}</div>
-                            <div className="font-medium text-sm text-gray-500">{user.email}</div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
-                            {/* Cambia esta línea para abrir el modal */}
-                            {/*<ResponsiveNavLink onClick={openNotificationsModal}>Notifications</ResponsiveNavLink>*/}
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
-            )}
+            <div className="pt-16">
+                {header && (
+                    <header className="bg-white shadow">
+                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                    </header>
+                )}
 
-            <main>{children}</main>
-
-            {/* Modal de Notificaciones */}
-           {/*  <Notifications show={showNotifications} onClose={closeNotificationsModal} />*/}
+                <main>{children}</main>
+            </div>
         </div>
     );
 }

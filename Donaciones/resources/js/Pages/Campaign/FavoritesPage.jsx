@@ -44,7 +44,7 @@ const FavoritesPage = ({ favorites, auth }) => {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div>
                             <Typography variant="h4" gutterBottom>
-                                Las campañas que han impactado en vos
+                                Tus favoritos
                             </Typography>
                             {favorites.map((favorite) => (
                                 <CampaignCard key={favorite.id} campaign={favorite.campaign} />

@@ -6,6 +6,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
+// Importar FontAwesome
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 import { initMercadoPago } from '@mercadopago/sdk-react'; 
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';

@@ -4,8 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CreatePanel = () => {
   return (
-    <div className="col-xl-3 col-md-6">
-      <div className="card bg-warning text-dark mb-4 shadow-sm"> {/* Cambié el color a bg-warning */}
+    <div className="">
+
+      <div className="card mb-4 shadow-sm" style={{ backgroundColor: '#00ff0080', color: 'white' }}>
         <div className="card-body d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <FaPlusCircle size={40} className="me-3" /> {/* Usé un nuevo icono */}

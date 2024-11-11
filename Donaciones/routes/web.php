@@ -71,6 +71,7 @@ Route::get('/categories', [CategoryController::class, 'index']);
 //CONTROLADORES
 Route::get('/campaign-count', [CampaignController::class, 'count'])->name('campaign.count');
 Route::get('/user-campaigns/count', [CampaignController::class, 'countUserCampaigns'])->middleware('auth');
+Route::get('/user-favorites/count', [CampaignController::class, 'countUserFavorites'])->middleware('auth');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -101,6 +102,7 @@ Route::get('/my-campaigns/{id}', function($id) {
 });
 
 //RUTAS DE FAVORITOS
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/favorites/{id}', [FavoriteController::class, 'store']); // Para agregar a favoritos
     Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy']); // Para eliminar de favoritos
