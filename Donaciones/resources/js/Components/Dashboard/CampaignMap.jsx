@@ -1,62 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import axios from 'axios';
+import React, { useState } from 'react';
+import Map, { Marker, Popup } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { Link } from "@inertiajs/react";
 
-const CampaignMap = () => {
-  const [campaigns, setCampaigns] = useState([]);
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
+const CampaignMap = ({ campaigns }) => {
+  const [selectedCampaign, setSelectedCampaign] = useState(null); // Estado para la campaña seleccionada
 
-  // Reemplaza 'TU_CLAVE_DE_API' con tu clave de Google Maps API
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.REACT_APP_GOOGLE_MAPS_API_KEY
-  });
+  const MAPBOX_TOKEN = 'pk.eyJ1IjoiZG9uYS1kYXItdnVlbHZlIiwiYSI6ImNtM2R2NDU2cjA3dzMybG9mcDhxc2k4bTUifQ.GWqeDxsFqV28pRp4ypBhTQ'; // Reemplaza con tu API Key
 
-  useEffect(() => {
-    // Cargar las campañas desde el backend
-    axios.get('/api/campaigns') // Ajusta la URL de acuerdo a tu API
-      .then(response => setCampaigns(response.data))
-      .catch(error => console.error('Error al cargar campañas:', error));
-  }, []);
-
-  const containerStyle = {
-    width: '100%',
-    height: '600px'
+  const handleMarkerClick = (campaign) => {
+    setSelectedCampaign(campaign); // Al hacer clic en un marcador, se establece la campaña seleccionada
   };
-
-  // Coordenadas iniciales del centro del mapa (por ejemplo, Buenos Aires)
-  const center = {
-    lat: -38.95161,
-    lng: -68.0591
-  };
-
-  if (!isLoaded) return <div>Cargando mapa...</div>;
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={8}
-    >
-      {campaigns.map((campaign) => (
-        <Marker
-          key={campaign.id}
-          position={{ lat: campaign.latitude, lng: campaign.longitude }}
-          onClick={() => setSelectedCampaign(campaign)}
-        />
-      ))}
-
-      {selectedCampaign && (
-        <InfoWindow
-          position={{ lat: selectedCampaign.latitude, lng: selectedCampaign.longitude }}
-          onCloseClick={() => setSelectedCampaign(null)}
-        >
-          <div>
-            <h4>{selectedCampaign.title}</h4>
-            <p>{selectedCampaign.description}</p>
-          </div>
-        </InfoWindow>
-      )}
-    </GoogleMap>
+    <div style={{ height: '400px', width: '100%' }}>
+       <h2 className="text-center mb-4">Descubre donde se encuentran nuestras campañas</h2>
+      <Map
+        initialViewState={{
+          latitude: -38.95161, // Coordenadas de Neuquén
+          longitude: -68.0591,
+          zoom: 10,
+        }}
+        style={{ width: '100%', height: '100%' }}
+        mapStyle="mapbox://styles/mapbox/streets-v11"
+        mapboxAccessToken={MAPBOX_TOKEN}
+      >
+        {campaigns.map((campaign) => (
+          <Marker
+            key={campaign.id}
+            latitude={campaign.latitude}
+            longitude={campaign.longitude}
+            color="fuchsia"
+            onClick={() => handleMarkerClick(campaign)} // Maneja el clic en el marcador
+          >
+            {/* Solo muestra el popup para la campaña seleccionada */}
+            {selectedCampaign && selectedCampaign.id === campaign.id && (
+              <Popup
+                longitude={campaign.longitude}
+                latitude={campaign.latitude}
+                closeButton={true}
+                closeOnClick={false}
+                anchor="top"
+                onClose={() => setSelectedCampaign(null)} // Cierra el popup al hacer clic
+              >
+                <div>
+                  <h4>{campaign.title}</h4>
+                  <p>{campaign.description}</p>
+                  <Link
+                  href={`/campaigns/${campaign.id}`} 
+                  className="btn btn-primary" 
+                >
+                  Ver detalles
+                </Link>
+                </div>
+              </Popup>
+            )}
+          </Marker>
+        ))}
+      </Map>
+    </div>
   );
 };
 

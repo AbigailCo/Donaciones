@@ -1,13 +1,21 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import CampaignCard from '../Components/Campaign/CardPanel.jsx';
-import MyCampPanel from '../Components/Campaign/MyCampPanel.jsx';
-import CreatePanel from '../Components/Campaign/CreatePanel.jsx';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../Components/Dashboard/Sidebar.jsx';
 import CampaignSearch from '../Components/Campaign/CampaignSearch.jsx';
-import CampaignsPage from '@/Components/Dashboard/CampaignsPage.jsx';
+import CampaignMap from '@/Components/Dashboard/CampaignMap.jsx';
+import axios from 'axios';
 
 export default function Dashboard({ auth }) {
+    const [campaigns, setCampaigns] = useState([]);
+   
+    useEffect(() => {
+        axios.get('/campaigns')
+          .then((response) => {
+            setCampaigns(response.data.data);
+          })
+          .catch((error) => console.error('Error fetching campaigns:', error));
+      }, []);
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -32,7 +40,7 @@ export default function Dashboard({ auth }) {
                         </div>
                         <CampaignSearch />
                         
-                        <CampaignsPage/>
+                         <CampaignMap campaigns={campaigns}/> 
                     </div>
                 </div>
             </div>

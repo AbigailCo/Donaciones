@@ -22,7 +22,7 @@ const CardPanel = () => {
       <div className="card mb-4 shadow-sm" style={{backgroundColor: '#ff00ff80', color: 'white' }}>
         <div className="card-body d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
-          <div className="sb-nav-link-icon mr-3"><i class="fa-solid fa-people-group"></i></div>
+          <div className="sb-nav-link-icon mr-3"><i className="fa-solid fa-people-group"></i></div>
             <span className="h5 mb-0">Todas las campañas</span>
           </div>
           <p className="text-center fw-bold fs-4 mb-0">{campaignCount}</p>
