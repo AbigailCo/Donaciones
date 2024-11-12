@@ -1,6 +1,6 @@
 {
-    "name": "DarVuelve/DarVuelve",
-    "type": "Plataforma de Donaciones",
+    "name": "miproyecto/darvuelve",
+    "type": "project",
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
