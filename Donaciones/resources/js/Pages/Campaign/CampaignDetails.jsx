@@ -13,8 +13,12 @@ const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [error, setError] = useState(null);
-  const [donationAmount, setDonationAmount] = useState(''); 
+  const [donationAmount, setDonationAmount] = useState('');
   const [donations, setDonations] = useState([]);
+
+  const totalDonado = donations.reduce((acc, donation) => acc + parseFloat(donation.amount), 0);
+  const metaAlcanzada = totalDonado >= campaign.goal;
+
 
   const getYouTubeId = (url) => {
     if (!url) return null;
@@ -64,28 +68,28 @@ const CampaignDetails = () => {
       user_id: auth.user.id,
       payment_status: 'pending',
     })
-    .then(response => {
-      console.log('Donación registrada:', response.data);
-      console.log('ID de la campaña:', response.data.donation.campaign_id); // Verificar aquí
-      // 2. Generamos la preferencia de pago en Mercado Pago
-      return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
-    })
-    .then(response => {
-      // Abrir la URL de pago en un popup
-      console.log('URL de pago:', response.data.init_point);
-      openPopup(response.data.init_point);
-      // 3. Llama al evento de actualización de campaña utilizando campaign.id
-      return axios.post(`/campaigns/${campaign.id}/update-event`);
-    })
-    .then(response => {
-      console.log('Evento de actualización de campaña procesado:', response.data);
-    })
-    .catch(error => {
-      console.error('Error al procesar la donación:', error);
-      console.log('Error Response:', error.response); // Log de la respuesta de error
-      setError('No se pudo completar la donación.');
-    });
-};
+      .then(response => {
+        console.log('Donación registrada:', response.data);
+        console.log('ID de la campaña:', response.data.donation.campaign_id); // Verificar aquí
+        // 2. Generamos la preferencia de pago en Mercado Pago
+        return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
+      })
+      .then(response => {
+        // Abrir la URL de pago en un popup
+        console.log('URL de pago:', response.data.init_point);
+        openPopup(response.data.init_point);
+        // 3. Llama al evento de actualización de campaña utilizando campaign.id
+        return axios.post(`/campaigns/${campaign.id}/update-event`);
+      })
+      .then(response => {
+        console.log('Evento de actualización de campaña procesado:', response.data);
+      })
+      .catch(error => {
+        console.error('Error al procesar la donación:', error);
+        console.log('Error Response:', error.response); // Log de la respuesta de error
+        setError('No se pudo completar la donación.');
+      });
+  };
 
   const handleEditClick = () => {
     router.visit(`/edit-campaign/${campaign.id}`);
@@ -148,19 +152,40 @@ const CampaignDetails = () => {
                 </Box>
 
                 {auth.user && auth.user.id !== campaign.user_id && (
-                  <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                    <TextField
-                      label="Monto a donar"
-                      variant="filled"
-                      fullWidth
-                      value={donationAmount}
-                      onChange={(e) => setDonationAmount(e.target.value)}
-                    />
-                    <Button variant="contained" color="primary" fullWidth onClick={handleDonation}>
-                      Donar a esta campaña
-                    </Button>
-                  </Box>
+                  totalDonado < campaign.goal ? (
+                    <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                      <TextField
+                        label="Monto a donar"
+                        variant="filled"
+                        fullWidth
+                        value={donationAmount}
+                        onChange={(e) => setDonationAmount(e.target.value)}
+                      />
+                      <Button variant="contained" color="primary" fullWidth onClick={handleDonation}>
+                        Donar a esta campaña
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Typography
+                    variant="body1"
+                    align="center"
+                    sx={{
+                      background: 'linear-gradient(90deg, #4a90e2, #ff00d9)',
+                    border: 'none',
+                    color: '#000000',
+                    fontWeight: 'bold',
+                    padding: '10px 20px',
+                    borderRadius: '30px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
+                  >
+                    ¡La meta ha sido alcanzada! Gracias por tu apoyo.
+                  </Typography>
+                  
+                  )
                 )}
+
                 {error && <Typography color="error">{error}</Typography>}
 
                 <CampaignComments campaign={campaign} currentUser={auth.user} />
