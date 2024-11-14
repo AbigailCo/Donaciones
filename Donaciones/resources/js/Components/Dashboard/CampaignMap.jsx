@@ -4,12 +4,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Link } from "@inertiajs/react";
 
 const CampaignMap = ({ campaigns }) => {
-  const [selectedCampaign, setSelectedCampaign] = useState(null); // Estado para la campaña seleccionada
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
 
   const MAPBOX_TOKEN = 'pk.eyJ1IjoiZG9uYS1kYXItdnVlbHZlIiwiYSI6ImNtM2R2NDU2cjA3dzMybG9mcDhxc2k4bTUifQ.GWqeDxsFqV28pRp4ypBhTQ'; // Reemplaza con tu API Key
 
   const handleMarkerClick = (campaign) => {
-    setSelectedCampaign(campaign); // Al hacer clic en un marcador, se establece la campaña seleccionada
+    setSelectedCampaign(campaign); 
   };
 
   return (
@@ -31,7 +31,7 @@ const CampaignMap = ({ campaigns }) => {
             latitude={campaign.latitude}
             longitude={campaign.longitude}
             color="fuchsia"
-            onClick={() => handleMarkerClick(campaign)} // Maneja el clic en el marcador
+            onClick={() => handleMarkerClick(campaign)} 
           >
             {/* Solo muestra el popup para la campaña seleccionada */}
             {selectedCampaign && selectedCampaign.id === campaign.id && (
