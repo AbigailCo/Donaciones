@@ -14,7 +14,7 @@ const CategoryFilter = ({ categories, selectedCategories, setSelectedCategories 
 
     return (
         <Form.Group className="mb-4">
-            <h5>Filtrar por Categoría</h5>
+           
             {categories.map((category) => (
                 <Form.Check
                     key={category.id}
