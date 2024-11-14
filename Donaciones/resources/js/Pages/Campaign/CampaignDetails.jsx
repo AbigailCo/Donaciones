@@ -17,8 +17,9 @@ const CampaignDetails = () => {
   const [donations, setDonations] = useState([]);
 
   const totalDonado = donations.reduce((acc, donation) => acc + parseFloat(donation.amount), 0);
-  const metaAlcanzada = totalDonado >= campaign.goal;
-
+  const fechaActual = new Date();
+  const fechaFinalizacion = new Date(campaign.end_date); 
+  const estaCerrada = fechaActual > fechaFinalizacion;
 
   const getYouTubeId = (url) => {
     if (!url) return null;
@@ -152,37 +153,65 @@ const CampaignDetails = () => {
                 </Box>
 
                 {auth.user && auth.user.id !== campaign.user_id && (
-                  totalDonado < campaign.goal ? (
-                    <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                      <TextField
-                        label="Monto a donar"
-                        variant="filled"
-                        fullWidth
-                        value={donationAmount}
-                        onChange={(e) => setDonationAmount(e.target.value)}
-                      />
-                      <Button variant="contained" color="primary" fullWidth onClick={handleDonation}>
-                        Donar a esta campaña
-                      </Button>
-                    </Box>
-                  ) : (
+                  // Verificamos si la campaña ha cerrado o si ha alcanzado la meta
+
+
+
+                  estaCerrada ? (
                     <Typography
-                    variant="body1"
-                    align="center"
-                    sx={{
-                      background: 'linear-gradient(90deg, #4a90e2, #ff00d9)',
-                    border: 'none',
-                    color: '#000000',
-                    fontWeight: 'bold',
-                    padding: '10px 20px',
-                    borderRadius: '30px',
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    }}
-                  >
-                    ¡La meta ha sido alcanzada! Gracias por tu apoyo.
-                  </Typography>
-                  
+                      variant="body1"
+                      align="center"
+                      sx={{
+                        background: 'linear-gradient(90deg, #ff0000, #ff7043)', // Rojo para "cerrada"
+                        border: 'none',
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        padding: '10px 20px',
+                        borderRadius: '30px',
+                        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                        transition: 'transform 0.2s, box-shadow 0.2s',
+                      }}
+                    >
+                      ¡La campaña ha cerrado! Gracias por tu apoyo.
+                    </Typography>
+                  ) : (
+                    // Si la campaña no está cerrada, mostramos si aún se puede donar o si la meta ha sido alcanzada
+                    totalDonado < campaign.goal ? (
+                      <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <TextField
+                          label="Monto a donar"
+                          variant="filled"
+                          fullWidth
+                          value={donationAmount}
+                          onChange={(e) => setDonationAmount(e.target.value)}
+                        />
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          fullWidth
+                          onClick={handleDonation}
+                        >
+                          Donar a esta campaña
+                        </Button>
+                      </Box>
+                    ) : (
+                      <Typography
+                        variant="body1"
+                        align="center"
+                        sx={{
+                          background: 'linear-gradient(90deg, #4a90e2, #ff00d9)', // Colores para meta alcanzada
+                          border: 'none',
+                          color: '#000000',
+                          fontWeight: 'bold',
+                          padding: '10px 20px',
+                          borderRadius: '30px',
+                          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                          transition: 'transform 0.2s, box-shadow 0.2s',
+                        }}
+                      >
+                        ¡La meta ha sido alcanzada! Gracias por tu apoyo.
+                      </Typography>
+                    )
                   )
                 )}
 
