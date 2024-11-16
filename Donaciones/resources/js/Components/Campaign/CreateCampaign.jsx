@@ -10,6 +10,7 @@ import YouTubeLinkInput from "@/Components/YouTubeLinkInput";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MapboxMap from '@/Components/Campaign/MapboxMap';
 
 const CreateCampaign = () => {
   const {
@@ -26,6 +27,7 @@ const CreateCampaign = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
 
   useEffect(() => {
     // Cargar categorías desde el backend
@@ -51,7 +53,8 @@ const CreateCampaign = () => {
       formData.append("start_date", data.start_date);
       formData.append("end_date", data.end_date);
       formData.append("category_id", data.category_id);
-
+      formData.append("latitude", coordinates.latitude);
+      formData.append("longitude", coordinates.longitude);
       console.log("ESTOS SON LOS ARCHIVO? :", imageFiles);
 
       if (imageFiles) {
@@ -102,15 +105,6 @@ const CreateCampaign = () => {
   return (
     <div className="container-fluid px-4">
       <h1 className="mt-4 text-center">Crear Campaña</h1>
-      <ol className="breadcrumb mb-4">
-        <li className="breadcrumb-item">
-          <a href="/panel">Inicio</a>
-        </li>
-        <li className="breadcrumb-item">
-          <a href="/campaign">Campañas</a>
-        </li>
-        <li className="breadcrumb-item active">Crear campaña</li>
-      </ol>
 
       <Card>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -220,9 +214,17 @@ const CreateCampaign = () => {
                   setVideoLink={setVideoLink}
                 />
               </Col>
+              <div>
+              <MapboxMap setCoordinates={setCoordinates} />
+              </div>
+              <Col xs={12}>
+              
+              
+              </Col>
             </Row>
+           
           </Card.Body>
-
+         
           <Card.Footer className="text-center">
             <Button type="submit" variant="primary">
               Guardar

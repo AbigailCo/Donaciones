@@ -19,6 +19,8 @@ class Campaign extends Model
         'user_id',
         'youtube_link',
         'category_id',
+        'latitude',
+        'longitude',
     ];
 
     public function user()
