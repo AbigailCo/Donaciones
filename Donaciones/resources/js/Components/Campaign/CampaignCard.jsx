@@ -24,16 +24,16 @@ const CampaignCard = ({ campaign }) => {
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
-        try {
-            const response = await axios.get(`/favorites/${campaign.id}`);
-            setIsFavorite(response.data.isFavorite);
-        } catch (error) {
-            console.error("Error fetching favorite status:", error);
-        }
+      try {
+        const response = await axios.get(`/favorites/${campaign.id}`);
+        setIsFavorite(response.data.isFavorite);
+      } catch (error) {
+        console.error("Error fetching favorite status:", error);
+      }
     };
 
     fetchFavoriteStatus();
-}, [campaign.id]);;
+  }, [campaign.id]);
   const handleToggleFavorite = (newStatus) => {
     setIsFavorite(newStatus);
   };

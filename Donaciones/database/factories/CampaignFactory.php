@@ -8,8 +8,6 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class CampaignFactory extends Factory
 {
@@ -17,29 +15,77 @@ class CampaignFactory extends Factory
 
     public function definition()
     {
-        // Coordenadas de ejemplo
-        $latitude = 40.730610;  // Latitud de Nueva York
-        $longitude = -73.935242; // Longitud de Nueva York
+        // Coordenadas aleatorias en Argentina
+        $latitude = $this->faker->latitude(-55, -22); // Latitud dentro de Argentina
+        $longitude = $this->faker->longitude(-73, -53); // Longitud dentro de Argentina
 
-        // Llamada a la API de Google Maps para obtener la dirección
-        $address = $this->getAddressFromCoordinates($latitude, $longitude);
+        // Relacionar títulos, descripciones y videos con categorías
+        $categories = [
+            'salud' => [
+                'title' => ['Campaña de vacunación', 'Donaciones para hospital'],
+                'description' => [
+                    'Apoya nuestra campaña de vacunación en comunidades rurales.',
+                    'Ayuda a recaudar fondos para equipar el hospital regional.'
+                ],
+                'youtube_links' => [
+                    'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Ejemplo
+                    'https://www.youtube.com/watch?v=3JZ_D3ELwOQ'
+                ],
+            ],
+            'tecnología' => [
+                'title' => ['Educación digital', 'Laboratorio de innovación'],
+                'description' => [
+                    'Promovemos la educación digital en escuelas públicas.',
+                    'Recaudamos fondos para un laboratorio de innovación tecnológica.'
+                ],
+                'youtube_links' => [
+                    'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
+                    'https://www.youtube.com/watch?v=ktvTqknDobU'
+                ],
+            ],
+            'educación' => [
+                'title' => ['Materiales escolares', 'Programa de becas'],
+                'description' => [
+                    'Brindamos materiales escolares a niños de bajos recursos.',
+                    'Apoya nuestro programa de becas para jóvenes talentosos.'
+                ],
+                'youtube_links' => [
+                    'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'https://www.youtube.com/watch?v=J---aiyznGQ'
+                ],
+            ],
+            'medio ambiente' => [
+                'title' => ['Reforestación', 'Protección de fauna'],
+                'description' => [
+                    'Únete a nuestra campaña de reforestación de bosques nativos.',
+                    'Recaudamos fondos para proteger especies en peligro de extinción.'
+                ],
+                'youtube_links' => [
+                    'https://www.youtube.com/watch?v=fRh_vgS2dFE',
+                    'https://www.youtube.com/watch?v=60ItHLz5WEA'
+                ],
+            ],
+        ];
+
+        // Seleccionar una categoría aleatoria
+        $selectedCategory = $this->faker->randomElement(array_keys($categories));
+        $categoryData = $categories[$selectedCategory];
 
         return [
-            'title' => $this->faker->sentence,
-            'description' => $this->faker->text,
+            'title' => $this->faker->randomElement($categoryData['title']),
+            'description' => $this->faker->randomElement($categoryData['description']),
             'goal' => $this->faker->numberBetween(1000, 50000),
             'start_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'end_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'user_id' => User::factory(), // Asocia una campaña a un usuario
-            'youtube_link' => $this->faker->optional()->url, // Link de YouTube opcional
+            'youtube_link' => $this->faker->randomElement($categoryData['youtube_links']), // Video aleatorio
             'category_id' => Category::inRandomOrder()->first()?->id, // Asignar una categoría aleatoria si existe
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'address' => $address, // Guardar la dirección
+            'address' => 'Argentina', // Usar una dirección genérica para simplificar
         ];
     }
 
-    // Generar múltiples imágenes para la campaña
     public function configure()
     {
         return $this->afterCreating(function (Campaign $campaign) {
@@ -48,7 +94,6 @@ class CampaignFactory extends Factory
                 $images = File::files($imageDirectory);
 
                 if (!empty($images)) {
-                    // Limitar a 3 imágenes como máximo
                     $randomImages = $this->faker->randomElements($images, min(3, count($images)));
 
                     foreach ($randomImages as $image) {
@@ -61,27 +106,5 @@ class CampaignFactory extends Factory
                 }
             }
         });
-    }
-
-    // Método para obtener la dirección a partir de las coordenadas usando la API de Google Maps
-    protected function getAddressFromCoordinates($latitude, $longitude)
-    {
-        $apiKey = env('GOOGLE_MAPS_API_KEY'); // Asegúrate de tener tu clave de API en el archivo .env
-
-        // Llamada a la API de Google Maps para obtener la dirección
-        $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
-            'latlng' => "{$latitude},{$longitude}",
-            'key' => $apiKey
-        ]);
-
-        // Verificar si la respuesta es exitosa y registrar la respuesta para depuración
-        Log::info('Respuesta de Google Maps:', $response->json());
-
-        if ($response->successful() && isset($response['results'][0]['formatted_address'])) {
-            return $response['results'][0]['formatted_address'];
-        }
-
-        // Si no se encuentra una dirección, devolver 'Dirección desconocida'
-        return 'Dirección desconocida';
     }
 }

@@ -17,6 +17,7 @@ import CarouselComponent from "../../Components/Campaign/CarouselComponent";
 import ProgressChart from "../../Components/Campaign/ProgressChart";
 import CampaignComments from "../../Components/Campaign/CampaignComments";
 import MapCampaign from "@/Components/Campaign/MapCampaign";
+import FavoriteButton from '@/Components/Campaign/FavoriteButton';
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -24,6 +25,7 @@ const CampaignDetails = () => {
   const [error, setError] = useState(null);
   const [donationAmount, setDonationAmount] = useState("");
   const [donations, setDonations] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const totalDonado = donations.reduce(
     (acc, donation) => acc + parseFloat(donation.amount),
@@ -112,6 +114,21 @@ const CampaignDetails = () => {
   const handleEditClick = () => {
     router.visit(`/edit-campaign/${campaign.id}`);
   };
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      try {
+        const response = await axios.get(`/favorites/${campaign.id}`);
+        setIsFavorite(response.data.isFavorite);
+      } catch (error) {
+        console.error("Error fetching favorite status:", error);
+      }
+    };
+
+    fetchFavoriteStatus();
+  }, [campaign.id]);
+  const handleToggleFavorite = (newStatus) => {
+    setIsFavorite(newStatus);
+  };
 
   // Ajustes de estilo de contenedor
   const containerStyle = {
@@ -137,9 +154,9 @@ const CampaignDetails = () => {
       width: 300,
       boxSizing: "border-box",
       padding: "20px",
-      marginTop: "108px", 
+      marginTop: "108px",
       height: "calc(100vh - 100px)",
-      overflow: "auto",   
+      overflow: "auto",
     },
   };
   return (
@@ -150,13 +167,12 @@ const CampaignDetails = () => {
             {/* Panel Lateral */}
             <Drawer
               sx={drawerStyle}
-              variant="persistent"
+              variant="permanent"
               anchor="left"
-              open={open}
             >
-              
+
               <div>
-              <Box
+                <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -190,11 +206,39 @@ const CampaignDetails = () => {
                       {new Date(campaign.end_date).toLocaleDateString("es-ES")}
                     </Typography>
                   </Box>
+
                 </Box>
-              <ProgressChart campaign={campaign} donations={donations} />
+                {auth.user && auth.user.id !== campaign.user_id && (
+                <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  color: 'black',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  borderColor: '#f6ff00',
+                  boxShadow: 3,
+                  maxWidth: '250px', 
+                  margin: 'auto', 
+                   // Agrega la animación de parpadeo
+                }}
+              >
+                <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+                  Agregar a favoritos
+                </Typography>
+                <FavoriteButton
+                  campaignId={campaign.id}
+                  isFavorite={isFavorite}
+                  onToggle={handleToggleFavorite}
+                  
+                />
+              </Box>
+                )}
+                <ProgressChart campaign={campaign} donations={donations} />
               </div>
-              
-              
+
+
             </Drawer>
             <Card sx={cardStyle}>
               <CarouselComponent images={campaign.images} />
@@ -214,7 +258,7 @@ const CampaignDetails = () => {
                 >
                   {campaign.description}
                 </Typography>
-               
+
 
                 {auth.user &&
                   auth.user.id !== campaign.user_id &&

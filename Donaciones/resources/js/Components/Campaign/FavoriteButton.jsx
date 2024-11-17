@@ -37,6 +37,9 @@ const FavoriteButton = ({ campaignId, isFavorite, onToggle }) => {
                     transition: 'color 0.3s',
                     padding: '10px',
                 }}
+                sx={{
+                    animation: 'blinkEffect 1s infinite', // Aplica la animación al botón también
+                  }}
             >
                 {loading ? (
                     <CircularProgress size={24} color="primary" />

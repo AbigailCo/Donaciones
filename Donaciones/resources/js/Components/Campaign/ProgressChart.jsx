@@ -6,18 +6,14 @@ const ProgressChart = ({ campaign, donations }) => {
     const totalDonado = donations.reduce((acc, donation) => acc + parseFloat(donation.amount), 0);
     const porcentajeProgreso = (totalDonado / campaign.goal) * 100;
 
-    // Si el total donado excede la meta, ajustamos el faltante a 0
     const faltante = totalDonado >= campaign.goal ? 0 : campaign.goal - totalDonado;
 
-    // Datos para el gráfico
     const data = [
         { name: 'Donado $', value: totalDonado },
         { name: 'Faltante $', value: faltante },
     ];
 
-    // Colores para el gráfico
-    const COLORS = ['#4CAF50', '#FF7043']; // Verde para donado, rojo para faltante
-    const progressColor = porcentajeProgreso >= 100 ? '#4CAF50' : '#FF7043'; // Si es 100% o mayor, todo verde
+    const COLORS = ['#4CAF50', '#FF7043']; // Verde para Donado, Rojo para Faltante
 
     return (
         <Card sx={{ mt: 4, boxShadow: 3, borderRadius: 2 }}>
@@ -40,7 +36,7 @@ const ProgressChart = ({ campaign, donations }) => {
                                 {data.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
-                                        fill={index === 0 ? progressColor : COLORS[index % COLORS.length]} // Cambiar el color al 100% verde
+                                        fill={COLORS[index]} // Aseguramos que los colores sean consistentes
                                     />
                                 ))}
                             </Pie>
@@ -48,7 +44,6 @@ const ProgressChart = ({ campaign, donations }) => {
                         </PieChart>
                     </ResponsiveContainer>
 
-                    {/* Mostrar el porcentaje en el centro del gráfico */}
                     <Typography
                         variant="h6"
                         sx={{
@@ -60,9 +55,7 @@ const ProgressChart = ({ campaign, donations }) => {
                         {porcentajeProgreso >= 100 ? '100' : porcentajeProgreso.toFixed(1)}%
                     </Typography>
                 </Box>
-                
 
-                {/* Mostrar total donado */}
                 <Typography
                     variant="body1"
                     sx={{
