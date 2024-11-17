@@ -57,7 +57,7 @@ const ProgressChart = ({ campaign, donations }) => {
                             color: porcentajeProgreso >= 100 ? 'primary.main' : 'text.secondary',
                         }}
                     >
-                        {porcentajeProgreso >= 100 ? '100%' : porcentajeProgreso.toFixed(1)}%
+                        {porcentajeProgreso >= 100 ? '100' : porcentajeProgreso.toFixed(1)}%
                     </Typography>
                 </Box>
                 

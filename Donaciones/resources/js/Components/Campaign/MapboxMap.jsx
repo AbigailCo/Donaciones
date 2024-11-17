@@ -43,6 +43,11 @@ const MapboxMap = ({ setCoordinates }) => {
 
   return (
     <div>
+         <h2 className="text-2xl font-semibold text-center text-blue-600 mt-6 mb-4">
+  <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
+   Arrastra el marcador hasta la ubicacion
+  </span>
+</h2>
       <div
         ref={mapContainerRef}
         style={{ width: "100%", height: "300px", marginBottom: "20px" }}
