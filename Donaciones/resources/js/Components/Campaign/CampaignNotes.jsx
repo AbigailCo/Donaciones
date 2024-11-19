@@ -28,8 +28,7 @@ const CampaignNotes = ({ campaignId }) => {
             <CardContent>
               <Typography variant="body1">{note.content}</Typography>
               <Typography variant="body2" color="text.secondary">
-                <strong>Actualizacion </strong> {note.id}
-                <strong>:</strong> {note.note}
+                <strong>Actualización: </strong> {note.note}
               </Typography>
             </CardContent>
           </Card>

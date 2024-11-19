@@ -17,6 +17,7 @@ use App\Notifications\DonationReceived;
 use Illuminate\Support\Facades\Mail; 
 use App\Mail\CampaignUpdateNotification; 
 use App\Models\Note;
+use App\Notifications\CampaignUpdated;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 class CampaignController extends Controller
@@ -309,7 +310,6 @@ class CampaignController extends Controller
     ]);
     Log::info("Nota validada correctamente.");
 
-
     $campaign = Campaign::findOrFail($id);
 
     // Verifico que el usuario es el creador de la campaña
@@ -331,22 +331,8 @@ class CampaignController extends Controller
         $donor = User::find($donorId);
 
         if ($donor) {
-            // Creo el mensaje de la notificación
-            $notificationMessage = [
-                'message' => "La campaña '{$campaign->title}' ha sido actualizada con una nueva nota: '{$note->note}'.",
-                'note_content' => $note->note,
-                'campaign_title' => $campaign->title,
-            ];
-
-            // Envio notificación al donante
-            $donor->notify(new DonationReceived($note->note, $campaign->title));
-
-            // Envio el correo al donante
-            try {
-                Mail::to($donor->email)->send(new CampaignUpdateNotification($campaign, $note));
-            } catch (\Exception $e) {
-                Log::error('Error al enviar correo: ' . $e->getMessage());
-            }
+            // Envio notificación al donante (correo y base de datos)
+            $donor->notify(new CampaignUpdated($note, $campaign->title));
         }
     }
 
