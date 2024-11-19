@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Donation;
 use App\Models\User;
 use App\Models\Campaign;
-use App\Notifications\DonationReceived; // Asegúrate de tener esta importación
-use Illuminate\Support\Facades\Mail; // Asegúrate de tener esta importación
-use App\Mail\CampaignUpdateNotification; // Asegúrate de tener esta importación
+use App\Notifications\DonationReceived; 
+use Illuminate\Support\Facades\Mail; 
+use App\Mail\CampaignUpdateNotification; 
 use Illuminate\Support\Facades\Log; 
 
 class DonationController extends Controller

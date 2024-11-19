@@ -131,6 +131,9 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/campaigns/{campaign}/comments', [CommentController::class, 'index']);
 Route::post('/comments', [CommentController::class, 'store']);
+Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);
+Route::get('/campaigns/{campaign_id}/notes', [CampaignController::class, 'getNotes']);
+
 
 //prueba de ruta
 Route::get('/test', function () {

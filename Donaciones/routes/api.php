@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/campaigns', [CampaignController::class, 'store']);
     Route::get('/categories', [CategoryController::class, 'index']);
@@ -34,12 +31,11 @@ Route::middleware('auth:sanctum')->get('/api/notifications', function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/campaigns', [CampaignController::class, 'store']);
     Route::get('/categories', [CategoryController::class, 'index']);
+    //Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);
+
     
-    // Mantén solo esta línea para las notificaciones
-  //  Route::get('/notifications', [NotificationController::class, 'getNotifications']); 
 });
 
 Route::post('/create-payment', [MercadoPagoController::class, 'createPayment']);
 Route::get('/campaigns/search', [CampaignController::class, 'search']);
-
-
+//Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);

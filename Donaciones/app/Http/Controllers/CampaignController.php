@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use App\Notifications\DonationReceived; 
+use Illuminate\Support\Facades\Mail; 
+use App\Mail\CampaignUpdateNotification; 
+use App\Models\Note;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 class CampaignController extends Controller
@@ -213,23 +217,6 @@ class CampaignController extends Controller
         ]);
     }
 
-    //YA NO USAMOS MAS ESTA FUNCION toda la logica la cambie a la funcion show
-    /* public function showMyCampaignDetails($id)
-{
-    $userId = auth()->id();
-    $campaign = Campaign::where('id', $id)
-        ->where('user_id', $userId)
-        ->with(['images', 'category']) // Asegúrate de cargar las imágenes aquí
-        ->first();
-
-    if (!$campaign) {
-        return redirect()->route('myCampaigns')->with('error', 'Campaña no encontrada o no tienes permiso para verla.');
-    }
-
-    return Inertia::render('Campaign/MyCampaignDetails', [
-        'campaign' => $campaign
-    ]);
-} */
 
 
     public function createPaymentPreference(Request $request, $id)
@@ -312,6 +299,66 @@ class CampaignController extends Controller
 
         return response()->json($campaigns);
     }
+
+
+    public function addNote(Request $request, $id)
+{
+    Log::info("Endpoint alcanzado para la campaña: {$id}");
+    $validated = $request->validate([
+        'note' => 'required|string|max:5000',
+    ]);
+    Log::info("Nota validada correctamente.");
+
+
+    $campaign = Campaign::findOrFail($id);
+
+    // Verifico que el usuario es el creador de la campaña
+    if (auth()->id() !== $campaign->user_id) {
+        abort(403, 'No tienes permiso para agregar notas a esta campaña.');
+    }
+
+    // Creo la nota
+    $note = $campaign->notes()->create([
+        'note' => $validated['note'],
+    ]);
+
+    // Obtengo todos los donantes de la campaña
+    $donors = Donation::where('campaign_id', $campaign->id)
+        ->distinct()
+        ->pluck('user_id'); // Obtengo los IDs únicos de los donantes
+
+    foreach ($donors as $donorId) {
+        $donor = User::find($donorId);
+
+        if ($donor) {
+            // Creo el mensaje de la notificación
+            $notificationMessage = [
+                'message' => "La campaña '{$campaign->title}' ha sido actualizada con una nueva nota: '{$note->note}'.",
+                'note_content' => $note->note,
+                'campaign_title' => $campaign->title,
+            ];
+
+            // Envio notificación al donante
+            $donor->notify(new DonationReceived($note->note, $campaign->title));
+
+            // Envio el correo al donante
+            try {
+                Mail::to($donor->email)->send(new CampaignUpdateNotification($campaign, $note));
+            } catch (\Exception $e) {
+                Log::error('Error al enviar correo: ' . $e->getMessage());
+            }
+        }
+    }
+
+    return response()->json(['message' => 'Nota agregada y notificaciones enviadas'], 200);
+}
+
+public function getNotes($campaign_id)
+{
+    $notes = Note::where('campaign_id', $campaign_id)->get();
+
+    return response()->json($notes);
+}
 
 
     

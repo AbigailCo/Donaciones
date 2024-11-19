@@ -18,6 +18,7 @@ import ProgressChart from "../../Components/Campaign/ProgressChart";
 import CampaignComments from "../../Components/Campaign/CampaignComments";
 import MapCampaign from "@/Components/Campaign/MapCampaign";
 import FavoriteButton from '@/Components/Campaign/FavoriteButton';
+import CampaignNotes from "../../Components/Campaign/CampaignNotes";
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -327,7 +328,8 @@ const CampaignDetails = () => {
                     ))}
 
                 {error && <Typography color="error">{error}</Typography>}
-
+                {/* Aquí se agrega el componente CampaignNotes */}
+                <CampaignNotes campaignId={campaign.id} />
                 <CampaignComments campaign={campaign} currentUser={auth.user} />
                 <CampaignVideo youtubeId={youtubeId} />
                 <MapCampaign campaign={campaign} />

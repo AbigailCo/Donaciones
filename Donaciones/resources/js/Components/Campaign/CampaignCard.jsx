@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
 import { usePage, router } from "@inertiajs/react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { Link } from "@inertiajs/react";
@@ -18,8 +19,39 @@ const CampaignCard = ({ campaign }) => {
   const youtubeId = getYouTubeId(campaign.youtube_link);
   const [isFavorite, setIsFavorite] = useState(false);
 
+  // Estado para el popup
+  const [showModal, setShowModal] = useState(false);
+  const [note, setNote] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleEditClick = () => {
     router.visit(`/edit-campaign/${campaign.id}`);
+  };
+
+  // Manejar abrir/cerrar el modal
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleSubmitNote = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await axios.post(
+        `/campaigns/${campaign.id}/notes`,
+        { note },
+        { withCredentials: true } 
+        //  credenciales
+    );
+      alert("Nota agregada exitosamente");
+      setNote(""); // Limpiar el formulario
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error al agregar la nota:", error);
+      alert("Error al agregar la nota.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -34,9 +66,11 @@ const CampaignCard = ({ campaign }) => {
 
     fetchFavoriteStatus();
   }, [campaign.id]);
+
   const handleToggleFavorite = (newStatus) => {
     setIsFavorite(newStatus);
   };
+
   return (
     <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
       <Carousel>
@@ -95,10 +129,45 @@ const CampaignCard = ({ campaign }) => {
         />
       )}
       {auth.user && auth.user.id === campaign.user_id && (
-        <button onClick={handleEditClick} className="btn btn-primary">
-          Editar campaña
-        </button>
+        <>
+          <button onClick={handleEditClick} className="btn btn-primary">
+            Editar campaña
+          </button>
+          <button onClick={handleShowModal} className="btn btn-secondary">
+            Agregar nota
+          </button>
+        </>
       )}
+
+      {/* Modal para agregar nota */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Nota</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitNote}>
+            <Form.Group controlId="formNote">
+              <Form.Label>Nota</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Escribe una actualización..."
+                required
+              />
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-3"
+            >
+              {isSubmitting ? "Enviando..." : "Agregar Nota"}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Card>
   );
 };
