@@ -52,4 +52,9 @@ class Campaign extends Model
     {
         return $this->belongsToMany(User::class, 'favorites');
     }
+    
+    public function notes()
+{
+    return $this->hasMany(Note::class);
+}
 }

@@ -208,11 +208,11 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <YouTubeLinkInput
-                  register={register}
-                  errors={errors}
-                  setVideoLink={setVideoLink}
-                />
+              <YouTubeLinkInput
+  register={register}
+  errors={errors}
+  setVideoLink={setVideoLink}
+/>
               </Col>
               <div>
               <MapboxMap setCoordinates={setCoordinates} />

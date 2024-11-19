@@ -11,9 +11,10 @@ const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
 
   const handleLinkChange = (e) => {
     const link = e.target.value;
-    if (validateYouTubeUrl(link)) {
+    if (link === '' || validateYouTubeUrl(link)) {
+      // Si el enlace está vacío o es válido, es aceptable
       setIsValidLink(true);
-      setVideoLink(link); // Guardar el enlace válido en el padre
+      setVideoLink(link);
     } else {
       setIsValidLink(false);
     }
@@ -24,15 +25,22 @@ const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
       <Form.Label>Link del video de YouTube:</Form.Label>
       <Form.Control
         type="text"
-        {...register('video', { required: 'Este campo es obligatorio' })} // Registrar el campo
+        {...register('video', {
+          pattern: {
+            value: /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/,
+            message: 'Por favor ingresa un enlace de YouTube válido',
+          },
+        })}
         onChange={handleLinkChange}
         isInvalid={!isValidLink || !!errors.video}
         placeholder="https://www.youtube.com/..."
       />
       <Form.Control.Feedback type="invalid">
-        {errors.video && 'Por favor ingresa un enlace de YouTube válido'}
+      {errors.video?.message}
       </Form.Control.Feedback>
-      {!isValidLink && <div className="text-danger">Enlace de YouTube no válido</div>}
+      {!isValidLink && e.target.value !== '' && (
+  <div className="text-danger">Enlace de YouTube no válido</div>
+)}
     </Form.Group>
   );
 };
