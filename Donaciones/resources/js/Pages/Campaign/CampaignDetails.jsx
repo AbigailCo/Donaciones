@@ -28,6 +28,7 @@ const CampaignDetails = () => {
   const [donations, setDonations] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
+
   const totalDonado = donations.reduce(
     (acc, donation) => acc + parseFloat(donation.amount),
     0

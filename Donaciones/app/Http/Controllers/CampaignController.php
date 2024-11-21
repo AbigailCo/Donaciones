@@ -133,6 +133,11 @@ class CampaignController extends Controller
                     'path' => $imageName, // Guardar el nombre de la imagen
                 ]);
             }
+        }else {
+            // Asignar imagen por defecto
+            $campaign->images()->create([
+                'path' => 'defecto.jpg', // Nombre de la imagen por defecto
+            ]);
         }
 
         return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
