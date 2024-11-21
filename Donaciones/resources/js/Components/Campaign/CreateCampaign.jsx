@@ -1,5 +1,3 @@
-//a este jsx lo incluye el jsx que esta en \resources\js\Pages\Campaign\CreateCampaign.jsx
-
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -21,19 +19,16 @@ const CreateCampaign = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  /*  const [imagePreviews, setImagePreviews] = useState([]); */
-  
-  const [videoLink, setVideoLink] = useState(""); // Agregar el estado para el enlace de video
+  const [videoLink, setVideoLink] = useState(""); 
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
 
   useEffect(() => {
-    // Cargar categorías desde el backend
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/categories"); // Ajusta la URL según tu configuración
+        const response = await axios.get("/categories"); 
         setCategories(response.data);
       } catch (error) {
         console.error("Error al cargar categorías", error);
@@ -42,9 +37,18 @@ const CreateCampaign = () => {
 
     fetchCategories();
   }, []);
+
   const onSubmit = async (data) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+
+    // Verificar si las coordenadas están presentes
+    if (!coordinates.latitude || !coordinates.longitude) {
+      toast.error("Elegir una ubicacion en el mapa es obligatorio.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append("title", data.title);
@@ -55,22 +59,15 @@ const CreateCampaign = () => {
       formData.append("category_id", data.category_id);
       formData.append("latitude", coordinates.latitude);
       formData.append("longitude", coordinates.longitude);
-      console.log("ESTOS SON LOS ARCHIVO? :", imageFiles);
 
       if (imageFiles) {
         imageFiles.forEach((image) => {
-          formData.append("images[]", image); // 'images[]' para el backend
+          formData.append("images[]", image); 
         });
       }
 
-      // Agregar el enlace de video al FormData
       if (videoLink) {
         formData.append("youtube_link", videoLink);
-      }
-      // Log para ver los datos
-      // Imprime el contenido de FormData
-      for (var pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
       }
 
       const response = await axios.post("/api/campaigns", formData, {
@@ -79,15 +76,15 @@ const CreateCampaign = () => {
         },
       });
 
-      if (response.status === 200) { // Verificar si la respuesta fue exitosa
+      if (response.status === 200) {
         toast.success("Campaña creada exitosamente");
         reset();
         setImageFiles([]);
         setVideoLink("");
         setTimeout(() => {
           navigate("/my-campaigns");
-          window.location.reload();  // Esto forzará una recarga de la página
-      }, 2000);
+          window.location.reload();
+        }, 2000);
       } else {
         throw new Error("Error desconocido en la creación de la campaña");
       }
@@ -98,7 +95,7 @@ const CreateCampaign = () => {
         toast.error("Error al crear la campaña");
       }
     } finally {
-      setIsSubmitting(false); // Liberar el botón de envío
+      setIsSubmitting(false);
     }
   };
 
@@ -121,13 +118,12 @@ const CreateCampaign = () => {
                   {errors.title?.message}
                 </Form.Control.Feedback>
               </Col>
+
               <Col md={6}>
                 <Form.Label>Categoría:</Form.Label>
                 <Form.Control
                   as="select"
-                  {...register("category_id", {
-                    required: "La categoría es requerida",
-                  })}
+                  {...register("category_id", { required: "La categoría es requerida" })}
                   isInvalid={!!errors.category_id}
                 >
                   <option value="">Selecciona una categoría</option>
@@ -141,14 +137,13 @@ const CreateCampaign = () => {
                   {errors.category_id?.message}
                 </Form.Control.Feedback>
               </Col>
+
               <Col xs={12}>
                 <Form.Label>Descripción:</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  {...register("description", {
-                    required: "Descripción es requerida",
-                  })}
+                  {...register("description", { required: "Descripción es requerida" })}
                   isInvalid={!!errors.description}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -173,9 +168,7 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de inicio:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register("start_date", {
-                    required: "Fecha de inicio es requerida",
-                  })}
+                  {...register("start_date", { required: "Fecha de inicio es requerida" })}
                   isInvalid={!!errors.start_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -187,9 +180,7 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de finalización:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register("end_date", {
-                    required: "Fecha de finalización es requerida",
-                  })}
+                  {...register("end_date", { required: "Fecha de finalización es requerida" })}
                   isInvalid={!!errors.end_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -198,33 +189,21 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <ImageUpload
-                  register={register}
-                  errors={errors}
-                  /* setImagePreviews={setImagePreviews} */ setImageFiles={
-                    setImageFiles
-                  }
-                />
+                <ImageUpload register={register} errors={errors} setImageFiles={setImageFiles} />
               </Col>
 
               <Col md={6}>
-              <YouTubeLinkInput
-  register={register}
-  errors={errors}
-  setVideoLink={setVideoLink}
-/>
+                <YouTubeLinkInput register={register} errors={errors} setVideoLink={setVideoLink} />
               </Col>
+
               <div>
-              <MapboxMap setCoordinates={setCoordinates} />
+                <MapboxMap setCoordinates={setCoordinates} />
               </div>
-              <Col xs={12}>
-              
-              
-              </Col>
+
+              <Col xs={12}></Col>
             </Row>
-           
           </Card.Body>
-         
+
           <Card.Footer className="text-center">
             <Button type="submit" variant="primary">
               Guardar
