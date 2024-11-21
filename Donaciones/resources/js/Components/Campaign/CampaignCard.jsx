@@ -4,7 +4,8 @@ import { usePage, router } from "@inertiajs/react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { Link } from "@inertiajs/react";
 import Carousel from "react-bootstrap/Carousel";
-import CampaignVideo from "./CampaignVideo";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import FavoriteButton from './FavoriteButton';
 
 const getYouTubeId = (url) => {
@@ -40,15 +41,15 @@ const CampaignCard = ({ campaign }) => {
       await axios.post(
         `/campaigns/${campaign.id}/notes`,
         { note },
-        { withCredentials: true } 
+        { withCredentials: true }
         //  credenciales
-    );
-      alert("Nota agregada exitosamente");
+      );
+      toast.success("Nota guardada exitosamente");
       setNote(""); // Limpiar el formulario
       handleCloseModal();
     } catch (error) {
       console.error("Error al agregar la nota:", error);
-      alert("Error al agregar la nota.");
+      toast.error("La nota no fue creada");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,6 +74,7 @@ const CampaignCard = ({ campaign }) => {
 
   return (
     <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
+      <ToastContainer />
       <Carousel>
         {Array.isArray(campaign.images) && campaign.images.length > 0 ? (
           campaign.images.map((image, index) => (
