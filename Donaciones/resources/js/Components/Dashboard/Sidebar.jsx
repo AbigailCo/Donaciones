@@ -5,6 +5,7 @@ import CreatePanel from "../Campaign/CreatePanel";
 import CampaignPanel from "../Campaign/CardPanel";
 import MyCampPanel from "../Campaign/MyCampPanel";
 import MyFavPanel from "../Campaign/MyFavPanel";
+import EstadisticasPanel from "../Campaign/EstadisticasPanel";
 
 const Sidebar = ({ auth }) => {
   return (
@@ -31,6 +32,11 @@ const Sidebar = ({ auth }) => {
 
             <MyCampPanel />
             <MyFavPanel />
+
+            <div className="sb-sidenav-menu-heading text-white text-xl font-semibold mt-6">
+              Generales
+            </div>
+           <EstadisticasPanel/>
           </div>
         </div>
         <div className="sb-sidenav-footer bg-blue-800 p-4 text-white mt-auto">

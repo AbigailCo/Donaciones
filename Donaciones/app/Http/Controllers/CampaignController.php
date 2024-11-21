@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CampaignUpdateNotification;
 use App\Models\Campaign;
 use App\Models\Category;
 use App\Models\Donation;
+use App\Models\Note;
 use App\Models\User;
+use App\Notifications\CampaignUpdated;
+use App\Notifications\DonationReceived;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use App\Notifications\DonationReceived; 
-use Illuminate\Support\Facades\Mail; 
-use App\Mail\CampaignUpdateNotification; 
-use App\Models\Note;
-use App\Notifications\CampaignUpdated;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 class CampaignController extends Controller
@@ -90,62 +91,62 @@ class CampaignController extends Controller
 
 
     public function store(Request $request)
-{
-    // Validación
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'goal' => 'required|numeric|min:1',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
-        'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
-        'category_id' => 'required|exists:categories,id',
-        'latitude' => 'required|numeric', // Validación para la latitud
-        'longitude' => 'required|numeric', // Validación para la longitud
-    ]);
-
-    // Asignar el ID del usuario a la campaña
-    $validated['user_id'] = Auth::id();
-
-    try {
-        // Crear la campaña con las coordenadas
-        $campaign = Campaign::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'goal' => $validated['goal'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
-            'category_id' => $validated['category_id'],
-            'latitude' => $validated['latitude'], // Guardar latitud
-            'longitude' => $validated['longitude'], // Guardar longitud
-            'user_id' => $validated['user_id'],
+    {
+        // Validación
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'goal' => 'required|numeric|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
+            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+            'category_id' => 'required|exists:categories,id',
+            'latitude' => 'required|numeric', // Validación para la latitud
+            'longitude' => 'required|numeric', // Validación para la longitud
         ]);
 
-        // Si se suben imágenes, guardarlas
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('images', 'public');
-                $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+        // Asignar el ID del usuario a la campaña
+        $validated['user_id'] = Auth::id();
 
+        try {
+            // Crear la campaña con las coordenadas
+            $campaign = Campaign::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'goal' => $validated['goal'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
+                'category_id' => $validated['category_id'],
+                'latitude' => $validated['latitude'], // Guardar latitud
+                'longitude' => $validated['longitude'], // Guardar longitud
+                'user_id' => $validated['user_id'],
+            ]);
+
+            // Si se suben imágenes, guardarlas
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('images', 'public');
+                    $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+
+                    $campaign->images()->create([
+                        'path' => $imageName, // Guardar el nombre de la imagen
+                    ]);
+                }
+            } else {
+                // Asignar imagen por defecto
                 $campaign->images()->create([
-                    'path' => $imageName, // Guardar el nombre de la imagen
+                    'path' => 'defecto.jpg', // Nombre de la imagen por defecto
                 ]);
             }
-        }else {
-            // Asignar imagen por defecto
-            $campaign->images()->create([
-                'path' => 'defecto.jpg', // Nombre de la imagen por defecto
-            ]);
-        }
 
-        return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
-    } catch (\Exception $e) {
-        Log::error('Error creando la campaña: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error al crear la campaña');
+            return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
+        } catch (\Exception $e) {
+            Log::error('Error creando la campaña: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear la campaña');
+        }
     }
-}
 
 
 
@@ -308,49 +309,68 @@ class CampaignController extends Controller
 
 
     public function addNote(Request $request, $id)
-{
-    Log::info("Endpoint alcanzado para la campaña: {$id}");
-    $validated = $request->validate([
-        'note' => 'required|string|max:5000',
-    ]);
-    Log::info("Nota validada correctamente.");
+    {
+        Log::info("Endpoint alcanzado para la campaña: {$id}");
+        $validated = $request->validate([
+            'note' => 'required|string|max:5000',
+        ]);
+        Log::info("Nota validada correctamente.");
 
-    $campaign = Campaign::findOrFail($id);
+        $campaign = Campaign::findOrFail($id);
 
-    // Verifico que el usuario es el creador de la campaña
-    if (auth()->id() !== $campaign->user_id) {
-        abort(403, 'No tienes permiso para agregar notas a esta campaña.');
-    }
-
-    // Creo la nota
-    $note = $campaign->notes()->create([
-        'note' => $validated['note'],
-    ]);
-
-    // Obtengo todos los donantes de la campaña
-    $donors = Donation::where('campaign_id', $campaign->id)
-        ->distinct()
-        ->pluck('user_id'); // Obtengo los IDs únicos de los donantes
-
-    foreach ($donors as $donorId) {
-        $donor = User::find($donorId);
-
-        if ($donor) {
-            // Envio notificación al donante (correo y base de datos)
-            $donor->notify(new CampaignUpdated($note, $campaign->title));
+        // Verifico que el usuario es el creador de la campaña
+        if (auth()->id() !== $campaign->user_id) {
+            abort(403, 'No tienes permiso para agregar notas a esta campaña.');
         }
+
+        // Creo la nota
+        $note = $campaign->notes()->create([
+            'note' => $validated['note'],
+        ]);
+
+        // Obtengo todos los donantes de la campaña
+        $donors = Donation::where('campaign_id', $campaign->id)
+            ->distinct()
+            ->pluck('user_id'); // Obtengo los IDs únicos de los donantes
+
+        foreach ($donors as $donorId) {
+            $donor = User::find($donorId);
+
+            if ($donor) {
+                // Envio notificación al donante (correo y base de datos)
+                $donor->notify(new CampaignUpdated($note, $campaign->title));
+            }
+        }
+
+        return response()->json(['message' => 'Nota agregada y notificaciones enviadas'], 200);
     }
 
-    return response()->json(['message' => 'Nota agregada y notificaciones enviadas'], 200);
-}
+    public function getNotes($campaign_id)
+    {
+        $notes = Note::where('campaign_id', $campaign_id)->get();
 
-public function getNotes($campaign_id)
-{
-    $notes = Note::where('campaign_id', $campaign_id)->get();
+        return response()->json($notes);
+    }
+    public function estadisGenerales()
+    {
+        // Ejemplo de obtener algunas estadísticas, como el total de campañas y su progreso
+        $totalCampaigns = Campaign::count();
+        $activeCampaigns = Campaign::where('end_date', '>', now())->count();
+        $completedCampaigns = Campaign::where('end_date', '>', now())
+                              ->where('goal', '<=', DB::raw('total_donated'))
+                              ->count();
+        $inactiveCampaign = Campaign::where('end_date', '<', now())->count();
+        $incompletedCampaign = Campaign::where('end_date', '<', now())
+        ->where('goal', '>', DB::raw('total_donated'))
+        ->count();
 
-    return response()->json($notes);
-}
-
-
-    
+        // Retornar los datos como un array
+        return response()->json([
+            'totalCampaigns' => $totalCampaigns,
+            'activeCampaigns' => $activeCampaigns,
+            'completedCampaigns' => $completedCampaigns,
+            'inactiveCampaign' => $inactiveCampaign,
+            'incompletedCampaign'  => $incompletedCampaign,
+        ]);
+    }
 }

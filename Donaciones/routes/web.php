@@ -66,7 +66,11 @@ Route::get('/CreateCampaign', function () {
 })->middleware(['auth', 'verified'])->name('CreateCampaign');
 Route::get('/campaigns/search', [CampaignController::class, 'search']);
 Route::get('/categories', [CategoryController::class, 'index']);
-
+//Seccion de estadisticass globales
+Route::get('/estadisGenerales', [CampaignController::class, 'estadisGenerales']);
+Route::get('/EstadisticasGlobales', function () {
+    return Inertia::render('Campaign/CampaignStatistics'); // Asegúrate de usar el path correcto
+})->middleware(['auth', 'verified'])->name('EstadisticasGlobales');
 
 //CONTROLADORES
 Route::get('/campaign-count', [CampaignController::class, 'count'])->name('campaign.count');
