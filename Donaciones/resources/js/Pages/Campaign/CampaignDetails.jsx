@@ -69,49 +69,37 @@ const CampaignDetails = () => {
   }, [campaign.id]);
 
   const handleDonation = () => {
-    console.log("Iniciando donación..."); // Log inicial
+
     if (!donationAmount) {
-      setError("Por favor, ingresa un monto.");
-      console.log("Monto no ingresado."); // Log adicional
-      return;
+        setError('Por favor, ingresa un monto.');
+        console.log('Monto no ingresado.'); // Log adicional
+        return;
     }
 
-    console.log("Monto a donar:", donationAmount); // Verificar el valor del monto
+    console.log('Monto a donar:', donationAmount); // Verificar el valor del monto
+
     // 1. Registramos la donación en la base de datos
-    axios
-      .post("/donations", {
+    axios.post('/donations', {
         amount: donationAmount,
         campaign_id: campaign.id,
         user_id: auth.user.id,
-        payment_status: "pending",
-      })
-      .then((response) => {
-        console.log("Donación registrada:", response.data);
-        console.log("ID de la campaña:", response.data.donation.campaign_id); // Verificar aquí
-        // 2. Generamos la preferencia de pago en Mercado Pago
-        return axios.post(`/campaigns/${campaign.id}/payment-preference`, {
-          amount: donationAmount,
-        });
-      })
-      .then((response) => {
+        payment_status: 'pending',
+    })
+    .then(response => {
+        console.log('Donación registrada:', response.data);
+        return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
+    })
+    .then(response => {
         // Abrir la URL de pago en un popup
-        console.log("URL de pago:", response.data.init_point);
         openPopup(response.data.init_point);
-        // 3. Llama al evento de actualización de campaña utilizando campaign.id
-        return axios.post(`/campaigns/${campaign.id}/update-event`);
-      })
-      .then((response) => {
-        console.log(
-          "Evento de actualización de campaña procesado:",
-          response.data
-        );
-      })
-      .catch((error) => {
-        console.error("Error al procesar la donación:", error);
-        console.log("Error Response:", error.response); // Log de la respuesta de error
-        setError("No se pudo completar la donación.");
-      });
-  };
+    })
+    .catch(error => {
+        console.error('Error al procesar la donación:', error);
+        console.log('Error Response:', error.response); // Log de la respuesta de error
+        setError('No se pudo completar la donación.');
+    });
+};
+
 
   const handleEditClick = () => {
     router.visit(`/edit-campaign/${campaign.id}`);

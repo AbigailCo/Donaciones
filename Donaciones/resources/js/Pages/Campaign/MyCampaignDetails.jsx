@@ -214,5 +214,3 @@ const MyCampaignDetails = () => {
 
 export default MyCampaignDetails;
 
-
-
