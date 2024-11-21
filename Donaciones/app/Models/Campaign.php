@@ -52,6 +52,11 @@ class Campaign extends Model
     {
         return $this->belongsToMany(User::class, 'favorites');
     }
+
+    public function creator()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
     
     public function notes()
 {

@@ -90,63 +90,81 @@ class CampaignController extends Controller
 
 
     public function store(Request $request)
-{
-    // Validación
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'goal' => 'required|numeric|min:1',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
-        'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
-        'category_id' => 'required|exists:categories,id',
-        'latitude' => 'required|numeric', // Validación para la latitud
-        'longitude' => 'required|numeric', // Validación para la longitud
-    ]);
-
-    // Asignar el ID del usuario a la campaña
-    $validated['user_id'] = Auth::id();
-
-    try {
-        // Crear la campaña con las coordenadas
-        $campaign = Campaign::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'goal' => $validated['goal'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
-            'category_id' => $validated['category_id'],
-            'latitude' => $validated['latitude'], // Guardar latitud
-            'longitude' => $validated['longitude'], // Guardar longitud
-            'user_id' => $validated['user_id'],
+    {
+        // Validación para la campaña
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'goal' => 'required|numeric|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
+            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+            'category_id' => 'required|exists:categories,id',
+            'latitude' => 'required|numeric', // Validación para la latitud
+            'longitude' => 'required|numeric', // Validación para la longitud
         ]);
-
-        // Si se suben imágenes, guardarlas
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('images', 'public');
-                $imageName = basename($imagePath); // Obtener solo el nombre del archivo
-
+    
+        // Asignar el ID del usuario a la campaña
+        $validated['user_id'] = Auth::id();
+    
+        try {
+            // Crear la campaña con las coordenadas
+            $campaign = Campaign::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'goal' => $validated['goal'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
+                'category_id' => $validated['category_id'],
+                'latitude' => $validated['latitude'], // Guardar latitud
+                'longitude' => $validated['longitude'], // Guardar longitud
+                'user_id' => $validated['user_id'],
+            ]);
+    
+            // Si se suben imágenes, guardarlas
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('images', 'public');
+                    $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+    
+                    $campaign->images()->create([
+                        'path' => $imageName, // Guardar el nombre de la imagen
+                    ]);
+                }
+            } else {
+                // Asignar imagen por defecto si no hay imágenes subidas
                 $campaign->images()->create([
-                    'path' => $imageName, // Guardar el nombre de la imagen
+                    'path' => 'defecto.jpg', // Nombre de la imagen por defecto
                 ]);
             }
-        }else {
-            // Asignar imagen por defecto
-            $campaign->images()->create([
-                'path' => 'defecto.jpg', // Nombre de la imagen por defecto
+    
+            // Validación para la donación
+            $donationValidated = $request->validate([
+                'amount' => 'required|numeric|min:1', // Validar el monto de la donación
             ]);
+    
+            // Crear la donación
+            $donation = Donation::create([
+                'amount' => $donationValidated['amount'],
+                'user_id' => Auth::id(), // El ID del usuario que realiza la donación
+                'campaign_id' => $campaign->id,
+            ]);
+    
+            // Obtener el creador de la campaña
+            $creator = $campaign->user; // El usuario que creó la campaña
+    
+            // Enviar notificación de la donación al creador de la campaña
+            $creator->notify(new DonationReceived($donationValidated['amount'], $campaign->title));
+    
+            return redirect()->route('myCampaigns')->with('success', '¡Campaña creada exitosamente y donación registrada!');
+        } catch (\Exception $e) {
+            Log::error('Error creando la campaña o registrando la donación: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear la campaña o registrar la donación');
         }
-
-        return redirect()->route('myCampaigns')->with('success', 'Campaña creada exitosamente!');
-    } catch (\Exception $e) {
-        Log::error('Error creando la campaña: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error al crear la campaña');
     }
-}
-
+    
 
 
     public function update(Request $request, $id)
