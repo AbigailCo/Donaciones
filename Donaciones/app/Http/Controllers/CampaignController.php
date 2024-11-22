@@ -216,7 +216,8 @@ class CampaignController extends Controller
     public function edit($id)
     {
         $campaign = Campaign::findOrFail($id);
-        return response()->json($campaign);
+        return view('campaigns.edit', compact('campaign'));
+        //return response()->json($campaign);
     }
 
     public function destroy($id)

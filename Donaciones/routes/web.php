@@ -10,14 +10,13 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Mail\CampaignUpdateNotification;
+use App\Http\Controllers\AdminController;
 use App\Mail\TestMail;
 use App\Models\Campaign;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-
 
 
 //EMAIL de notificaciones
@@ -97,12 +96,9 @@ Route::get('/my-campaigns/{id}', function($id) {
   
     Route::post('/campaigns/{id}/payment-preference', [CampaignController::class, 'createPaymentPreference']);
 
-    /* Route::get('/campaigns/{id}', [CampaignController::class, 'show']); */
+   // Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
+   Route::put('/campaigns/{id}', [CampaignController::class, 'update'])->name('campaigns.update');
 
-
-
-    Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
-   // Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaign.edit');
 
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
 });
@@ -129,16 +125,17 @@ Route::get('/campaigns/{id}/edit', function ($id) {
 
 Route::post('/donations', [DonationController::class, 'store']);
 Route::get('/campaigns/{id}/donations', [CampaignController::class, 'getDonations']);
-/*
-Route::middleware('auth')->group(function () {
-    Route::post('/comments', [CommentController::class, 'store']);
-    Route::get('/campaigns/{campaign_id}/comments', [CommentController::class, 'index']);
-}); */
 
 Route::get('/campaigns/{campaign}/comments', [CommentController::class, 'index']);
 Route::post('/comments', [CommentController::class, 'store']);
 Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);
 Route::get('/campaigns/{campaign_id}/notes', [CampaignController::class, 'getNotes']);
+
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+});
+Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
+Route::get('/campaigns/{id}/destroy', [CampaignController::class, 'edit'])->name('campaigns.destroy');
 
 
 //prueba de ruta
