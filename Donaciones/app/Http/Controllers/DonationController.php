@@ -44,7 +44,8 @@ class DonationController extends Controller
     
             // Enviar correo al creador de la campaña
             try {
-                Mail::to($campaignCreator->email)->send(new CampaignUpdateNotification($campaign));
+                //si descomento esto se envia doble mail
+               // Mail::to($campaignCreator->email)->send(new CampaignUpdateNotification($campaign));
             } catch (\Exception $e) {
                 Log::error('Error al enviar correo al creador de la campaña: ' . $e->getMessage());
             }

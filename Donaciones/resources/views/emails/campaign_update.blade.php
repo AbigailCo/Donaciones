@@ -8,7 +8,8 @@
     
     <p>La campaña que apoyaste ha recibido una nueva actualización. Aquí están los detalles:</p>
     
-    <p><strong>Nota:</strong> "{{ $note->note }}"</p>
+    <p><strong>Meta:</strong> "{{ $campaign->goal }}"</p>
+    <p><strong>Total donado:</strong> "{{ $campaign->total_donated }}"</p>
     
 
     <p>Gracias por tu continuo apoyo a esta causa.</p>

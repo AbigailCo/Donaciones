@@ -10,14 +10,13 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Mail\CampaignUpdateNotification;
+use App\Http\Controllers\AdminController;
 use App\Mail\TestMail;
 use App\Models\Campaign;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-
 
 ////////////////////////////////////////////////////////////////////////
 //                       NOTIFICACIONES POR MAIL                     //
@@ -164,6 +163,12 @@ Route::get('/campaigns/{campaign}/comments', [CommentController::class, 'index']
 Route::post('/comments', [CommentController::class, 'store']);
 Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);
 Route::get('/campaigns/{campaign_id}/notes', [CampaignController::class, 'getNotes']);
+
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+});
+Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
+Route::get('/campaigns/{id}/destroy', [CampaignController::class, 'edit'])->name('campaigns.destroy');
 
 
 ////////////////////////////////////////////////////////////////////////
