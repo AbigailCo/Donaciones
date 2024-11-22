@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
 import CampaignVideo from "../../Components/Campaign/CampaignVideo";
 import axios from "axios";
 import { initMercadoPago } from "@mercadopago/sdk-react";
@@ -118,7 +118,7 @@ const CampaignDetails = () => {
 
 
   const handleEditClick = () => {
-    router.visit(`/edit-campaign/${campaign.id}`);
+    router.visit(`/campaigns/${campaign.id}/edit`);
   };
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -179,6 +179,13 @@ const CampaignDetails = () => {
             >
 
               <div>
+              {auth.user && auth.user.id === campaign.user_id && (
+                  <Box margin= '30px' textAlign="center" mt={3} >
+                    <Button  variant="contained" onClick={handleEditClick}>
+                      Editar campaña
+                    </Button>
+                  </Box>
+                )}
               <Box
                   sx={{
                  
@@ -379,13 +386,7 @@ const CampaignDetails = () => {
                 <CampaignVideo youtubeId={youtubeId} />
                 <MapCampaign campaign={campaign} />
 
-                {auth.user && auth.user.id === campaign.user_id && (
-                  <Box textAlign="center" mt={3}>
-                    <Button variant="contained" onClick={handleEditClick}>
-                      Editar campaña
-                    </Button>
-                  </Box>
-                )}
+                
               </CardContent>
             </Card>
           </Box>

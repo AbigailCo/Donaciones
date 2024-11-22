@@ -125,17 +125,12 @@ Route::middleware('auth:sanctum')->group(function () {
     //Para mostrar todas las campañas
     Route::get('/campaigns/{id}', [CampaignController::class, 'show'])->name('campaigns.show');
     Route::post('/campaigns/{id}/payment-preference', [CampaignController::class, 'createPaymentPreference']);
-    Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
     Route::delete('/campaigns/{id}', [CampaignController::class, 'destroy']);
+    Route::put('/campaigns/{id}', [CampaignController::class, 'update']);
+    Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit']);
+   
 });
 Route::get('/campaigns', [CampaignController::class, 'index']);
-Route::get('/edit-campaign/{id}', function ($id) {
-    return Inertia::render('Campaign/EditCampaign', ['id' => $id]);
-})->middleware(['auth', 'verified'])->name('editCampaign');
-Route::get('/campaigns/{id}/edit', function ($id) {
-    $campaign = Campaign::findOrFail($id); // Asegúrate de importar el modelo Campaign
-    return response()->json($campaign);
-})->middleware(['auth', 'verified'])->name('campaign.edit');
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -167,8 +162,6 @@ Route::get('/campaigns/{campaign_id}/notes', [CampaignController::class, 'getNot
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
 });
-Route::get('/campaigns/{id}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
-Route::get('/campaigns/{id}/destroy', [CampaignController::class, 'edit'])->name('campaigns.destroy');
 
 
 ////////////////////////////////////////////////////////////////////////

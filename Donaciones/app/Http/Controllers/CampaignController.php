@@ -102,12 +102,12 @@ class CampaignController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'youtube_link' => 'nullable|url', 
+            'youtube_link' => 'nullable|url',
             'category_id' => 'required|exists:categories,id',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'alias' => 'nullable|string|regex:/^\S+$/',
-            'cvu' => 'nullable|string|max:22', 
+            'cvu' => 'nullable|string|max:22',
             'cbu' => 'nullable|string|max:22',
         ]);
         if (collect(['alias', 'cvu', 'cbu'])->filter(fn($key) => $request->filled($key))->count() > 1) {
@@ -130,9 +130,9 @@ class CampaignController extends Controller
                 'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
                 'category_id' => $validated['category_id'],
                 'latitude' => $validated['latitude'],
-                'longitude' => $validated['longitude'], 
+                'longitude' => $validated['longitude'],
                 'user_id' => $validated['user_id'],
-                'alias' => $validated['alias'] ?? null, 
+                'alias' => $validated['alias'] ?? null,
                 'cvu' => $validated['cvu'] ?? null,
                 'cbu' => $validated['cbu'] ?? null,
             ]);
@@ -179,58 +179,38 @@ class CampaignController extends Controller
         }
     }
 
-
-
     public function update(Request $request, $id)
     {
-        Log::info('Prueba de log');
-        dd($request->all());
-        try {
-            $campaign = Campaign::findOrFail($id);
-            Log::info('Campaña encontrada:', $campaign->toArray());
-            $this->authorize('update', $campaign);
+        $campaign = Campaign::findOrFail($id);
 
-            $validator = Validator::make($request->all(), [
-                'title' => 'sometimes|string|max:255',
-                'description' => 'sometimes|string',
-                'goal' => 'sometimes|numeric|min:1',
-                'start_date' => 'sometimes|date',
-                'end_date' => 'sometimes|date|after_or_equal:start_date',
-                'youtube_link' => 'nullable|url',
-                'images.*' => 'nullable|sometimes|image|mimes:jpeg,png,jpg|max:2048'
-            ]);
+        // Validación
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'goal' => 'required|numeric',
+            'end_date' => 'required|date',
+        ]);
 
-            if ($validator->fails()) {
-                dd('Error en validación:', $validator->errors());
-                return response()->json($validator->errors(), 422);
-            }
+        // Actualizar campaña
+        $campaign->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'goal' => $request->goal,
+            'end_date' => $request->end_date,
+        ]);
 
-            Log::error('Antes de actualizar:', $request->all());
-            $campaign->update($request->except(['images']));
-            Log::error('Después de actualizar:', $campaign->toArray());
-
-
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('public/campaigns');
-                    $campaign->images()->create(['path' => $path]);
-                }
-            }
-
-            return response()->json($campaign);
-            dd($campaign->toArray());
-        } catch (\Exception $e) {
-            Log::error('Error al actualizar la campaña: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al actualizar la campaña'], 500);
-        }
+        return Inertia::render('Campaign/CampaignDetails');
     }
-
 
     public function edit($id)
     {
-        $campaign = Campaign::findOrFail($id);
-        return view('campaigns.edit', compact('campaign'));
-        //return response()->json($campaign);
+        $campaign = Campaign::find($id);
+        if (!$campaign) {
+            return response()->json(['message' => 'Campaña no encontrada'], 404);
+        }
+        return Inertia::render('Campaign/EditCampaign', [
+            'campaign' => $campaign
+        ]);
     }
 
     public function destroy($id)

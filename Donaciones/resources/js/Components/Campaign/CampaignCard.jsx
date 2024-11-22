@@ -27,13 +27,14 @@ const CampaignCard = ({ campaign }) => {
   const [imageFiles, setImageFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleEditClick = () => {
-    router.visit(`/edit-campaign/${campaign.id}`);
-  };
 
   // Manejar abrir/cerrar el modal
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+
+  const handleEditCampaign = () => {
+    router.visit(`/campaigns/${campaign.id}/edit`);
+  };
 
   const handleSubmitNote = async (e) => {
     e.preventDefault();
@@ -148,7 +149,7 @@ const CampaignCard = ({ campaign }) => {
       )}
       {auth.user && auth.user.id === campaign.user_id && (
         <>
-          <button onClick={handleEditClick} className="btn btn-primary">
+          <button onClick={handleEditCampaign} className="btn btn-primary">
             Editar campaña
           </button>
           <button onClick={handleShowModal} className="btn btn-secondary">

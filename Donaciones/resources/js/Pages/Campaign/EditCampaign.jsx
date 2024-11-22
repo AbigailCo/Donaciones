@@ -1,229 +1,130 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Form, Col, Row, Card } from "react-bootstrap";
-import ImageUpload from "@/Components/ImageUpload";
-import { useParams, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { usePage } from '@inertiajs/react';
-
-// Componente para el campo de YouTube Link
-const YouTubeLinkInput = ({ register, errors, setValue }) => {
-  const handleLinkChange = (e) => {
-    // Actualiza el valor del campo youtube_link en el formulario
-    setValue("youtube_link", e.target.value);
-  };
-
-  return (
-    <div>
-      <Form.Label>Link de YouTube:</Form.Label>
-      <Form.Control
-        type="text"
-        {...register("youtube_link")}
-        onChange={handleLinkChange}  // Maneja el cambio del campo
-        isInvalid={!!errors.youtube_link}  // Muestra el error si existe
-      />
-      {errors.youtube_link && (
-        <Form.Control.Feedback type="invalid">{errors.youtube_link.message}</Form.Control.Feedback>
-      )}
-    </div>
-  );
-};
-
-const EditCampaign = () => {
-  const { id } = usePage().props; // Obtener el ID de la campaña de los parámetros de la URL
-  const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm({
-    defaultValues: {
-      youtube_link: "",  // Asegúrate de que el campo youtube_link esté vacío al inicio
-    },
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import React, { useState, useEffect } from 'react';
+import { Head } from "@inertiajs/react";
+import EditCampaignForm from "@/Components/Campaign/EditCampaign";
+import Sidebar from "@/Components/Dashboard/Sidebar";
+import { usePage } from "@inertiajs/react";
+import { Inertia } from "@inertiajs/inertia";
+export default function EditCampaign({ auth }) {
+  const { campaign } = usePage().props;
+  const [formData, setFormData] = useState({
+    title: campaign.title,
+    description: campaign.description,
+    goal: campaign.goal,
+    end_date: campaign.end_date,
   });
 
-  const [categories, setCategories] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   useEffect(() => {
-    // Cargar categorías
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/categories");
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error al cargar categorías", error);
-      }
-    };
+    setFormData({
+      title: campaign.title,
+      description: campaign.description,
+      goal: campaign.goal,
+      end_date: campaign.end_date,
+    });
+  }, [campaign]);
 
-    // Cargar datos de la campaña
-    const fetchCampaign = async () => {
-      try {
-        const response = await axios.get(`/campaigns/${id}/edit`);
-        const campaignData = response.data;
-
-        // Asignar los datos de la campaña al formulario
-        setValue("title", campaignData.title);
-        setValue("description", campaignData.description);
-        setValue("goal", campaignData.goal);
-        setValue("start_date", campaignData.start_date);
-        setValue("end_date", campaignData.end_date);
-        setValue("category_id", campaignData.category_id);
-        setValue("youtube_link", campaignData.youtube_link);
-      } catch (error) {
-        console.error("Error al cargar la campaña", error);
-      }
-    };
-
-    fetchCategories();
-    fetchCampaign();
-  }, [id, setValue]);
-
-  const onSubmit = async (data) => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-
-    // Si youtube_link está vacío, no lo agregamos a formData
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("goal", data.goal);
-    formData.append("start_date", data.start_date);
-    formData.append("end_date", data.end_date);
-    formData.append("category_id", data.category_id);
-
-    // Agregar imagenes si las hay
-    if (data.imageFiles) {
-      data.imageFiles.forEach((image) => formData.append("images[]", image));
-    }
-
-    // Solo agregar youtube_link si no es vacío
-    if (data.youtube_link) {
-      formData.append("youtube_link", data.youtube_link);
-    }
-
-    try {
-      console.log("Campos en formData antes de enviar:", Object.fromEntries(formData.entries()));
-
-      await axios.put(`/campaigns/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      toast.success("Campaña actualizada exitosamente");
-      setTimeout(() => {
-        navigate("/my-campaigns");
-      }, 2000);
-    } catch (error) {
-      toast.error("Error al actualizar la campaña");
-      console.error(error);  // Asegúrate de ver el error para más detalles
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Aquí enviarías los datos al backend para actualizar la campaña
+      await axios.put(`/campaigns/${campaign.id}`, formData);
+       // Redirigir al usuario a la lista de campañas
+       Inertia.visit(`/campaigns/${campaign.id}`);
+    } catch (error) {
+      console.error('Error al actualizar la campaña', error);
+    }
+  };
   return (
-    <div className="container-fluid px-4">
-      <h1 className="mt-4 text-center">Editar Campaña</h1>
-      <ol className="breadcrumb mb-4">
-        <li className="breadcrumb-item">
-          <a href="/panel">Inicio</a>
-        </li>
-        <li className="breadcrumb-item">
-          <a href="/campaign">Campañas</a>
-        </li>
-        <li className="breadcrumb-item active">Editar campaña</li>
-      </ol>
+    <AuthenticatedLayout user={auth.user}>
+      <Head title="Editar campaña" />
 
-      <Card>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Card.Body className="text-bg-light">
-            <Row className="g-4">
-              <Col md={6}>
-                <Form.Label>Título:</Form.Label>
-                <Form.Control
-                  type="text"
-                  {...register("title", { required: true })}
-                  isInvalid={!!errors.title}
-                />
-                <Form.Control.Feedback type="invalid">{errors.title?.message}</Form.Control.Feedback>
-              </Col>
-              <Col md={6}>
-                <Form.Label>Categoría:</Form.Label>
-                <Form.Control as="select" {...register("category_id", { required: true })} isInvalid={!!errors.category_id}>
-                  <option value="">Selecciona una categoría</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                  ))}
-                </Form.Control>
-                <Form.Control.Feedback type="invalid">{errors.category_id?.message}</Form.Control.Feedback>
-              </Col>
-              <Col xs={12}>
-                <Form.Label>Descripción:</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  {...register("description", { required: true })}
-                  isInvalid={!!errors.description}
-                />
-                <Form.Control.Feedback type="invalid">{errors.description?.message}</Form.Control.Feedback>
-              </Col>
-              <Col md={6}>
-                <Form.Label>Meta:</Form.Label>
-                <Form.Control
-                  type="number"
-                  step="0.01"
-                  {...register("goal", { required: true })}
-                  isInvalid={!!errors.goal}
-                />
-                <Form.Control.Feedback type="invalid">{errors.goal?.message}</Form.Control.Feedback>
-              </Col>
-              <Col md={6}>
-                <Form.Label>Fecha de inicio:</Form.Label>
-                <Form.Control
-                  type="date"
-                  {...register("start_date", { required: true })}
-                  isInvalid={!!errors.start_date}
-                />
-                <Form.Control.Feedback type="invalid">{errors.start_date?.message}</Form.Control.Feedback>
-              </Col>
-              <Col md={6}>
-                <Form.Label>Fecha de finalización:</Form.Label>
-                <Form.Control
-                  type="date"
-                  {...register("end_date", { required: true })}
-                  isInvalid={!!errors.end_date}
-                />
-                <Form.Control.Feedback type="invalid">{errors.end_date?.message}</Form.Control.Feedback>
-              </Col>
-              <Col md={6}>
-                <ImageUpload
-                  register={register}
-                  errors={errors}
-                  setImageFiles={(files) => setValue("imageFiles", files)}
-                />
-              </Col>
-              <Col md={6}>
-                <YouTubeLinkInput
-                  register={register}
-                  errors={errors}
-                  setValue={setValue}  // Este prop es necesario para actualizar el valor del youtube_link
-                />
-              </Col>
-            </Row>
-          </Card.Body>
-          <Card.Footer className="text-center">
-            <Button type="submit" variant="primary" disabled={isSubmitting}>Guardar Cambios</Button>
-          </Card.Footer>
-        </Form>
-      </Card>
-      <ToastContainer />
+      <div className="d-flex h-100">
+        <div className="w-1/5">
+          <Sidebar auth={auth} />
+        </div>
+        <div className="flex-1 mt-12 mx-4">
+        <h1 className="mt-4 text-center">Panel de edicion</h1>
+        <h2 className="mt-4 text-center">Edita tu campaña: {campaign.title}</h2>
+        <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+  <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        Titulo
+      </label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value={formData.title}
+        onChange={handleInputChange}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      />
     </div>
+    <div>
+      <label
+        htmlFor="description"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Descripcion
+      </label>
+      <textarea
+        id="description"
+        name="description"
+        value={formData.description}
+        onChange={handleInputChange}
+        rows="4"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      ></textarea>
+    </div>
+    <div>
+      <label htmlFor="goal" className="block text-sm font-medium text-gray-700">
+        Meta de la campaña
+      </label>
+      <input
+        type="number"
+        id="goal"
+        name="goal"
+        value={formData.goal}
+        onChange={handleInputChange}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      />
+    </div>
+    <div>
+      <label
+        htmlFor="end_date"
+        className="block text-sm font-medium text-gray-700"
+      >
+       Fecha de cierre
+      </label>
+      <input
+        type="date"
+        id="end_date"
+        name="end_date"
+        value={formData.end_date}
+        onChange={handleInputChange}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      />
+    </div>
+    <div>
+      <button
+        type="submit"
+        className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Actualizar
+      </button>
+    </div>
+  </form>
+</div>
+        </div>
+      </div>
+    </AuthenticatedLayout>
   );
-};
-
-export default EditCampaign;
+}
