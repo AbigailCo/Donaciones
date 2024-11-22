@@ -40,7 +40,7 @@ const EstaConvinada = () => {
 
     return (
         <div style={{ marginTop: "40px" }}>
-            <h2>Alcance de la campaña y sus donaciones</h2>
+            <h1 className="mt-4 text-center">Alcanse de las campañas y recaudaciones</h1>
 
             <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={data}>
@@ -53,7 +53,7 @@ const EstaConvinada = () => {
                     <Bar dataKey="donaciones" stackId="a" fill="#8884d8" name="Cantidad $" />
                 </BarChart>
             </ResponsiveContainer>
-            <h2>Periodo de interaccion en la plataforma</h2>
+            <h1 className="mt-4 text-center">Interaccion de usuarios con la plataforma</h1>
 
             {/* Area Chart para mostrar la acumulación de donaciones a lo largo del tiempo */}
             <ResponsiveContainer width="100%" height={400}>
@@ -72,7 +72,7 @@ const EstaConvinada = () => {
                 </AreaChart>
             </ResponsiveContainer>
 
-            <h2>Usuario: Cuanto dono y cuantas campañas tiene activas</h2>
+            <h1 className="mt-4 text-center">Usuarios: sus donaciones y campañas activas</h1>
             <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={campaignData} barCategoryGap="20%">
                     <CartesianGrid strokeDasharray="3 3" />

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Grid } from '@mui/material';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CampaignCard from '../../Components/Campaign/CampaignCard';
 import { Head } from '@inertiajs/react';
+import Sidebar from '@/Components/Dashboard/Sidebar';
 
 const MyCampaigns = ({ campaigns, auth }) => {
   if (!auth.user) {
@@ -16,27 +16,37 @@ const MyCampaigns = ({ campaigns, auth }) => {
   }
 
   return (
-    
     <AuthenticatedLayout user={auth.user}>
       <Head title="Mis campañas" />
-      <div className="container mt-20" >
-      
-      <h1 className="mt-4 text-center">Mis Campañas</h1>
-        {campaigns.length > 0 ? (
-          <Grid container spacing={3}>
-            {campaigns.map((campaign) => (
-              <Grid item xs={12} sm={6} md={4} key={campaign.id}>
-                <CampaignCard campaign={campaign} />
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Typography className="text-center" variant="h4" gutterBottom>
-            Todavia no creaste ninguna campaña en esta aplicacion
-          </Typography>
-        )}
+
+      {/* Contenedor principal con flexbox para organizar el sidebar y el contenido */}
+      <div className="d-flex h-100">
+
+        
+        <div className="w-1/5">
+          <Sidebar auth={auth} />
+        </div>
+
+        {/* Contenido principal */}
+        <div className="flex-1 mt-12 mx-4">
+        
+          <h1 className="mt-4 text-center">Mis campañas</h1>
+          {campaigns.length > 0 ? (
+            <Grid container spacing={3}>
+              {campaigns.map((campaign) => (
+                <Grid item xs={12} sm={6} md={4} key={campaign.id}>
+                  <CampaignCard campaign={campaign} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Typography className="text-center" variant="h5" color="textSecondary">
+              Todavía no creaste ninguna campaña en esta aplicación.
+            </Typography>
+          )}
+        </div>
       </div>
-      
+
     </AuthenticatedLayout>
   );
 };

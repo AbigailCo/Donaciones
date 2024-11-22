@@ -36,7 +36,7 @@ export default function General(){
     }, []);
     return (
       <div style={{ marginTop: "38px" }}>
-        <h2>Estadisticas generales</h2>
+        <h1 className="mt-4 text-center">Estadisticas generales</h1>
         <EstaGeneral data={data} />
       </div>
     );

@@ -21,8 +21,8 @@ export default function RelaUserDona(){
             });
     }, []);
     return (
-      <div style={{ width: '100%', height: '100%', marginTop: "38px" }}>
-        <h2>Que usuario fue el mejor donante</h2>
+      <div style={{ width: '100%', marginTop: "38px" }}>
+        <h1 className="mt-4 text-center">Usuario mas generoso</h1>
         <EstaUserDona data={data} />
       </div>
     );

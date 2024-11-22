@@ -1,59 +1,59 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import { Link } from '@inertiajs/react';
+import { Grid, Typography } from '@mui/material';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import CampaignCard from '../../Components/Campaign/CampaignCard';
+import { Head } from '@inertiajs/react';
+import Sidebar from '@/Components/Dashboard/Sidebar';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import CampaignCard from '../../Components/Campaign/CampaignCard';  // Importa el componente CampaignCard
 
 const FavoritesPage = ({ favorites, auth }) => {
-    if (!favorites || favorites.length === 0) {
-        return (
-            <AuthenticatedLayout
-                user={auth.user}
-                
-            >
-                <Head title="Favorite" />
-    
-                <div className="py-12">
-                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div>
-                                <Typography className="text-center" variant="h4" gutterBottom>
-                                    Todavia no elegiste ninguna campaña como favorita
-                                </Typography>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </AuthenticatedLayout>
-        );
-    }
-
+    console.log(favorites)
+  if (!auth.user) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-          
-        >
-            <Head title="Mis favoritos" />
-
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div>
-                        <h1 className="mt-4 text-center">Mis favoritos</h1>
-                            {favorites.map((favorite) => (
-                                <CampaignCard key={favorite.id} campaign={favorite.campaign} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ToastContainer />
-        </AuthenticatedLayout>
+      <div className="text-center mt-5">
+        <h2>Sesión expirada</h2>
+        <p>Por favor, inicia sesión nuevamente.</p>
+      </div>
     );
+  }
+
+  return (
+    <AuthenticatedLayout user={auth.user}>
+      <Head title="Mis favoritos" />
+
+      {/* Contenedor principal con flexbox para organizar el sidebar y el contenido */}
+      <div className="d-flex h-100">
+
+        
+        <div className="w-1/5">
+          <Sidebar auth={auth} />
+        </div>
+
+        {/* Contenido principal */}
+        <div className="flex-1 mt-12 mx-4">
+        
+          <h1 className="mt-4 text-center">Mis Favoritos</h1>
+          {favorites.length > 0 ? (
+            <Grid container spacing={3}>
+              {favorites.map((favorite) => (
+                <Grid item xs={12} sm={6} md={4} key={favorite.id}>
+                   <CampaignCard key={favorite.id} campaign={favorite.campaign} />
+                   <ToastContainer />
+                </Grid>
+                
+              ))}
+            </Grid>
+          ) : (
+            <Typography className="text-center" variant="h5" color="textSecondary">
+              Todavía no tienes ningun favorito
+            </Typography>
+          )}
+        </div>
+      </div>
+
+    </AuthenticatedLayout>
+  );
 };
 
 export default FavoritesPage;

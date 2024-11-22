@@ -3,23 +3,22 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import FormCreateCampaign from '../../Components/Campaign/CreateCampaign';
-import ImageUpload from '../../Components/ImageUpload';
-import Create from '@/Components/Campaign/CreatePanel';
+import Sidebar from '@/Components/Dashboard/Sidebar';
 export default function CreateCampaign({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-           
+
         >
             <Head title="Crear campaña" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="d-flex h-100">
+                <div className="w-1/5">
+                    <Sidebar auth={auth} />
+                </div>
+                <div className="flex-1 mt-12 mx-4">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                     {/* formcreatecampaign es el archivo que esta en Donaciones\Donaciones\resources\js\Components\Campaign\CreateCampaign.jsx */}   
-                       <FormCreateCampaign/> 
-                     
-                       
+                        <FormCreateCampaign />
                     </div>
                 </div>
             </div>

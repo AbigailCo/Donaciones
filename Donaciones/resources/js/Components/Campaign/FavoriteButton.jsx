@@ -33,16 +33,18 @@ const FavoriteButton = ({ campaignId, isFavorite, onToggle }) => {
                 onClick={toggleFavorite} 
                 disabled={loading} 
                 style={{
-                    color: isFavorite ? '#FFD700' : '#ccc', // Estilo dorado cuando es favorito
-                    transition: 'color 0.3s',
-                    padding: '10px',
+                    color: isFavorite ? '#363535' : '#fcf803', // Estilo dorado cuando es favorito
+                    border: `2px solid ${isFavorite ? '#363535' : '#ccc'}`,
+                    backgroundColor: isFavorite ? '#fcf803' : '#363535',
+                    padding: '2px',
+                    margin: '10px',
                 }}
                 sx={{
-                    animation: 'blinkEffect 1s infinite', // Aplica la animación al botón también
+                    animation: 'blinkEffect 2s infinite', // Aplica la animación al botón también
                   }}
             >
                 {loading ? (
-                    <CircularProgress size={24} color="primary" />
+                    <CircularProgress size={12} color="primary" />
                 ) : isFavorite ? (
                     <StarIcon />
                 ) : (
