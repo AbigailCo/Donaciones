@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\Category;
 use App\Models\Donation;
 use App\Models\Note;
+use App\Models\NoteImage;
 use App\Models\User;
 use App\Notifications\CampaignUpdated;
 use App\Notifications\DonationReceived;
@@ -288,9 +289,6 @@ class CampaignController extends Controller
         }
     }
 
-
-
-
     public function getDonations($id)
     {
         $donations = Donation::where('campaign_id', $id)->get();
@@ -331,6 +329,8 @@ class CampaignController extends Controller
         Log::info("Endpoint alcanzado para la campaña: {$id}");
         $validated = $request->validate([
             'note' => 'required|string|max:5000',
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:2048',
         ]);
         Log::info("Nota validada correctamente.");
 
@@ -345,6 +345,19 @@ class CampaignController extends Controller
         $note = $campaign->notes()->create([
             'note' => $validated['note'],
         ]);
+
+
+        if ($request->has('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('images', 'public');
+                $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+                // Crear el registro en la tabla note_images
+                NoteImage::create([
+                    'note_id' => $note->id,
+                    'path' => $imageName,
+                ]);
+            }
+        }
 
         // Obtengo todos los donantes de la campaña
         $donors = Donation::where('campaign_id', $campaign->id)
@@ -365,10 +378,19 @@ class CampaignController extends Controller
 
     public function getNotes($campaign_id)
     {
-        $notes = Note::where('campaign_id', $campaign_id)->get();
+        $notes = Note::with('images')
+        ->where('campaign_id', $campaign_id)
+        ->get()
+        ->map(function ($note) {
+            // Formatear la fecha de creación
+            $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // o cualquier formato que prefieras
+            return $note;
+        });
 
         return response()->json($notes);
     }
+
+
     //PARTE DE ESTADISTICAS
     public function estadisGenerales()
     {
@@ -478,11 +500,10 @@ class CampaignController extends Controller
                     'address' => $campaign->address,
                 ];
             });
-    
+
         // Retornar los datos en formato JSON
         return response()->json([
             'campaigns' => $campaigns
         ]);
     }
-    
 }

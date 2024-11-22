@@ -7,6 +7,7 @@ import Carousel from "react-bootstrap/Carousel";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FavoriteButton from './FavoriteButton';
+import ImageUpload from "../ImageUpload";
 
 const getYouTubeId = (url) => {
   if (!url) return null;
@@ -17,12 +18,13 @@ const getYouTubeId = (url) => {
 
 const CampaignCard = ({ campaign }) => {
   const { auth } = usePage().props;
-  const youtubeId = getYouTubeId(campaign.youtube_link);
+/*   const youtubeId = getYouTubeId(campaign.youtube_link); */
   const [isFavorite, setIsFavorite] = useState(false);
 
   // Estado para el popup
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState("");
+  const [imageFiles, setImageFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleEditClick = () => {
@@ -36,17 +38,31 @@ const CampaignCard = ({ campaign }) => {
   const handleSubmitNote = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
+    const formData = new FormData();
+    formData.append('note', note); 
+  
+    // Agregar las imágenes al FormData
+    imageFiles.forEach((file) => {
+      formData.append('images[]', file); 
+    });
+  
     try {
+      // Enviar la solicitud con FormData
       await axios.post(
         `/campaigns/${campaign.id}/notes`,
-        { note },
-        { withCredentials: true }
-        //  credenciales
+        formData, 
+        {
+          withCredentials: true, 
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
       toast.success("Nota guardada exitosamente");
-      setNote(""); // Limpiar el formulario
-      handleCloseModal();
+      setNote("");  
+      setImageFiles([]);
+      handleCloseModal(); 
     } catch (error) {
       console.error("Error al agregar la nota:", error);
       toast.error("La nota no fue creada");
@@ -141,7 +157,6 @@ const CampaignCard = ({ campaign }) => {
         </>
       )}
 
-      {/* Modal para agregar nota */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Nota</Modal.Title>
@@ -159,6 +174,10 @@ const CampaignCard = ({ campaign }) => {
                 required
               />
             </Form.Group>
+
+            {/* Componente ImageUpload */}
+            <ImageUpload setImageFiles={setImageFiles} errors={{}} />
+
             <Button
               variant="primary"
               type="submit"

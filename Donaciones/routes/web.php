@@ -86,6 +86,7 @@ Route::get('/CreateCampaign', function () {
     return Inertia::render('Campaign/CreateCampaign'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('CreateCampaign');
 
+
 ////////////////////////////////////////////////////////////////////////
 //                       ESTADISTICAS GLOBALES                        //
 ////////////////////////////////////////////////////////////////////////
@@ -156,7 +157,7 @@ Route::post('/donations', [DonationController::class, 'store']);
 Route::get('/campaigns/{id}/donations', [CampaignController::class, 'getDonations']);
 
 ////////////////////////////////////////////////////////////////////////
-//                       CONTROLADORES de comentarios                 //
+//                       CONTROLADORES de comentarios y notas         //
 ////////////////////////////////////////////////////////////////////////
 
 Route::get('/campaigns/{campaign}/comments', [CommentController::class, 'index']);

@@ -15,4 +15,9 @@ class Note extends Model
     {
         return $this->belongsTo(Campaign::class);
     }
+
+    public function images()
+    {
+        return $this->hasMany(NoteImage::class);
+    }
 }
