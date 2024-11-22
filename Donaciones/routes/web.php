@@ -68,8 +68,10 @@ Route::get('/campaigns/search', [CampaignController::class, 'search']);
 Route::get('/categories', [CategoryController::class, 'index']);
 //Seccion de estadisticass globales
 Route::get('/estadisGenerales', [CampaignController::class, 'estadisGenerales']);
+Route::get('/UserDona', [CampaignController::class, 'donationCorrelation']);
+Route::get('/estadisConvinada', [CampaignController::class, 'getMetrics']);
 Route::get('/EstadisticasGlobales', function () {
-    return Inertia::render('Campaign/CampaignStatistics'); // Asegúrate de usar el path correcto
+    return Inertia::render('Campaign/CampaignGeneral'); // Asegúrate de usar el path correcto
 })->middleware(['auth', 'verified'])->name('EstadisticasGlobales');
 
 //CONTROLADORES

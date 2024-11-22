@@ -105,10 +105,10 @@ class CampaignController extends Controller
             'latitude' => 'required|numeric', // Validación para la latitud
             'longitude' => 'required|numeric', // Validación para la longitud
         ]);
-    
+
         // Asignar el ID del usuario a la campaña
         $validated['user_id'] = Auth::id();
-    
+
         try {
             // Crear la campaña con las coordenadas
             $campaign = Campaign::create([
@@ -123,13 +123,13 @@ class CampaignController extends Controller
                 'longitude' => $validated['longitude'], // Guardar longitud
                 'user_id' => $validated['user_id'],
             ]);
-    
+
             // Si se suben imágenes, guardarlas
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $imagePath = $image->store('images', 'public');
                     $imageName = basename($imagePath); // Obtener solo el nombre del archivo
-    
+
                     $campaign->images()->create([
                         'path' => $imageName, // Guardar el nombre de la imagen
                     ]);
@@ -140,32 +140,32 @@ class CampaignController extends Controller
                     'path' => 'defecto.jpg', // Nombre de la imagen por defecto
                 ]);
             }
-    
+
             // Validación para la donación
             $donationValidated = $request->validate([
                 'amount' => 'required|numeric|min:1', // Validar el monto de la donación
             ]);
-    
+
             // Crear la donación
             $donation = Donation::create([
                 'amount' => $donationValidated['amount'],
                 'user_id' => Auth::id(), // El ID del usuario que realiza la donación
                 'campaign_id' => $campaign->id,
             ]);
-    
+
             // Obtener el creador de la campaña
             $creator = $campaign->user; // El usuario que creó la campaña
-    
+
             // Enviar notificación de la donación al creador de la campaña
             $creator->notify(new DonationReceived($donationValidated['amount'], $campaign->title));
-    
+
             return redirect()->route('myCampaigns')->with('success', '¡Campaña creada exitosamente y donación registrada!');
         } catch (\Exception $e) {
             Log::error('Error creando la campaña o registrando la donación: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al crear la campaña o registrar la donación');
         }
     }
-    
+
 
 
     public function update(Request $request, $id)
@@ -369,26 +369,87 @@ class CampaignController extends Controller
 
         return response()->json($notes);
     }
+    //PARTE DE ESTADISTICAS
     public function estadisGenerales()
     {
         // Ejemplo de obtener algunas estadísticas, como el total de campañas y su progreso
         $totalCampaigns = Campaign::count();
         $activeCampaigns = Campaign::where('end_date', '>', now())->count();
-        $completedCampaigns = Campaign::where('end_date', '>', now())
-                              ->where('goal', '<=', DB::raw('total_donated'))
-                              ->count();
         $inactiveCampaign = Campaign::where('end_date', '<', now())->count();
-        $incompletedCampaign = Campaign::where('end_date', '<', now())
-        ->where('goal', '>', DB::raw('total_donated'))
-        ->count();
+
+        $completedCampaigns = Campaign::where('goal', '<=', DB::raw('total_donated'))
+            ->count();
+        $incompletedCampaign = Campaign::where('goal', '>', DB::raw('total_donated'))
+            ->count();
 
         // Retornar los datos como un array
         return response()->json([
             'totalCampaigns' => $totalCampaigns,
             'activeCampaigns' => $activeCampaigns,
-            'completedCampaigns' => $completedCampaigns,
             'inactiveCampaign' => $inactiveCampaign,
+            'completedCampaigns' => $completedCampaigns,
             'incompletedCampaign'  => $incompletedCampaign,
+        ]);
+    }
+    public function donationCorrelation()
+    {
+        // Agrupar donaciones por usuario
+        $donations = Donation::selectRaw('users.name, donations.user_id, COUNT(*) as total_donations, SUM(donations.amount) as total_amount')
+            ->join('users', 'users.id', '=', 'donations.user_id') // Hacemos la unión con la tabla users
+            ->groupBy('donations.user_id', 'users.name') // Agrupamos por user_id y name
+            ->get();
+
+        // Transformar los datos en un formato adecuado para el frontend
+        $correlationData = $donations->map(function ($donation) {
+            return [
+                'user_id' => $donation->user_id,
+                'user_name' => $donation->name,
+                'total_donations' => $donation->total_donations,
+                'total_amount' => $donation->total_amount,
+            ];
+        });
+
+        // Retornar los datos como JSON al frontend
+        return response()->json([
+            'data' => $correlationData
+        ]);
+    }
+    public function getMetrics()
+    {
+        // Obtener las métricas de las campañas: alcance, donaciones, participación
+        $campaigns = Campaign::all()->map(function ($campaign) {
+            return [
+                'name' => $campaign->title,
+                'alcance' => $campaign->donations->pluck('user_id')->unique()->count(),
+                'donaciones' => $campaign->donations->sum('amount'), 
+                
+            ];
+        });
+
+        // Obtener las donaciones a lo largo del tiempo
+        $donationsOverTime = Donation::selectRaw('DATE(created_at) as date, SUM(amount) as total_donations')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Obtener las estadísticas por usuario (campañas activas y total de donaciones)
+        $userStats = User::withCount('campaigns')  
+            ->withSum('donations', 'amount') 
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'user_name' => $user->name,
+                    'user_id' => $user->id,
+                    'total_campaigns' => $user->campaigns_count,
+                    'total_donations' => $user->donations_sum_amount,
+                ];
+            });
+
+        // Retornar los datos al frontend en formato JSON
+        return response()->json([
+            'campaignData' => $campaigns,
+            'donationsOverTime' => $donationsOverTime,
+            'campaignStats' => $userStats,
         ]);
     }
 }
