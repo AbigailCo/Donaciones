@@ -3,6 +3,7 @@ import { Head } from "@inertiajs/react";
 import General from "./Estadisticas/General";
 import UserDona from "./Estadisticas/RelaUserDona";
 import Convinada from "./Estadisticas/EstaConvinada";
+import GeneraExcel from "./Estadisticas/GeneraExcel";
 import Sidebar from "@/Components/Dashboard/Sidebar";
 
 export default function CampaignGeneral({ auth }) {
@@ -25,9 +26,11 @@ export default function CampaignGeneral({ auth }) {
               </p>
             </div>
           </div>
+          <GeneraExcel/>
           <General />
           <UserDona />
           <Convinada />
+
         </div>
       </div>
     </AuthenticatedLayout>

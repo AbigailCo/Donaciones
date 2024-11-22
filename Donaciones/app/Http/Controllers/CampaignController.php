@@ -422,8 +422,8 @@ class CampaignController extends Controller
             return [
                 'name' => $campaign->title,
                 'alcance' => $campaign->donations->pluck('user_id')->unique()->count(),
-                'donaciones' => $campaign->donations->sum('amount'), 
-                
+                'donaciones' => $campaign->donations->sum('amount'),
+
             ];
         });
 
@@ -434,8 +434,8 @@ class CampaignController extends Controller
             ->get();
 
         // Obtener las estadísticas por usuario (campañas activas y total de donaciones)
-        $userStats = User::withCount('campaigns')  
-            ->withSum('donations', 'amount') 
+        $userStats = User::withCount('campaigns')
+            ->withSum('donations', 'amount')
             ->get()
             ->map(function ($user) {
                 return [
@@ -453,4 +453,37 @@ class CampaignController extends Controller
             'campaignStats' => $userStats,
         ]);
     }
+
+    public function exportAllCampaigns()
+    {
+        // Obtener todas las campañas con el nombre de la categoría
+        $campaigns = Campaign::with('category:id,name')
+            ->get()
+            ->map(function ($campaign) {
+                return [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'description' => $campaign->description,
+                    'goal' => $campaign->goal,
+                    'total_donated' => $campaign->total_donated,
+                    'start_date' => $campaign->start_date,
+                    'end_date' => $campaign->end_date,
+                    'user_id' => $campaign->user_id,
+                    'youtube_link' => $campaign->youtube_link,
+                    'created_at' => $campaign->created_at,
+                    'updated_at' => $campaign->updated_at,
+                    'deleted_at' => $campaign->deleted_at,
+                    'category_name' => $campaign->category->name ?? null, // Nombre de la categoría o null
+                    'latitude' => $campaign->latitude,
+                    'longitude' => $campaign->longitude,
+                    'address' => $campaign->address,
+                ];
+            });
+    
+        // Retornar los datos en formato JSON
+        return response()->json([
+            'campaigns' => $campaigns
+        ]);
+    }
+    
 }
