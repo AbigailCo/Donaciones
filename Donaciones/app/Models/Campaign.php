@@ -21,6 +21,9 @@ class Campaign extends Model
         'category_id',
         'latitude',
         'longitude',
+        'alias', 
+        'cvu', 
+        'cbu',
     ];
 
     public function user()

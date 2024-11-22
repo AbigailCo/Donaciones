@@ -8,7 +8,8 @@ import YouTubeLinkInput from "@/Components/YouTubeLinkInput";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MapboxMap from '@/Components/Campaign/MapboxMap';
+import MapboxMap from "@/Components/Campaign/MapboxMap";
+import AliasCvuCbu from "../AliasCvuCbu";
 
 const CreateCampaign = () => {
   const {
@@ -19,16 +20,26 @@ const CreateCampaign = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const [videoLink, setVideoLink] = useState(""); 
+  const [videoLink, setVideoLink] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
+  const [coordinates, setCoordinates] = useState({
+    latitude: null,
+    longitude: null,
+  });
+  const [donationField, setDonationField] = useState({
+    field: null,
+    value: "",
+  });
+  const handleFieldChange = ({ field, value }) => {
+    setDonationField({ field, value });
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/categories"); 
+        const response = await axios.get("/categories");
         setCategories(response.data);
       } catch (error) {
         console.error("Error al cargar categorías", error);
@@ -59,10 +70,13 @@ const CreateCampaign = () => {
       formData.append("category_id", data.category_id);
       formData.append("latitude", coordinates.latitude);
       formData.append("longitude", coordinates.longitude);
+      if (donationField.field && donationField.value) {
+        formData.append(donationField.field, donationField.value);
+      }
 
       if (imageFiles) {
         imageFiles.forEach((image) => {
-          formData.append("images[]", image); 
+          formData.append("images[]", image);
         });
       }
 
@@ -123,7 +137,9 @@ const CreateCampaign = () => {
                 <Form.Label>Categoría:</Form.Label>
                 <Form.Control
                   as="select"
-                  {...register("category_id", { required: "La categoría es requerida" })}
+                  {...register("category_id", {
+                    required: "La categoría es requerida",
+                  })}
                   isInvalid={!!errors.category_id}
                 >
                   <option value="">Selecciona una categoría</option>
@@ -143,7 +159,9 @@ const CreateCampaign = () => {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  {...register("description", { required: "Descripción es requerida" })}
+                  {...register("description", {
+                    required: "Descripción es requerida",
+                  })}
                   isInvalid={!!errors.description}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -163,12 +181,14 @@ const CreateCampaign = () => {
                   {errors.goal?.message}
                 </Form.Control.Feedback>
               </Col>
-
+              <AliasCvuCbu onFieldChange={handleFieldChange} />
               <Col md={6}>
                 <Form.Label>Fecha de inicio:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register("start_date", { required: "Fecha de inicio es requerida" })}
+                  {...register("start_date", {
+                    required: "Fecha de inicio es requerida",
+                  })}
                   isInvalid={!!errors.start_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -180,7 +200,9 @@ const CreateCampaign = () => {
                 <Form.Label>Fecha de finalización:</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register("end_date", { required: "Fecha de finalización es requerida" })}
+                  {...register("end_date", {
+                    required: "Fecha de finalización es requerida",
+                  })}
                   isInvalid={!!errors.end_date}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -189,11 +211,19 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <ImageUpload register={register} errors={errors} setImageFiles={setImageFiles} />
+                <ImageUpload
+                  register={register}
+                  errors={errors}
+                  setImageFiles={setImageFiles}
+                />
               </Col>
 
               <Col md={6}>
-                <YouTubeLinkInput register={register} errors={errors} setVideoLink={setVideoLink} />
+                <YouTubeLinkInput
+                  register={register}
+                  errors={errors}
+                  setVideoLink={setVideoLink}
+                />
               </Col>
 
               <div>

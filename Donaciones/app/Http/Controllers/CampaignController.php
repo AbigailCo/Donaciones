@@ -93,6 +93,7 @@ class CampaignController extends Controller
 
     public function store(Request $request)
     {
+        Log::info($request->all());
         // Validación para la campaña
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -100,12 +101,20 @@ class CampaignController extends Controller
             'goal' => 'required|numeric|min:1',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validar múltiples imágenes
-            'youtube_link' => 'nullable|url', // Validar el enlace de YouTube
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'youtube_link' => 'nullable|url', 
             'category_id' => 'required|exists:categories,id',
-            'latitude' => 'required|numeric', // Validación para la latitud
-            'longitude' => 'required|numeric', // Validación para la longitud
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'alias' => 'nullable|string|regex:/^\S+$/',
+            'cvu' => 'nullable|string|max:22', 
+            'cbu' => 'nullable|string|max:22',
         ]);
+        if (collect(['alias', 'cvu', 'cbu'])->filter(fn($key) => $request->filled($key))->count() > 1) {
+            return response()->json([
+                'message' => 'Solo uno de los campos alias, cvu o cbu puede estar presente.',
+            ], 422);
+        }
 
         // Asignar el ID del usuario a la campaña
         $validated['user_id'] = Auth::id();
@@ -120,9 +129,12 @@ class CampaignController extends Controller
                 'end_date' => $validated['end_date'],
                 'youtube_link' => $validated['youtube_link'] ?? null, // Si hay un enlace de YouTube
                 'category_id' => $validated['category_id'],
-                'latitude' => $validated['latitude'], // Guardar latitud
-                'longitude' => $validated['longitude'], // Guardar longitud
+                'latitude' => $validated['latitude'],
+                'longitude' => $validated['longitude'], 
                 'user_id' => $validated['user_id'],
+                'alias' => $validated['alias'] ?? null, 
+                'cvu' => $validated['cvu'] ?? null,
+                'cbu' => $validated['cbu'] ?? null,
             ]);
 
             // Si se suben imágenes, guardarlas
@@ -380,13 +392,13 @@ class CampaignController extends Controller
     public function getNotes($campaign_id)
     {
         $notes = Note::with('images')
-        ->where('campaign_id', $campaign_id)
-        ->get()
-        ->map(function ($note) {
-            // Formatear la fecha de creación
-            $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // o cualquier formato que prefieras
-            return $note;
-        });
+            ->where('campaign_id', $campaign_id)
+            ->get()
+            ->map(function ($note) {
+                // Formatear la fecha de creación
+                $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // o cualquier formato que prefieras
+                return $note;
+            });
 
         return response()->json($notes);
     }

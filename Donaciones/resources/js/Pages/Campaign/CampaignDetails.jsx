@@ -29,6 +29,15 @@ const CampaignDetails = () => {
   const [donationAmount, setDonationAmount] = useState("");
   const [donations, setDonations] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const selectedField = campaign.alias ? "alias" : campaign.cvu ? "cvu" : campaign.cbu ? "cbu" : null;
+  
+  // Función para obtener el valor según el campo seleccionado
+  const getFieldValue = () => {
+    if (selectedField === "alias") return campaign.alias;
+    if (selectedField === "cvu") return campaign.cvu;
+    if (selectedField === "cbu") return campaign.cbu;
+    return null;
+  };
 
 
   const totalDonado = donations.reduce(
@@ -170,6 +179,43 @@ const CampaignDetails = () => {
             >
 
               <div>
+              <Box
+                  sx={{
+                 
+                    mb: 4,
+                    p: 3,
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 4,
+                    boxShadow: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    <strong>¿Como donar?</strong> 
+                  </Typography>
+                  <Box sx={{ textAlign: "left" }}>
+                  {selectedField === "alias" && (
+              <span>
+                <strong>Alias:</strong> {getFieldValue()}
+              </span>
+            )}
+            {selectedField === "cvu" && (
+              <span>
+                <strong>CVU:</strong> {getFieldValue()}
+              </span>
+            )}
+            {selectedField === "cbu" && (
+              <span>
+                <strong>CBU:</strong> {getFieldValue()}
+              </span>
+            )}
+                  </Box>
+                </Box>
                 <Box
                   sx={{
                     display: "flex",
@@ -204,6 +250,8 @@ const CampaignDetails = () => {
                       {new Date(campaign.end_date).toLocaleDateString("es-ES")}
                     </Typography>
                   </Box>
+                 
+         
 
                 </Box>
                 {auth.user && auth.user.id !== campaign.user_id && (

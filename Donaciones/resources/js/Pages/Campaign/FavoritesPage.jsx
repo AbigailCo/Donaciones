@@ -1,11 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import CampaignCard from '../../Components/Campaign/CampaignCard';
+import CampaignCard from '@/Components/Campaign/CampaignCard';
 import { Head } from '@inertiajs/react';
 import Sidebar from '@/Components/Dashboard/Sidebar';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 
 const FavoritesPage = ({ favorites, auth }) => {
     console.log(favorites)
@@ -17,32 +16,22 @@ const FavoritesPage = ({ favorites, auth }) => {
       </div>
     );
   }
-
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Mis favoritos" />
-
-      {/* Contenedor principal con flexbox para organizar el sidebar y el contenido */}
       <div className="d-flex h-100">
-
-        
         <div className="w-1/5">
           <Sidebar auth={auth} />
         </div>
-
-        {/* Contenido principal */}
         <div className="flex-1 mt-12 mx-4">
-        
           <h1 className="mt-4 text-center">Mis Favoritos</h1>
           {favorites.length > 0 ? (
             <Grid container spacing={3}>
               {favorites.map((favorite) => (
                 <Grid item xs={12} sm={6} md={4} key={favorite.id}>
-                   <CampaignCard key={favorite.id} campaign={favorite.campaign} />
-                   <ToastContainer />
-                </Grid>
-                
-              ))}
+                   <CampaignCard key={favorite.id} campaign={favorite.campaign} />              
+                </Grid>       
+              ))} 
             </Grid>
           ) : (
             <Typography className="text-center" variant="h5" color="textSecondary">
