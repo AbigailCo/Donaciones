@@ -19,6 +19,8 @@ import CampaignComments from "../../Components/Campaign/CampaignComments";
 import MapCampaign from "@/Components/Campaign/MapCampaign";
 import FavoriteButton from '@/Components/Campaign/FavoriteButton';
 import CampaignNotes from "../../Components/Campaign/CampaignNotes";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -44,6 +46,7 @@ const CampaignDetails = () => {
     return matches ? matches[1] : null;
   };
   const youtubeId = getYouTubeId(campaign.youtube_link);
+  
 
   useEffect(() => {
     initMercadoPago("TEST-ca5184c7-731c-4a71-9887-b5a5e97cd506");
@@ -80,18 +83,22 @@ const CampaignDetails = () => {
 
     // 1. Registramos la donación en la base de datos
     axios.post('/donations', {
-        amount: donationAmount,
+        amount: parseFloat(donationAmount),
         campaign_id: campaign.id,
         user_id: auth.user.id,
         payment_status: 'pending',
     })
     .then(response => {
         console.log('Donación registrada:', response.data);
+      
         return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
     })
     .then(response => {
         // Abrir la URL de pago en un popup
         openPopup(response.data.init_point);
+        setTimeout(() => {
+          window.location.reload(); // Recarga la página después de un breve retraso
+      }, 1500); // Espera 1.5 segundos antes de recargar
     })
     .catch(error => {
         console.error('Error al procesar la donación:', error);
@@ -154,6 +161,7 @@ const CampaignDetails = () => {
       {auth.user ? (
         <AuthenticatedLayout user={auth.user}>
           <Box sx={{ ...containerStyle, marginTop: "24px" }}>
+          <ToastContainer position="top-right" autoClose={3000} />
             {/* Panel Lateral */}
             <Drawer
               sx={drawerStyle}
