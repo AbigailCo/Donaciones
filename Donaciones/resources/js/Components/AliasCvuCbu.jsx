@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const AliasCvuCbu = ({ onFieldChange }) => {
-    const { register, setValue, formState: { errors }, clearErrors, handleSubmit } = useForm();
+    const { register, setValue, formState: { errors }, clearErrors, handleSubmit, getFieldState, } = useForm();
     const [selectedField, setSelectedField] = useState(null);
 
     const handleFieldSelection = (field) => {
@@ -66,7 +66,13 @@ const AliasCvuCbu = ({ onFieldChange }) => {
                     <input
                         id="alias"
                         type="text"
-                        className={`form-control ${errors.alias ? "border border-danger" : "border border-success"}`}
+                        className={`form-control ${
+                            errors.cbu
+                              ? "border border-danger"
+                              : (getFieldState("alias")?.isDirty && !errors.cbu )
+                              ? "border border-success"
+                              : "" // Si no hay errores
+                          }`}
                         {...register("alias", {
                             required: "El alias es obligatorio.",
                             pattern: {
@@ -86,7 +92,13 @@ const AliasCvuCbu = ({ onFieldChange }) => {
                     <input
                         id="cvu"
                         type="text"
-                        className={`form-control ${errors.cvu ? "border border-danger" : "border border-success"}`}
+                        className={`form-control ${
+                            errors.cbu
+                              ? "border border-danger"
+                              : (getFieldState("cvu")?.isDirty && !errors.cbu )
+                              ? "border border-success"
+                              : "" // Si no hay errores
+                          }`}
                         {...register("cvu", {
                             required: "El CVU es obligatorio.",
                             pattern: {
@@ -106,7 +118,13 @@ const AliasCvuCbu = ({ onFieldChange }) => {
                     <input
                         id="cbu"
                         type="text"
-                        className={`form-control ${errors.cbu ? "border border-danger" : "border border-success"}`}
+                        className={`form-control ${
+                            errors.cbu
+                              ? "border border-danger"
+                              : (getFieldState("cbu")?.isDirty && !errors.cbu ) 
+                              ? "border border-success"
+                              : "" 
+                          }`}
                         {...register("cbu", {
                             required: "El CBU es obligatorio.",
                             pattern: {

@@ -1,22 +1,38 @@
-import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { Form } from "react-bootstrap";
 
 const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
   const [isValidLink, setIsValidLink] = useState(true);
+  const [youtubePreview, setYoutubePreview] = useState("");
 
   const validateYouTubeUrl = (url) => {
     const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
     return youtubeRegex.test(url);
   };
 
+  const getYouTubeVideoId = (url) => {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
   const handleLinkChange = (e) => {
     const link = e.target.value;
-    if (link === '' || validateYouTubeUrl(link)) {
-      // Si el enlace está vacío o es válido, es aceptable
+
+    if (link === "" || validateYouTubeUrl(link)) {
       setIsValidLink(true);
       setVideoLink(link);
+
+      // Extraer el ID del video y generar la URL para la previsualización
+      const videoId = getYouTubeVideoId(link);
+      if (videoId) {
+        setYoutubePreview(`https://www.youtube.com/embed/${videoId}`);
+      } else {
+        setYoutubePreview("");
+      }
     } else {
       setIsValidLink(false);
+      setYoutubePreview("");
     }
   };
 
@@ -25,10 +41,10 @@ const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
       <Form.Label>Link del video de YouTube:</Form.Label>
       <Form.Control
         type="text"
-        {...register('video', {
+        {...register("video", {
           pattern: {
             value: /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/,
-            message: 'Por favor ingresa un enlace de YouTube válido',
+            message: "Por favor ingresa un enlace de YouTube válido",
           },
         })}
         onChange={handleLinkChange}
@@ -36,11 +52,23 @@ const YouTubeLinkInput = ({ register, errors, setVideoLink }) => {
         placeholder="https://www.youtube.com/..."
       />
       <Form.Control.Feedback type="invalid">
-      {errors.video?.message}
+        {errors.video?.message || (!isValidLink && "Enlace de YouTube no válido")}
       </Form.Control.Feedback>
-      {!isValidLink && e.target.value !== '' && (
-  <div className="text-danger">Enlace de YouTube no válido</div>
-)}
+
+      {/* Previsualización del video */}
+      {youtubePreview && (
+        <div className="mt-3">
+          <label>Previsualización del video</label>
+          <div className="embed-responsive embed-responsive-16by9">
+            <iframe
+              className="embed-responsive-item"
+              src={youtubePreview}
+              allowFullScreen
+              title="Previsualización de YouTube"
+            ></iframe>
+          </div>
+        </div>
+      )}
     </Form.Group>
   );
 };
