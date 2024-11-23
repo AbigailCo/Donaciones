@@ -8,9 +8,14 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>}
         >
             <Head title="Perfil" />
+            <div className="bg-gradient-to-r from-blue-500 to-fuchsia-500 shadow-lg rounded-lg overflow-hidden mt-12 mb-6">
+                            <div className="p-6 text-center text-white">
+                                <h1 className="text-3xl font-bold">{auth.user?.name}</h1>
+                                <p className="mt-2 text-lg">Edita tu perfil</p>
+                            </div>
+                        </div>
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
