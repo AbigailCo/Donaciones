@@ -32,8 +32,37 @@ class AdminController extends Controller
 {
     $users = User::select('id', 'name', 'email', 'created_at') // Selecciona columnas necesarias
                   ->latest()
-                  ->paginate(10);
+                  ->paginate(5);
 
     return response()->json($users);
 }
+
+public function deleteUser($id)
+{
+    // Busca el usuario por ID
+    $user = User::find($id);
+
+    // Verifica si el usuario existe
+    if (!$user) {
+        return response()->json([
+            'error' => 'Usuario no encontrado.',
+        ], 404);
+    }
+
+    // Evita eliminar al administrador principal (opcional)
+    if ($user->email === 'admin@gmail.com') {
+        return response()->json([
+            'error' => 'No puedes eliminar al administrador principal.',
+        ], 403);
+    }
+
+    // Elimina el usuario
+    $user->delete();
+
+    return response()->json([
+        'message' => 'Usuario eliminado correctamente.',
+    ]);
+}
+
+
 }

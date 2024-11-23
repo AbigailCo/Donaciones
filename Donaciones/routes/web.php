@@ -192,6 +192,9 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
 
     // Rutas para usuarios en el panel de administración
     Route::get('/admin/users', [AdminController::class, 'getUsers']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
+
+
 });
 
 
