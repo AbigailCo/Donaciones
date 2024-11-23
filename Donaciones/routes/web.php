@@ -51,6 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//Agregamos una foto de perfil
+Route::post('/user/profile', [ProfileController::class, 'updatePhoto']);
+Route::get('/userCreador/{id}', [CampaignController::class, 'getCreator']);
+
 ////////////////////////////////////////////////////////////////////////
 //                       INTEGRACION DE MERCADO PAGO                  //
 ////////////////////////////////////////////////////////////////////////
@@ -170,16 +174,11 @@ Route::post('/comments', [CommentController::class, 'store']);
 Route::post('/campaigns/{id}/notes', [CampaignController::class, 'addNote']);
 Route::get('/campaigns/{campaign_id}/notes', [CampaignController::class, 'getNotes']);
 
-/*
-Route::middleware(['auth', 'verified', 'admin_check'])->group(function () {
-    Route::get('/admin', function () {
-        return Inertia::render('Admin/AdminDashboard'); 
-    })->name('admin.dashboard');
+////////////////////////////////////////////////////////////////////////
+//                       CONTROLADORES panel de usuario               //
+////////////////////////////////////////////////////////////////////////
 
-    Route::get('/admin/campaigns', [CampaignController::class, 'getCampaigns']);
-    Route::delete('/admin/campaigns/{id}', [CampaignController::class, 'destroy']);
-    Route::get('/admin/users', [AdminController::class, 'getUsers']);
-});*/
+
 Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
     // Ruta para el panel principal de administración
     Route::get('/admin', function () {
@@ -196,10 +195,16 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
 
 
 });
+/*
+Route::middleware(['auth', 'verified', 'admin_check'])->group(function () {
+    Route::get('/admin', function () {
+        return Inertia::render('Admin/AdminDashboard'); 
+    })->name('admin.dashboard');
 
-
-
-
+    Route::get('/admin/campaigns', [CampaignController::class, 'getCampaigns']);
+    Route::delete('/admin/campaigns/{id}', [CampaignController::class, 'destroy']);
+    Route::get('/admin/users', [AdminController::class, 'getUsers']);
+});*/
 
 ////////////////////////////////////////////////////////////////////////
 //                            PRUEBA                                  //

@@ -40,6 +40,16 @@ class CampaignController extends Controller
         return response()->json($campaigns);
     }
 
+    public function getCreator($id)
+    {
+        $campaign = Campaign::with('user')->find($id);
+        if (!$campaign) {
+            return response()->json(['error' => 'Campaña no encontrada'], 404);
+        }
+            return response()->json([
+            'user' => $campaign->creator
+        ]);
+    }
 
     public function count()
     {

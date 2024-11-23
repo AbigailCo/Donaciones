@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FavoriteButton from './FavoriteButton';
 import ImageUpload from "../ImageUpload";
+import FotoPerfil from "./FotoPerfil";
 
 const getYouTubeId = (url) => {
   if (!url) return null;
@@ -16,7 +17,7 @@ const getYouTubeId = (url) => {
   return matches ? matches[1] : null;
 };
 
-const CampaignCard = ({ campaign }) => {
+const CampaignCard = ({ campaign}) => {
   const { auth } = usePage().props;
 /*   const youtubeId = getYouTubeId(campaign.youtube_link); */
   const [isFavorite, setIsFavorite] = useState(false);
@@ -92,6 +93,9 @@ const CampaignCard = ({ campaign }) => {
   return (
     <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
       <ToastContainer />
+      <div>
+        <FotoPerfil campaign={campaign}/>
+      </div>
       <Carousel>
         {Array.isArray(campaign.images) && campaign.images.length > 0 ? (
           campaign.images.map((image, index) => (
@@ -139,6 +143,7 @@ const CampaignCard = ({ campaign }) => {
           </Typography>
         </CardContent>
       </Link>
+     
 
       {auth.user && auth.user.id !== campaign.user_id && (
         <FavoriteButton

@@ -60,4 +60,28 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+
+        if ($request->hasFile('profile_picture')) {
+            $imagePath = $request->file('profile_picture')->store('perfil', 'public');
+            $imageName = basename($imagePath);
+            $user->profile_picture = $imageName;
+        }else {
+            // Asignar imagen por defecto si no hay imágenes subidas
+            $user->images()->create([
+                'path' => 'defecto.jpg', // Nombre de la imagen por defecto
+            ]);
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Profile updated successfully']);
+    }
 }
