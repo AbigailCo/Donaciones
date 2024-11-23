@@ -3,6 +3,7 @@ import axios from "axios";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Sidebar from '../../Components/Dashboard/Sidebar.jsx';
 import { Head } from '@inertiajs/react';
+import { toast } from 'react-toastify'; // Importa toast
 
 const AdminDashboard = ({ auth }) => {
   console.log("Auth data:", auth);
@@ -33,8 +34,12 @@ const AdminDashboard = ({ auth }) => {
         .delete(`/admin/campaigns/${id}`)
         .then(() => {
           setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
+          toast.success("Campaña eliminada correctamente."); // Muestra el toast de éxito
         })
-        .catch((error) => console.error("Error al eliminar campaña:", error));
+        .catch((error) => {
+          console.error("Error al eliminar campaña:", error);
+          toast.error("Ocurrió un error al eliminar la campaña."); // Muestra el toast de error
+        });
     }
   };
 
@@ -56,11 +61,11 @@ const AdminDashboard = ({ auth }) => {
         .delete(`/admin/users/${id}`)
         .then(() => {
           setUsers(users.filter((user) => user.id !== id));
-          alert("Usuario eliminado correctamente.");
+          toast.success("Usuario eliminado correctamente."); // Muestra el toast de éxito
         })
         .catch((error) => {
           console.error("Error al eliminar usuario:", error);
-          alert("Ocurrió un error al eliminar el usuario.");
+          toast.error("Ocurrió un error al eliminar el usuario."); // Muestra el toast de error
         });
     }
   };
@@ -68,7 +73,7 @@ const AdminDashboard = ({ auth }) => {
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="AdminPanel" />
-
+      
       <div className="d-flex h-100" style={{ marginTop: "4rem" }}>
         {/* Sidebar ocupa 25% del ancho */}
         <div className="w-1/4">
@@ -144,22 +149,29 @@ const AdminDashboard = ({ auth }) => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="py-2 px-4 border-b text-center">{user.id}</td>
-                    <td className="py-2 px-4 border-b">{user.name}</td>
-                    <td className="py-2 px-4 border-b">{user.email}</td>
-                    <td className="py-2 px-4 border-b">{user.created_at}</td>
-                    <td className="py-2 px-4 border-b text-center">
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {users.map((user) => {
+                  const createdAt = new Date(user.created_at);
+                  const formattedDate = createdAt.toLocaleDateString('es-ES'); // dd/mm/yyyy
+                  const formattedTime = createdAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); // hh:mm
+                  return (
+                    <tr key={user.id}>
+                      <td className="py-2 px-4 border-b text-center">{user.id}</td>
+                      <td className="py-2 px-4 border-b">{user.name}</td>
+                      <td className="py-2 px-4 border-b">{user.email}</td>
+                      <td className="py-2 px-4 border-b">
+                        {formattedDate} {formattedTime}
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">
+                        <button
+                          onClick={() => deleteUser(user.id)}
+                          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
