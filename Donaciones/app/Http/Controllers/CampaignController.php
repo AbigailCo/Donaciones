@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Mail\CampaignUpdateNotification;
 use App\Models\Campaign;
+use App\Models\CampaignImage;
 use App\Models\Category;
 use App\Models\Donation;
 use App\Models\Note;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -211,6 +213,56 @@ class CampaignController extends Controller
         return Inertia::render('Campaign/EditCampaign', [
             'campaign' => $campaign
         ]);
+    }
+
+    //EDICION DE IMAGENES DE LA CAMPAÑA
+    public function getImages($id)
+    {
+        $campaign = Campaign::findOrFail($id);
+        $images = $campaign->images;
+        return response()->json($images);
+    }
+
+    public function updateImages(Request $request, $id)
+    {
+        $request->validate([
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $campaign = Campaign::findOrFail($id);
+
+        if ($request->hasFile('images')) {
+            $uploadedImages = [];
+
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('images', 'public');
+                $imageName = basename($imagePath);
+                // Crear registro en la tabla images_campaign
+                $imageRecord = $campaign->images()->create(['path' =>  $imageName]);
+
+                $uploadedImages[] = $imageRecord;
+            }
+
+            return response()->json([
+                'message' => 'Imágenes actualizadas exitosamente',
+                'images' => $uploadedImages,
+            ]);
+        }
+
+        return response()->json(['message' => 'No se subieron imágenes'], 400);
+    }
+
+    public function deleteImage($id)
+    {
+        $image = CampaignImage::findOrFail($id);
+
+        // Eliminar archivo físico
+        Storage::disk('public')->delete($image->path);
+
+        // Eliminar registro de la base de datos
+        $image->delete();
+
+        return response()->json(['message' => 'Imagen eliminada correctamente']);
     }
 
     public function destroy($id)

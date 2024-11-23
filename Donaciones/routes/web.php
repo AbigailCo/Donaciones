@@ -131,6 +131,13 @@ Route::middleware('auth:sanctum')->group(function () {
    
 });
 Route::get('/campaigns', [CampaignController::class, 'index']);
+////////////////////////////////////////////////////////////////////////
+//                       editar imagenes                              //
+////////////////////////////////////////////////////////////////////////
+Route::get('/campaigns/{id}/images', [CampaignController::class, 'getImages']);
+Route::post('/campaigns/{id}/images', [CampaignController::class, 'updateImages']);
+Route::delete('/images_campaign/{id}', [CampaignController::class, 'deleteImage']);
+
 
 
 ////////////////////////////////////////////////////////////////////////
