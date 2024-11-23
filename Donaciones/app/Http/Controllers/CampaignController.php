@@ -566,7 +566,7 @@ class CampaignController extends Controller
         $campaigns = Campaign::with('user:id,name')
                               ->select('id', 'title', 'user_id')
                               ->latest() // Ordenar por las más recientes
-                              ->paginate(10); // Paginar con 10 por página
+                              ->paginate(5); // Paginar con 10 por página
     
         return response()->json($campaigns);
     }

@@ -32,7 +32,7 @@ class AdminController extends Controller
 {
     $users = User::select('id', 'name', 'email', 'created_at') // Selecciona columnas necesarias
                   ->latest()
-                  ->paginate(10);
+                  ->paginate(5);
 
     return response()->json($users);
 }

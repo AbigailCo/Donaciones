@@ -8,20 +8,24 @@ const AdminDashboard = ({ auth }) => {
   console.log("Auth data:", auth);
 
   const [campaigns, setCampaigns] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
-  const [users, setUsers] = useState([]);
+  const [campaignsCurrentPage, setCampaignsCurrentPage] = useState(1);
+  const [campaignsLastPage, setCampaignsLastPage] = useState(1);
 
+  const [users, setUsers] = useState([]);
+  const [usersCurrentPage, setUsersCurrentPage] = useState(1);
+  const [usersLastPage, setUsersLastPage] = useState(1);
+
+  // Paginado de campañas
   useEffect(() => {
     axios
-      .get(`/admin/campaigns?page=${currentPage}`)
+      .get(`/admin/campaigns?page=${campaignsCurrentPage}`)
       .then((response) => {
         setCampaigns(response.data.data);
-        setCurrentPage(response.data.current_page);
-        setLastPage(response.data.last_page);
+        setCampaignsCurrentPage(response.data.current_page);
+        setCampaignsLastPage(response.data.last_page);
       })
       .catch((error) => console.error("Error cargando campañas:", error));
-  }, [currentPage]);
+  }, [campaignsCurrentPage]);
 
   const deleteCampaign = (id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta campaña?")) {
@@ -34,29 +38,32 @@ const AdminDashboard = ({ auth }) => {
     }
   };
 
+  // Paginado de usuarios
   useEffect(() => {
     axios
-      .get(`/admin/users?page=${currentPage}`)
+      .get(`/admin/users?page=${usersCurrentPage}`)
       .then((response) => {
         setUsers(response.data.data);
+        setUsersCurrentPage(response.data.current_page);
+        setUsersLastPage(response.data.last_page);
       })
       .catch((error) => console.error("Error cargando usuarios:", error));
-  }, [currentPage]);
+  }, [usersCurrentPage]);
 
   const deleteUser = (id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-        axios
-            .delete(`/admin/users/${id}`)
-            .then(() => {
-                setUsers(users.filter((user) => user.id !== id));
-                alert("Usuario eliminado correctamente.");
-            })
-            .catch((error) => {
-                console.error("Error al eliminar usuario:", error);
-                alert("Ocurrió un error al eliminar el usuario.");
-            });
+      axios
+        .delete(`/admin/users/${id}`)
+        .then(() => {
+          setUsers(users.filter((user) => user.id !== id));
+          alert("Usuario eliminado correctamente.");
+        })
+        .catch((error) => {
+          console.error("Error al eliminar usuario:", error);
+          alert("Ocurrió un error al eliminar el usuario.");
+        });
     }
-};
+  };
 
   return (
     <AuthenticatedLayout user={auth.user}>
@@ -104,19 +111,19 @@ const AdminDashboard = ({ auth }) => {
             </tbody>
           </table>
 
-          {/* Paginación */}
+          {/* Paginación para campañas */}
           <div className="mt-4 flex justify-center items-center">
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              onClick={() => setCampaignsCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={campaignsCurrentPage === 1}
               className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
             >
               Anterior
             </button>
-            <span>Página {currentPage} de {lastPage}</span>
+            <span>Página {campaignsCurrentPage} de {campaignsLastPage}</span>
             <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, lastPage))}
-              disabled={currentPage === lastPage}
+              onClick={() => setCampaignsCurrentPage((prev) => Math.min(prev + 1, campaignsLastPage))}
+              disabled={campaignsCurrentPage === campaignsLastPage}
               className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
             >
               Siguiente
@@ -155,6 +162,25 @@ const AdminDashboard = ({ auth }) => {
                 ))}
               </tbody>
             </table>
+
+            {/* Paginación para usuarios */}
+            <div className="mt-4 flex justify-center items-center">
+              <button
+                onClick={() => setUsersCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={usersCurrentPage === 1}
+                className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
+              >
+                Anterior
+              </button>
+              <span>Página {usersCurrentPage} de {usersLastPage}</span>
+              <button
+                onClick={() => setUsersCurrentPage((prev) => Math.min(prev + 1, usersLastPage))}
+                disabled={usersCurrentPage === usersLastPage}
+                className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -163,5 +189,3 @@ const AdminDashboard = ({ auth }) => {
 };
 
 export default AdminDashboard;
-
-
