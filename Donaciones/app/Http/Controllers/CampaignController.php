@@ -265,6 +265,17 @@ class CampaignController extends Controller
         return response()->json(['message' => 'Imagen eliminada correctamente']);
     }
 
+    public function updateLink(Request $request, $id)
+{
+    $validated = $request->validate([
+        'youtube_link' => 'nullable|string|max:255|url', // Validación del enlace
+    ]);
+
+    $campaign = Campaign::findOrFail($id);
+    $campaign->update($validated);
+
+    return response()->json(['message' => 'Campaña actualizada exitosamente.', 'campaign' => $campaign]);
+}
     public function destroy($id)
     {
         $campaign = Campaign::findOrFail($id);

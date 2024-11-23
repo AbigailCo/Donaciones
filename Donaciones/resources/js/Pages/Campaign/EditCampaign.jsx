@@ -6,6 +6,7 @@ import Sidebar from "@/Components/Dashboard/Sidebar";
 import { usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import EditImagesCampaign from "@/Components/Campaign/EditImagesCampaign";
+import EditYoutubeLink from "@/Components/Campaign/EditYoutubeLink";
 export default function EditCampaign({ auth }) {
   const { campaign } = usePage().props;
   const [formData, setFormData] = useState({
@@ -54,6 +55,7 @@ export default function EditCampaign({ auth }) {
         <div className="flex-1 mt-12 mx-4">
           <h1 className="mt-4 text-center">Panel de edicion</h1>
           <EditImagesCampaign campaignId={campaign.id}/>
+          <EditYoutubeLink campaign={campaign}/>
           <div style={{ marginTop: "15px" }}>
             <form onSubmit={handleSubmit} className="space-y-7 ">
               <div>
