@@ -7,6 +7,7 @@ import CampaignMap from '@/Components/Dashboard/CampaignMap.jsx';
 import axios from 'axios';
 
 export default function Dashboard({ auth }) {
+    //console.log(auth.user);
     const [campaigns, setCampaigns] = useState([]);
    
     useEffect(() => {
@@ -16,6 +17,8 @@ export default function Dashboard({ auth }) {
           })
           .catch((error) => console.error('Error fetching campaigns:', error));
       }, []);
+
+      
     return (
         <AuthenticatedLayout
             user={auth.user}

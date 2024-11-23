@@ -4,7 +4,7 @@ import '../css/styles.css'
 import '../css/stylesWelcome.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Importar FontAwesome
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -13,7 +13,8 @@ import { initMercadoPago } from '@mercadopago/sdk-react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { BrowserRouter as Router } from 'react-router-dom'; 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
+import AdminDashboard from './Pages/Admin/AdminDashboard'; 
 
 const appName = import.meta.env.VITE_APP_NAME || 'Dar Vuelve';
 
