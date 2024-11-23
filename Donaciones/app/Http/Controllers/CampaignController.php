@@ -277,15 +277,13 @@ class CampaignController extends Controller
     return response()->json(['message' => 'Campaña actualizada exitosamente.', 'campaign' => $campaign]);
 }
     public function destroy($id)
-    {
-        $campaign = Campaign::findOrFail($id);
-        $this->authorize('delete', $campaign);
+{
+    // Encuentra la campaña y elimínala
+    $campaign = Campaign::findOrFail($id);
+    $campaign->delete(); // Si usas SoftDeletes, esto marcará la campaña como eliminada
 
-        // Eliminar la campaña
-        $campaign->delete();
-
-        return response()->json(['message' => 'Campaign deleted successfully']);
-    }
+    return response()->json(['message' => 'Campaña eliminada correctamente']);
+}
 
     public function myCampaigns()
     {
@@ -561,5 +559,15 @@ class CampaignController extends Controller
         return response()->json([
             'campaigns' => $campaigns
         ]);
+    }
+
+    public function getCampaigns()
+    {
+        $campaigns = Campaign::with('user:id,name')
+                              ->select('id', 'title', 'user_id')
+                              ->latest() // Ordenar por las más recientes
+                              ->paginate(10); // Paginar con 10 por página
+    
+        return response()->json($campaigns);
     }
 }
