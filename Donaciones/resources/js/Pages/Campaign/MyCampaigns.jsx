@@ -1,8 +1,8 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CampaignCard from '../../Components/Campaign/CampaignCard';
-import { Head } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import Sidebar from '@/Components/Dashboard/Sidebar';
 
 const MyCampaigns = ({ campaigns, auth }) => {
@@ -22,14 +22,22 @@ const MyCampaigns = ({ campaigns, auth }) => {
       {/* Contenedor principal con flexbox para organizar el sidebar y el contenido */}
       <div className="d-flex h-100">
 
-        
+        {/* Sidebar */}
         <div className="w-1/5">
           <Sidebar auth={auth} />
         </div>
 
         {/* Contenido principal */}
         <div className="flex-1 mt-12 mx-4">
-        
+          {/* Botón en la esquina superior derecha */}
+          <div className="flex justify-end mb-4">
+          <Link href="/CreateCampaign" style={{ textDecoration: 'none' }}>
+    <Button variant="contained" color="primary">
+      Agregar Campaña
+    </Button>
+            </Link>
+          </div>
+
           <h1 className="mt-4 text-center">Mis campañas</h1>
           {campaigns.length > 0 ? (
             <Grid container spacing={3}>
@@ -46,7 +54,6 @@ const MyCampaigns = ({ campaigns, auth }) => {
           )}
         </div>
       </div>
-
     </AuthenticatedLayout>
   );
 };

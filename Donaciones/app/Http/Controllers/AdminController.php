@@ -25,12 +25,13 @@ class AdminController extends Controller
         // Trae todas las campañas, sin filtro por status
     $campaigns = Campaign::all(); // Si tienes SoftDeletes, usa ->withTrashed()
     
-    return view('admin.dashboard', compact('campaigns'));
+    return response()->json($campaigns);
+
     }
 
     public function getUsers()
 {
-    $users = User::select('id', 'name', 'email', 'created_at') // Selecciona columnas necesarias
+    $users = User::select('id', 'name', 'email', 'role', 'created_at') // Selecciona columnas necesarias
                   ->latest()
                   ->paginate(5);
 
@@ -63,6 +64,31 @@ public function deleteUser($id)
         'message' => 'Usuario eliminado correctamente.',
     ]);
 }
+
+public function assignAdmin($id)
+{
+    $user = User::find($id);
+    if (!$user) {
+        return response()->json([
+            'error' => 'Usuario no encontrado.',
+        ], 404);
+    }
+
+    // Verifica que no estemos cambiando el rol del administrador principal
+    if ($user->email === 'admin@gmail.com') {
+        return response()->json([
+            'error' => 'No puedes modificar el rol del administrador principal.',
+        ], 403);
+    }
+    $user->role = 'admin';
+    $user->save();
+
+    return response()->json([
+        'message' => 'El usuario ha sido promovido a administrador.',
+        'user' => $user, // Devuelve el usuario actualizado
+    ]);
+}
+
 
 
 }
