@@ -290,22 +290,23 @@ class CampaignController extends Controller
 {
     // Encuentra la campaña y elimínala
     $campaign = Campaign::findOrFail($id);
-    $campaign->delete(); // Si usas SoftDeletes, esto marcará la campaña como eliminada
+    $campaign->delete(); 
 
     return response()->json(['message' => 'Campaña eliminada correctamente']);
 }
 
-    public function myCampaigns()
-    {
-        $userId = auth()->id();
-        $campaigns = Campaign::where('user_id', $userId)
-            ->with(['images', 'category']) // Asegura cargar la relación de categoría
-            ->get();
+public function myCampaigns()
+{
+    $userId = auth()->id();
+    $campaigns = Campaign::where('user_id', $userId)
+        ->with(['images', 'category']) 
+        ->orderBy('created_at', 'desc') // Ordena por las más recientes
+        ->get();
 
-        return Inertia::render('Campaign/MyCampaigns', [
-            'campaigns' => $campaigns
-        ]);
-    }
+    return Inertia::render('Campaign/MyCampaigns', [
+        'campaigns' => $campaigns
+    ]);
+}
 
 
 
@@ -573,10 +574,10 @@ class CampaignController extends Controller
 
     public function getCampaigns()
     {
-        $campaigns = Campaign::with('user:id,name')
-                              ->select('id', 'title', 'user_id')
-                              ->latest() // Ordenar por las más recientes
-                              ->paginate(5); // Paginar con 10 por página
+        $campaigns = Campaign::with('user:id,name') 
+                              ->select('id', 'title', 'user_id', 'created_at') 
+                              ->orderBy('created_at', 'desc') 
+                              ->paginate(5); // Paginación
     
         return response()->json($campaigns);
     }

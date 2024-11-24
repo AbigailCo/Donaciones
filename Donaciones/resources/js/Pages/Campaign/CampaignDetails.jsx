@@ -40,6 +40,10 @@ const CampaignDetails = () => {
     return null;
   };
 
+  const formatFecha = (fecha) => {
+    const localDate = new Date(fecha + "T00:00:00"); // forzamos a tratarlo como local
+    return localDate.toLocaleDateString("es-ES");
+  };
 
   const totalDonado = donations.reduce(
     (acc, donation) => acc + parseFloat(donation.amount),
@@ -252,12 +256,13 @@ const CampaignDetails = () => {
         <Typography variant="body2" color="text.secondary">
           <strong>Fecha de comienzo:</strong>
           <br />
-          {new Date(campaign.start_date).toLocaleDateString("es-ES")}
+          {formatFecha(campaign.start_date)}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <strong>Fecha de finalización:</strong>
           <br />
-          {new Date(campaign.end_date).toLocaleDateString("es-ES")}
+          {formatFecha(campaign.end_date)}
+
         </Typography>
       </Box>
     </Box>
