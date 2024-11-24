@@ -21,6 +21,7 @@ import FavoriteButton from '@/Components/Campaign/FavoriteButton';
 import CampaignNotes from "../../Components/Campaign/CampaignNotes";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaFacebookF, FaTwitter, FaWhatsapp } from "react-icons/fa";
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -56,6 +57,7 @@ const CampaignDetails = () => {
   };
   const youtubeId = getYouTubeId(campaign.youtube_link);
   
+
 
   useEffect(() => {
     initMercadoPago("TEST-ca5184c7-731c-4a71-9887-b5a5e97cd506");
@@ -171,128 +173,174 @@ const CampaignDetails = () => {
         <AuthenticatedLayout user={auth.user}>
           <Box sx={{ ...containerStyle, marginTop: "24px" }}>
           <ToastContainer position="top-right" autoClose={3000} />
-            {/* Panel Lateral */}
-            <Drawer
-              sx={drawerStyle}
-              variant="permanent"
-              anchor="left"
-            >
+           {/* Panel Lateral */}
+<Drawer
+  sx={drawerStyle}
+  variant="permanent"
+  anchor="left"
+>
+  <div>
+    {/* Botón de Editar Campaña */}
+    {auth.user && auth.user.id === campaign.user_id && (
+      <Box margin='30px' textAlign="center" mt={3}>
+        <Button variant="contained" onClick={handleEditClick}>
+          Editar campaña
+        </Button>
+      </Box>
+    )}
 
-              <div>
-              {auth.user && auth.user.id === campaign.user_id && (
-                  <Box margin= '30px' textAlign="center" mt={3} >
-                    <Button  variant="contained" onClick={handleEditClick}>
-                      Editar campaña
-                    </Button>
-                  </Box>
-                )}
-              <Box
-                  sx={{
-                 
-                    mb: 4,
-                    p: 3,
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e0e0e0",
-                    borderRadius: 4,
-                    boxShadow: 1,
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    color="primary"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    <strong>¿Como donar?</strong> 
-                  </Typography>
-                  <Box sx={{ textAlign: "left" }}>
-                  {selectedField === "alias" && (
-              <span>
-                <strong>Alias:</strong> {getFieldValue()}
-              </span>
-            )}
-            {selectedField === "cvu" && (
-              <span>
-                <strong>CVU:</strong> {getFieldValue()}
-              </span>
-            )}
-            {selectedField === "cbu" && (
-              <span>
-                <strong>CBU:</strong> {getFieldValue()}
-              </span>
-            )}
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 4,
-                    p: 3,
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #e0e0e0",
-                    borderRadius: 4,
-                    boxShadow: 1,
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    color="primary"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    <strong>Meta:</strong> ${campaign.goal}
-                  </Typography>
-                  <Box sx={{ textAlign: "right" }}>
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Fecha de comienzo:</strong>
-                      <br />
-                      {new Date(campaign.start_date).toLocaleDateString(
-                        "es-ES"
-                      )}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Fecha de finalización:</strong>
-                      <br />
-                      {new Date(campaign.end_date).toLocaleDateString("es-ES")}
-                    </Typography>
-                  </Box>
-                 
-         
+    {/* Box: ¿Cómo donar? */}
+    <Box
+      sx={{
+        mb: 4,
+        p: 3,
+        backgroundColor: "#ffffff",
+        border: "1px solid #e0e0e0",
+        borderRadius: 4,
+        boxShadow: 1,
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        variant="h6"
+        color="primary"
+        sx={{ fontWeight: "bold" }}
+      >
+        <strong>¿Cómo donar?</strong>
+      </Typography>
+      <Box sx={{ textAlign: "left" }}>
+        {selectedField === "alias" && (
+          <span>
+            <strong>Alias:</strong> {getFieldValue()}
+          </span>
+        )}
+        {selectedField === "cvu" && (
+          <span>
+            <strong>CVU:</strong> {getFieldValue()}
+          </span>
+        )}
+        {selectedField === "cbu" && (
+          <span>
+            <strong>CBU:</strong> {getFieldValue()}
+          </span>
+        )}
+      </Box>
+    </Box>
 
-                </Box>
-                {auth.user && auth.user.id !== campaign.user_id && (
-                <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  color: 'black',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  borderColor: '#f6ff00',
-                  boxShadow: 3,
-                  maxWidth: '250px', 
-                  margin: 'auto', 
-                   // Agrega la animación de parpadeo
-                }}
-              >
-                <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                  Agregar a favoritos
-                </Typography>
-                <FavoriteButton
-                  campaignId={campaign.id}
-                  isFavorite={isFavorite}
-                  onToggle={handleToggleFavorite}
-                  
-                />
-              </Box>
-                )}
-                <ProgressChart campaign={campaign} donations={donations} />
-              </div>
+    {/* Box: Meta */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        mb: 4,
+        p: 3,
+        backgroundColor: "#ffffff",
+        border: "1px solid #e0e0e0",
+        borderRadius: 4,
+        boxShadow: 1,
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        variant="h6"
+        color="primary"
+        sx={{ fontWeight: "bold" }}
+      >
+        <strong>Meta:</strong> ${campaign.goal}
+      </Typography>
+      <Box sx={{ textAlign: "right" }}>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Fecha de comienzo:</strong>
+          <br />
+          {new Date(campaign.start_date).toLocaleDateString("es-ES")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          <strong>Fecha de finalización:</strong>
+          <br />
+          {new Date(campaign.end_date).toLocaleDateString("es-ES")}
+        </Typography>
+      </Box>
+    </Box>
 
+    {/* Box: Agregar a Favoritos */}
+    {auth.user && auth.user.id !== campaign.user_id && (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          color: 'black',
+          padding: '16px',
+          borderRadius: '8px',
+          borderColor: '#f6ff00',
+          boxShadow: 3,
+          maxWidth: '250px',
+          margin: 'auto',
+        }}
+      >
+        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+          Agregar a favoritos
+        </Typography>
+        <FavoriteButton
+          campaignId={campaign.id}
+          isFavorite={isFavorite}
+          onToggle={handleToggleFavorite}
+        />
+      </Box>
+    )}
 
-            </Drawer>
+    {/* Box: Redes Sociales */}
+    <Box
+      sx={{
+        mb: 4,
+        p: 3,
+        backgroundColor: "#ffffff",
+        border: "1px solid #e0e0e0",
+        borderRadius: 4,
+        boxShadow: 1,
+        alignItems: "center",
+        textAlign: "center",
+        marginTop: '24px',
+      }}
+    >
+      <Typography
+        variant="h6"
+        color="primary"
+        sx={{ fontWeight: "bold", mb: 2 }}
+      >
+        Comparte esta campaña
+      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=https://www.tusitio.com/campaign/${campaign.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaFacebookF size={32} color="#4267B2" />
+        </a>
+        <a
+          href={`https://api.whatsapp.com/send?text=¡Mira esta campaña! https://www.tusitio.com/campaign/${campaign.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaWhatsapp size={32} color="#25D366" />
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?text=¡Apoya esta campaña!&url=https://www.tusitio.com/campaign/${campaign.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaTwitter size={32} color="#1DA1F2" />
+        </a>
+      </Box>
+    </Box>
+   
+
+    {/* Gráfico de progreso */}
+    <ProgressChart campaign={campaign} donations={donations} />
+  </div>
+</Drawer>
+
             <Card sx={cardStyle}>
               <CarouselComponent images={campaign.images} />
               <CardContent>
