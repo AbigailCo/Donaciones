@@ -13,7 +13,7 @@ class AdminController extends Controller
     {
         // Asegúrate de que solo los administradores puedan acceder
         $this->middleware(function ($request, $next) {
-            if (auth()->user()->email !== 'admin@gmail.com') {
+            if (auth()->user()->role !== 'admin') {
                 abort(403); // Si no es el admin, denegamos el acceso
             }
             return $next($request);
@@ -51,7 +51,7 @@ public function deleteUser($id)
     }
 
     // Evita eliminar al administrador principal (opcional)
-    if ($user->email === 'admin@gmail.com') {
+    if ($user->role === 'admin') {
         return response()->json([
             'error' => 'No puedes eliminar al administrador principal.',
         ], 403);
