@@ -119,14 +119,14 @@ const removeAdmin = (userId) => {
     <AuthenticatedLayout user={auth.user}>
       <Head title="AdminPanel" />
       
-      <div className="d-flex h-100" style={{ marginTop: "4rem" }}>
+      <div className="d-flex h-100" >
         {/* Sidebar ocupa 25% del ancho */}
         <div className="w-1/4">
           <Sidebar auth={auth} />
         </div>
 
         {/* Contenido principal con margen izquierdo */}
-        <div className="w-3/4 ml-4 py-4 bg-light">
+        <div className="w-3/4 ml-4 py-4 bg-light mt-10">
           <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
 
           {/* Campañas */}
