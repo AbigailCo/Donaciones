@@ -102,7 +102,7 @@ Route::get('/UserDona', [CampaignController::class, 'donationCorrelation']);
 Route::get('/estadisConvinada', [CampaignController::class, 'getMetrics']);
 Route::get('/allCampaigns', [CampaignController::class, 'exportAllCampaigns']);
 Route::get('/EstadisticasGlobales', function () {
-    return Inertia::render('Campaign/CampaignGeneral'); // Asegúrate de usar el path correcto
+    return Inertia::render('Campaign/CampaignGeneral'); 
 })->middleware(['auth', 'verified'])->name('EstadisticasGlobales');
 
 ////////////////////////////////////////////////////////////////////////
@@ -193,20 +193,13 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'getUsers']);
     Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
     Route::put('/admin/users/{id}/assign-admin', [AdminController::class, 'assignAdmin']);
+    Route::put('/admin/users/{id}/remove-admin', [AdminController::class, 'removeAdmin']);
+  //  Route::get('/AdminPanel', [AdminController::class, 'index'])->name('AdminPanel');
+
 
 
 
 });
-/*
-Route::middleware(['auth', 'verified', 'admin_check'])->group(function () {
-    Route::get('/admin', function () {
-        return Inertia::render('Admin/AdminDashboard'); 
-    })->name('admin.dashboard');
-
-    Route::get('/admin/campaigns', [CampaignController::class, 'getCampaigns']);
-    Route::delete('/admin/campaigns/{id}', [CampaignController::class, 'destroy']);
-    Route::get('/admin/users', [AdminController::class, 'getUsers']);
-});*/
 
 ////////////////////////////////////////////////////////////////////////
 //                            PRUEBA                                  //

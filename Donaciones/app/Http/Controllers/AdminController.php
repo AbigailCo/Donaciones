@@ -11,7 +11,6 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        // Asegúrate de que solo los administradores puedan acceder
         $this->middleware(function ($request, $next) {
             if (auth()->user()->role !== 'admin') {
                 abort(403); // Si no es el admin, denegamos el acceso
@@ -22,8 +21,8 @@ class AdminController extends Controller
 
     public function index()
     {
-        // Trae todas las campañas, sin filtro por status
-    $campaigns = Campaign::all(); // Si tienes SoftDeletes, usa ->withTrashed()
+        // Trae todas las campañas, sin filtro 
+    $campaigns = Campaign::all(); 
     
     return response()->json($campaigns);
 
@@ -31,7 +30,7 @@ class AdminController extends Controller
 
     public function getUsers()
 {
-    $users = User::select('id', 'name', 'email', 'role', 'created_at') // Selecciona columnas necesarias
+    $users = User::select('id', 'name', 'email', 'role', 'created_at') 
                   ->latest()
                   ->paginate(5);
 
@@ -40,17 +39,15 @@ class AdminController extends Controller
 
 public function deleteUser($id)
 {
-    // Busca el usuario por ID
     $user = User::find($id);
 
-    // Verifica si el usuario existe
     if (!$user) {
         return response()->json([
             'error' => 'Usuario no encontrado.',
         ], 404);
     }
 
-    // Evita eliminar al administrador principal (opcional)
+    // Evito eliminar al administrador principal 
     if ($user->role === 'admin') {
         return response()->json([
             'error' => 'No puedes eliminar al administrador principal.',
@@ -74,12 +71,7 @@ public function assignAdmin($id)
         ], 404);
     }
 
-    // Verifica que no estemos cambiando el rol del administrador principal
-    if ($user->email === 'admin@gmail.com') {
-        return response()->json([
-            'error' => 'No puedes modificar el rol del administrador principal.',
-        ], 403);
-    }
+   
     $user->role = 'admin';
     $user->save();
 
@@ -88,6 +80,43 @@ public function assignAdmin($id)
         'user' => $user, // Devuelve el usuario actualizado
     ]);
 }
+
+public function removeAdmin($id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'error' => 'Usuario no encontrado.',
+        ], 404);
+    }
+
+    // Verifico si el usuario actual es un administrador
+    if ($user->role !== 'admin') {
+        return response()->json([
+            'error' => 'El usuario no es administrador.',
+        ], 400);
+    }
+
+    // Evito que todos los administradores sean eliminados
+    $remainingAdmins = User::where('role', 'admin')->count();
+
+    if ($remainingAdmins <= 1) {
+        return response()->json([
+            'error' => 'Debe haber al menos un administrador en el sistema.',
+        ], 403);
+    }
+
+    // Cambio el rol del usuario a un rol user
+    $user->role = 'user';
+    $user->save();
+
+    return response()->json([
+        'message' => 'El rol de administrador ha sido removido.',
+        'user' => $user,
+    ]);
+}
+
 
 
 

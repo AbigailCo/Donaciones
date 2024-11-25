@@ -6,6 +6,7 @@ import CampaignPanel from "../Campaign/CardPanel";
 import MyCampPanel from "../Campaign/MyCampPanel";
 import MyFavPanel from "../Campaign/MyFavPanel";
 import EstadisticasPanel from "../Campaign/EstadisticasPanel";
+import AdminPanel from "../Campaign/AdminPanel";
 
 const Sidebar = ({ auth }) => {
   console.log(auth.user);
@@ -38,10 +39,13 @@ const Sidebar = ({ auth }) => {
 
             {/* Mostrar sección de administrador si el usuario tiene rol admin */}
             {auth.user.role === 'admin' && (
-  <Link href="/admin" className="nav-link text-white">
-    Panel de Administrador
-  </Link>
-)}
+              <AdminPanel>
+              
+            <Link href="/admin" className="nav-link text-white">
+              Panel de Administrador
+            </Link>
+            </AdminPanel>
+             )}
           </div>
         </div>
         <div className="sb-sidenav-footer bg-blue-800 p-4 text-white mt-auto">

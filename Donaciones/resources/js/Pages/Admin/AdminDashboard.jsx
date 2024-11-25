@@ -38,6 +38,28 @@ const AdminDashboard = ({ auth }) => {
       });
   }
 };
+// Función para quitar rol de administrador
+const removeAdmin = (userId) => {
+  if (window.confirm("¿Estás seguro de que quieres quitar el rol de administrador a este usuario?")) {
+    axios
+      .put(`/admin/users/${userId}/remove-admin`)
+      .then((response) => {
+        toast.success("Rol de administrador eliminado correctamente.");
+        // Actualizo el estado de los usuarios
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId ? { ...user, role: 'user' } : user
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error al quitar rol de admin:", error);
+        toast.error(
+          error.response?.data?.error || "Ocurrió un error al quitar el rol de administrador."
+        );
+      });
+  }
+};
 
   // Paginado de campañas
   useEffect(() => {
@@ -184,22 +206,32 @@ const AdminDashboard = ({ auth }) => {
                       <td className="py-2 px-4 border-b">{user.email}</td>
                       <td className="py-2 px-4 border-b">{user.role ? user.role : "Sin rol asignado"}</td>
                       <td className="py-2 px-4 border-b text-center">
+  <td className="py-2 px-4 border-b text-center text-center">
   {user.role === 'admin' ? (
-    <span className="text-green-500">Administrador</span>
+    <>
+      <span className="text-green-500 text-sm">Administrador</span>
+      <button
+        onClick={() => removeAdmin(user.id)}
+        className="bg-yellow-500 text-white text-sm px-2 py-1 rounded hover:bg-yellow-600 ml-1"
+      >
+        Quitar Admin
+      </button>
+    </>
   ) : (
     <button
       onClick={() => assignAdmin(user.id)}
-      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      className="bg-blue-500 text-white text-sm px-2 py-1 rounded hover:bg-blue-600"
     >
       Asignar Admin
     </button>
   )}
   <button
     onClick={() => deleteUser(user.id)}
-    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-2"
+    className="bg-red-500 text-white text-sm px-2 py-1 rounded hover:bg-red-600 ml-1"
   >
     Eliminar
   </button>
+</td>
 </td>
                     </tr>
                   );
