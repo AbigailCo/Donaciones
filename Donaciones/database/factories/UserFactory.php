@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
@@ -23,12 +24,31 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // Carpeta de imágenes de perfil
+        $profileDirectory = public_path('storage/perfil');
+
+        // Si el directorio existe, obtiene las imágenes
+        if (File::exists($profileDirectory)) {
+            $images = File::files($profileDirectory);
+
+            // Si hay imágenes, selecciona una aleatoria
+            if (!empty($images)) {
+                $randomImage = $this->faker->randomElement($images);
+                $profileImagePath = $randomImage->getFilename();
+            } else {
+                $profileImagePath = null; // No hay imágenes disponibles
+            }
+        } else {
+            $profileImagePath = null; // No existe la carpeta
+        }
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'profile_picture' => $profileImagePath, // Almacena la ruta de la imagen de perfil
         ];
     }
 

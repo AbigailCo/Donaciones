@@ -60,7 +60,7 @@ const EstaConvinada = () => {
                 <AreaChart data={donationData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
-                    <YAxis />
+                    <YAxis domain={['auto', 'auto']} />
                     <Tooltip />
                     <Area
                         type="monotone"
@@ -72,9 +72,9 @@ const EstaConvinada = () => {
                 </AreaChart>
             </ResponsiveContainer>
 
-            <h1 className="mt-4 text-center">Usuarios: sus donaciones y campañas activas</h1>
+            <h1 className="mt-7 text-center">Usuarios: sus donaciones y campañas activas</h1>
             <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={campaignData} barCategoryGap="20%">
+                <BarChart data={campaignData} barCategoryGap="0%">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                          dataKey={(data) => `${data.user_id} - ${data.user_name}`}
@@ -113,7 +113,7 @@ const EstaConvinada = () => {
                         }}
                         /* labelFormatter={(user_name) => `Usuario ID: ${user_name}`} */
                     />
-                    <Legend verticalAlign="top" height={36} />
+                    <Legend verticalAlign="bottom" height={56} />
                     <Bar
                         yAxisId="left"
                         dataKey="total_campaigns"

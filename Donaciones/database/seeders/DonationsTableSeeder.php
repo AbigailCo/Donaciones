@@ -15,10 +15,17 @@ class DonationsTableSeeder extends Seeder
         $users = User::all();
         
         foreach ($campaigns as $campaign) {
-            foreach ($users->random(3) as $user) { 
+            // Obtener un número aleatorio de usuarios entre 1 y 20
+            $randomUsersCount = rand(1, 20);
+
+            // Seleccionar aleatoriamente los usuarios
+            foreach ($users->random($randomUsersCount) as $user) {
+                // Crear una donación con una fecha de creación aleatoria
                 Donation::factory()->create([
                     'campaign_id' => $campaign->id,
                     'user_id' => $user->id,
+                    'created_at' => now()->subDays(rand(0, 30)), // Fecha aleatoria en los últimos 30 días
+                   
                 ]);
             }
         }
