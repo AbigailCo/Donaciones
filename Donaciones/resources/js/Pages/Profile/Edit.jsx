@@ -4,8 +4,12 @@ import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import { Head } from "@inertiajs/react";
 import ProfilePictureForm from "./Partials/ProfilePictureForm";
+import { useState } from "react";
 
-export default function Edit({ auth, mustVerifyEmail, status }) {
+export default function Edit({ auth, mustVerifyEmail, status,  }) {
+ 
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Perfil" />
@@ -50,7 +54,16 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
               </div>
             )}
           </div>
-          <ProfilePictureForm />
+          {isLoading && (
+            <div className="text-center my-4">
+              <span className="spinner-border text-primary" role="status"></span>
+              <p className="mt-2">Actualizando foto...</p>
+            </div>
+          )}
+          <ProfilePictureForm
+          
+            onLoading={(loading) => setIsLoading(loading)}
+          />
           <UpdateProfileInformationForm
             mustVerifyEmail={mustVerifyEmail}
             status={status}

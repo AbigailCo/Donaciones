@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const ProfilePictureForm = () => {
+const ProfilePictureForm = ({onLoading }) => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -10,25 +12,31 @@ const ProfilePictureForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (onLoading) onLoading(true);
     const formData = new FormData();
-    formData.append('profile_picture', file);
+    formData.append("profile_picture", file);
 
     try {
-      await axios.post('/user/profile', formData, {
+      const response = await axios.post("/user/profile", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-      alert('Foto de perfil actualizada');
+      console.log(file);
+      window.location.reload();
+      toast.success("La foto de perfilfue actualizada");
     } catch (error) {
       console.error(error);
-      alert('Error al actualizar la foto de perfil');
+      toast.error("La foto de perfil no fue actualizada");
     }
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <form onSubmit={handleSubmit} className="w-50 p-4 bg-light shadow rounded">
+      <form
+        onSubmit={handleSubmit}
+        className="w-50 p-4 bg-light shadow rounded"
+      >
         <h3 className="text-center mb-4">Actualizar Foto de Perfil</h3>
         <div className="mb-3">
           <label htmlFor="profile_picture" className="form-label">
