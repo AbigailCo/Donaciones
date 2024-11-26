@@ -12,7 +12,7 @@ export default function RelaUserDona(){
                 const chartData = response.data.data.map(item => ({
                     x: item.user_id, // Usuario ID
                     y: parseFloat(item.total_amount), // Monto Donado convertido a número
-                    name: `Usuario ${item.user_name} ID ${item.user_id} ` // Etiqueta para tooltip
+                    name: `Usuario ${item.user_name}` // Etiqueta para tooltip
                 }));
                 setData(chartData);
             })

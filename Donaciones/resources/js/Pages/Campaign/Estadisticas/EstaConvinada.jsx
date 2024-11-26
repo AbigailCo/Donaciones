@@ -40,7 +40,7 @@ const EstaConvinada = () => {
 
     return (
         <div style={{ marginTop: "40px" }}>
-            <h1 className="mt-4 text-center">Alcanse de las campañas y recaudaciones</h1>
+            <h1 className="mt-4 text-center">Alcance de las campañas y recaudaciones</h1>
 
             <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={data}>
@@ -77,7 +77,7 @@ const EstaConvinada = () => {
                 <BarChart data={campaignData} barCategoryGap="0%">
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
-                         dataKey={(data) => `${data.user_id} - ${data.user_name}`}
+                         dataKey={(data) => `${data.user_name}`}
                         label={{
                             value: "Usuarios",
                             position: "insideBottom",

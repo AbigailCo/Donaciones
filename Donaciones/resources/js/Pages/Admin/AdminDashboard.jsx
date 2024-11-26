@@ -23,7 +23,6 @@ const AdminDashboard = ({ auth }) => {
       .put(`/admin/users/${userId}/assign-admin`)
       .then((response) => {
         toast.success("Rol de administrador asignado correctamente.");
-        // Actualiza el estado de los usuarios
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === userId ? { ...user, role: 'admin' } : user
@@ -45,7 +44,6 @@ const removeAdmin = (userId) => {
       .put(`/admin/users/${userId}/remove-admin`)
       .then((response) => {
         toast.success("Rol de administrador eliminado correctamente.");
-        // Actualizo el estado de los usuarios
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === userId ? { ...user, role: 'user' } : user
@@ -79,11 +77,11 @@ const removeAdmin = (userId) => {
         .delete(`/admin/campaigns/${id}`)
         .then(() => {
           setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
-          toast.success("Campaña eliminada correctamente."); // Muestra el toast de éxito
+          toast.success("Campaña eliminada correctamente."); 
         })
         .catch((error) => {
           console.error("Error al eliminar campaña:", error);
-          toast.error("Ocurrió un error al eliminar la campaña."); // Muestra el toast de error
+          toast.error("Ocurrió un error al eliminar la campaña."); 
         });
     }
   };
@@ -106,11 +104,11 @@ const removeAdmin = (userId) => {
         .delete(`/admin/users/${id}`)
         .then(() => {
           setUsers(users.filter((user) => user.id !== id));
-          toast.success("Usuario eliminado correctamente."); // Muestra el toast de éxito
+          toast.success("Usuario eliminado correctamente."); 
         })
         .catch((error) => {
           console.error("Error al eliminar usuario:", error);
-          toast.error("Ocurrió un error al eliminar el usuario."); // Muestra el toast de error
+          toast.error("Ocurrió un error al eliminar el usuario."); 
         });
     }
   };

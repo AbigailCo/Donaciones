@@ -128,11 +128,9 @@ class CampaignController extends Controller
             ], 422);
         }
 
-        // Asignar el ID del usuario a la campaña
         $validated['user_id'] = Auth::id();
 
         try {
-            // Crear la campaña con las coordenadas
             $campaign = Campaign::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
@@ -149,39 +147,33 @@ class CampaignController extends Controller
                 'cbu' => $validated['cbu'] ?? null,
             ]);
 
-            // Si se suben imágenes, guardarlas
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $imagePath = $image->store('images', 'public');
-                    $imageName = basename($imagePath); // Obtener solo el nombre del archivo
+                    $imageName = basename($imagePath); 
 
                     $campaign->images()->create([
-                        'path' => $imageName, // Guardar el nombre de la imagen
+                        'path' => $imageName, 
                     ]);
                 }
             } else {
-                // Asignar imagen por defecto si no hay imágenes subidas
                 $campaign->images()->create([
                     'path' => 'defecto.jpg', // Nombre de la imagen por defecto
                 ]);
             }
 
-            // Validación para la donación
             $donationValidated = $request->validate([
-                'amount' => 'required|numeric|min:1', // Validar el monto de la donación
+                'amount' => 'required|numeric|min:1', 
             ]);
 
-            // Crear la donación
             $donation = Donation::create([
                 'amount' => $donationValidated['amount'],
-                'user_id' => Auth::id(), // El ID del usuario que realiza la donación
+                'user_id' => Auth::id(), 
                 'campaign_id' => $campaign->id,
             ]);
 
-            // Obtener el creador de la campaña
-            $creator = $campaign->user; // El usuario que creó la campaña
+            $creator = $campaign->user; 
 
-            // Enviar notificación de la donación al creador de la campaña
             $creator->notify(new DonationReceived($donationValidated['amount'], $campaign->title));
 
             return redirect()->route('myCampaigns')->with('success', '¡Campaña creada exitosamente y donación registrada!');
@@ -315,6 +307,7 @@ public function myCampaigns()
         $campaign = Campaign::findOrFail($id);
 
         $amount = $request->input('amount'); // Recibir el monto que el usuario quiere donar
+        \Log::info("Generando preferencia para campaña: {$id} con monto: {$request->amount}");
 
         $preferenceData = [
             'items' => [
@@ -351,6 +344,8 @@ public function myCampaigns()
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
+            \Log::error("Error al crear preferencia: " . $e->getMessage());
+        dd($e->getMessage()); // Detener la ejecución para inspeccionar el error
         }
     }
 
