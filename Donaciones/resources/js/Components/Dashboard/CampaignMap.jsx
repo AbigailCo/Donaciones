@@ -13,8 +13,9 @@ const CampaignMap = ({ campaigns }) => {
   };
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
+    <div className="flex-1 mb-20 bg-white py-6 px-4 sm:px-6 lg:px-8" style={{ height: '400px', width: '100%' }}>
        <h2 className="text-center mb-4">Descubre donde se encuentran nuestras campañas</h2>
+       <h6 className="text-center mb-4">Navega por el mapa haciedo zoom o arrastralo hasta llegar donde deseas</h6>
       <Map
         initialViewState={{
           latitude: -38.95161, // Coordenadas de Neuquén

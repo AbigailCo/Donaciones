@@ -45,15 +45,12 @@ const CreateCampaign = () => {
         console.error("Error al cargar categorías", error);
       }
     };
-
     fetchCategories();
   }, []);
 
   const onSubmit = async (data) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-
-    // Verificar si las coordenadas están presentes
     if (!coordinates.latitude || !coordinates.longitude) {
       toast.error("Elegir una ubicacion en el mapa es obligatorio.");
       setIsSubmitting(false);
@@ -115,14 +112,15 @@ const CreateCampaign = () => {
 
   return (
     <div className="container-fluid px-4">
-      <h1 className="mt-4 text-center">Crear Campaña</h1>
+      <h2 className="mt-4 text-center">Crear campaña</h2>
+      <h6 className="mb-4 text-center">da comienzo a una nueva campaña</h6>
 
       <Card>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Card.Body className="text-bg-light">
             <Row className="g-4">
               <Col md={6}>
-                <Form.Label>Título:</Form.Label>
+                <Form.Label>Título</Form.Label>
                 <Form.Control
                   type="text"
                   {...register("title", { required: "El título es requerido" })}
@@ -134,7 +132,7 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <Form.Label>Categoría:</Form.Label>
+                <Form.Label>Categoría</Form.Label>
                 <Form.Control
                   as="select"
                   {...register("category_id", {
@@ -155,7 +153,7 @@ const CreateCampaign = () => {
               </Col>
 
               <Col xs={12}>
-                <Form.Label>Descripción:</Form.Label>
+                <Form.Label>Descripción</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -170,7 +168,7 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <Form.Label>Meta:</Form.Label>
+                <Form.Label>Meta</Form.Label>
                 <Form.Control
                   type="number"
                   step="0.01"
@@ -183,7 +181,7 @@ const CreateCampaign = () => {
               </Col>
               <AliasCvuCbu onFieldChange={handleFieldChange} />
               <Col md={6}>
-                <Form.Label>Fecha de inicio:</Form.Label>
+                <Form.Label>Fecha de inicio</Form.Label>
                 <Form.Control
                   type="date"
                   {...register("start_date", {
@@ -197,7 +195,7 @@ const CreateCampaign = () => {
               </Col>
 
               <Col md={6}>
-                <Form.Label>Fecha de finalización:</Form.Label>
+                <Form.Label>Fecha de finalización</Form.Label>
                 <Form.Control
                   type="date"
                   {...register("end_date", {

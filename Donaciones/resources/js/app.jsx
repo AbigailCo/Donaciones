@@ -30,8 +30,8 @@ createInertiaApp({
     const root = createRoot(el);
 
     root.render(
-      <Router>
-        <App {...props} />
+      <Router >
+        <App {...props} style={{backgroundColor: "#ded7d7"}}/>
         <ToastContainer /> 
       </Router>
     );

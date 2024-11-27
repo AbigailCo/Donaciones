@@ -6,7 +6,7 @@ import { Link } from "@inertiajs/react";
 import Carousel from "react-bootstrap/Carousel";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import FavoriteButton from './FavoriteButton';
+import FavoriteButton from "./FavoriteButton";
 import ImageUpload from "../ImageUpload";
 import FotoPerfil from "./FotoPerfil";
 
@@ -17,9 +17,9 @@ const getYouTubeId = (url) => {
   return matches ? matches[1] : null;
 };
 
-const CampaignCard = ({ campaign}) => {
+const CampaignCard = ({ campaign }) => {
   const { auth } = usePage().props;
-/*   const youtubeId = getYouTubeId(campaign.youtube_link); */
+  /*   const youtubeId = getYouTubeId(campaign.youtube_link); */
   const [isFavorite, setIsFavorite] = useState(false);
 
   // Estado para el popup
@@ -27,7 +27,6 @@ const CampaignCard = ({ campaign}) => {
   const [note, setNote] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
 
   // Manejar abrir/cerrar el modal
   const handleShowModal = () => setShowModal(true);
@@ -40,31 +39,27 @@ const CampaignCard = ({ campaign}) => {
   const handleSubmitNote = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     const formData = new FormData();
-    formData.append('note', note); 
-  
+    formData.append("note", note);
+
     // Agregar las imágenes al FormData
     imageFiles.forEach((file) => {
-      formData.append('images[]', file); 
+      formData.append("images[]", file);
     });
-  
+
     try {
       // Enviar la solicitud con FormData
-      await axios.post(
-        `/campaigns/${campaign.id}/notes`,
-        formData, 
-        {
-          withCredentials: true, 
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      await axios.post(`/campaigns/${campaign.id}/notes`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Nota guardada exitosamente");
-      setNote("");  
+      setNote("");
       setImageFiles([]);
-      handleCloseModal(); 
+      handleCloseModal();
     } catch (error) {
       console.error("Error al agregar la nota:", error);
       toast.error("La nota no fue creada");
@@ -92,9 +87,9 @@ const CampaignCard = ({ campaign}) => {
 
   return (
     <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
-      <ToastContainer />
+
       <div>
-        <FotoPerfil campaign={campaign}/>
+        <FotoPerfil campaign={campaign} />
       </div>
       <Carousel>
         {Array.isArray(campaign.images) && campaign.images.length > 0 ? (
@@ -143,23 +138,44 @@ const CampaignCard = ({ campaign}) => {
           </Typography>
         </CardContent>
       </Link>
-     
 
       {auth.user && auth.user.id !== campaign.user_id && (
-        <FavoriteButton
-          campaignId={campaign.id}
-          isFavorite={isFavorite}
-          onToggle={handleToggleFavorite}
-        />
+        <div className="flex justify-center items-center h-full ">
+          <button
+            onClick={() => handleToggleFavorite()}
+            aria-label={
+              isFavorite ? "Eliminar de favoritos" : "Agregar a favoritos"
+            }
+            className="flex items-center px-1 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-600 hover:to-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-300"
+          >
+            <span className="mr-2 text-lg font-semibold">
+              {isFavorite ? "Favorito" : "Agregar a favoritos"}
+            </span>
+            <FavoriteButton
+              campaignId={campaign.id}
+              isFavorite={isFavorite}
+              onToggle={handleToggleFavorite}
+            />
+          </button>
+        </div>
       )}
       {auth.user && auth.user.id === campaign.user_id && (
         <>
-          <button onClick={handleEditCampaign} className="btn btn-primary">
+        <div className="flex justify-center items-center h-full">
+        <button
+            onClick={handleEditCampaign}
+            className="flex justify-center items-center h-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
+          >
             Editar campaña
           </button>
-          <button onClick={handleShowModal} className="btn btn-secondary">
+          <button
+            onClick={handleShowModal}
+            className="flex justify-center items-center h-full bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
+          >
             Agregar nota
           </button>
+        </div>
+          
         </>
       )}
 

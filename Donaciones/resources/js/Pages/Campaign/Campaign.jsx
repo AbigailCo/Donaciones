@@ -10,14 +10,14 @@ export default function Campaign({ auth }) {
     <AuthenticatedLayout user={auth.user}>
       <Head title="Campañas" />
 
-      <div className="d-flex h-100">
-        <div className="w-1/5">
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
 
-        <div className="flex-1 mt-12 mx-4">
-          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <h1 className="mt-4 text-center">Nuestras campañas</h1>
+        <div className="mt-4">
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h3 className="mb-6 text-center">Nuestras campañas</h3>
             <Campaigns />
           </div>
         </div>
