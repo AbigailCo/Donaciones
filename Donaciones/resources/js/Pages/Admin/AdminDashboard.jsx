@@ -89,11 +89,11 @@ const AdminDashboard = ({ auth }) => {
         .delete(`/admin/campaigns/${id}`)
         .then(() => {
           setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
-          toast.success("Campaña eliminada correctamente."); // Muestra el toast de éxito
+          toast.success("Campaña eliminada correctamente."); 
         })
         .catch((error) => {
           console.error("Error al eliminar campaña:", error);
-          toast.error("Ocurrió un error al eliminar la campaña."); // Muestra el toast de error
+          toast.error("Ocurrió un error al eliminar la campaña."); 
         });
     }
   };
@@ -116,11 +116,11 @@ const AdminDashboard = ({ auth }) => {
         .delete(`/admin/users/${id}`)
         .then(() => {
           setUsers(users.filter((user) => user.id !== id));
-          toast.success("Usuario eliminado correctamente."); // Muestra el toast de éxito
+          toast.success("Usuario eliminado correctamente."); 
         })
         .catch((error) => {
           console.error("Error al eliminar usuario:", error);
-          toast.error("Ocurrió un error al eliminar el usuario."); // Muestra el toast de error
+          toast.error("Ocurrió un error al eliminar el usuario."); 
         });
     }
   };

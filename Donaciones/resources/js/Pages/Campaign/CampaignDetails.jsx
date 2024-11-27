@@ -96,7 +96,6 @@ const CampaignDetails = () => {
 
     console.log('Monto a donar:', donationAmount); // Verificar el valor del monto
 
-    // 1. Registramos la donación en la base de datos
     axios.post('/donations', {
         amount: parseFloat(donationAmount),
         campaign_id: campaign.id,
@@ -110,10 +109,9 @@ const CampaignDetails = () => {
     })
     .then(response => {
         // Abrir la URL de pago en un popup
+        console.log("Init Point URL:", response.data.init_point);
         openPopup(response.data.init_point);
-        setTimeout(() => {
-          window.location.reload(); // Recarga la página después de un breve retraso
-      }, 1500); // Espera 1.5 segundos antes de recargar
+    
     })
     .catch(error => {
         console.error('Error al procesar la donación:', error);
@@ -403,6 +401,7 @@ const CampaignDetails = () => {
                           fullWidth
                           value={donationAmount}
                           onChange={(e) => setDonationAmount(e.target.value)}
+                          placeholder="Ingresa el monto a donar"
                         />
                         <Button
                           variant="contained"
