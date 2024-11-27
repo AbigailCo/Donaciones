@@ -1,9 +1,9 @@
-import React from 'react';
-import { Grid, Typography, Button } from '@mui/material';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import CampaignCard from '../../Components/Campaign/CampaignCard';
-import { Head, usePage, Link } from '@inertiajs/react';
-import Sidebar from '@/Components/Dashboard/Sidebar';
+import React from "react";
+import { Grid, Typography, Button } from "@mui/material";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import CampaignCard from "../../Components/Campaign/CampaignCard";
+import { Head, usePage, Link } from "@inertiajs/react";
+import Sidebar from "@/Components/Dashboard/Sidebar";
 
 const MyCampaigns = ({ campaigns, auth }) => {
   if (!auth.user) {
@@ -18,27 +18,38 @@ const MyCampaigns = ({ campaigns, auth }) => {
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Mis campañas" />
-
-      {/* Contenedor principal con flexbox para organizar el sidebar y el contenido */}
-      <div className="d-flex h-100">
-
-        {/* Sidebar */}
-        <div className="w-1/5">
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
 
-        {/* Contenido principal */}
-        <div className="flex-1 mt-12 mx-4">
-          {/* Botón en la esquina superior derecha */}
-          <div className="flex justify-end mb-4">
-          <Link href="/CreateCampaign" style={{ textDecoration: 'none' }}>
-    <Button variant="contained" color="primary">
-      Agregar Campaña
-    </Button>
+
+        <div className="flex-1 mx-4">
+          <h3 className="text-center">Mis campañas</h3>
+          <div className="mb-4" style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <Link href="/CreateCampaign" style={{ textDecoration: "none" }}>
+              <Button
+                style={{
+                  background: "linear-gradient(90deg, #7eb8fc, #fc6fe7)",
+                  border: "none",
+                  color: "#000000",
+                  fontWeight: "bold",
+                  padding: "10px 20px",
+                  borderRadius: "30px",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+                  transition: "transform 0.2s, box-shadow 0.2s",
+                }}
+                variant="contained"
+                color="primary"
+              >
+                Agregar Campaña
+              </Button>
             </Link>
           </div>
-
-          <h1 className="mt-4 text-center">Mis campañas</h1>
           {campaigns.length > 0 ? (
             <Grid container spacing={3}>
               {campaigns.map((campaign) => (
@@ -48,7 +59,11 @@ const MyCampaigns = ({ campaigns, auth }) => {
               ))}
             </Grid>
           ) : (
-            <Typography className="text-center" variant="h5" color="textSecondary">
+            <Typography
+              className="text-center"
+              variant="h5"
+              color="textSecondary"
+            >
               Todavía no creaste ninguna campaña en esta aplicación.
             </Typography>
           )}

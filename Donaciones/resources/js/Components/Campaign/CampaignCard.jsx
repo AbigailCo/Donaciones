@@ -172,7 +172,7 @@ const CampaignCard = ({ campaign }) => {
             onClick={handleShowModal}
             className="flex justify-center items-center h-full bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
           >
-            Agregar nota
+            Actualizar campaña
           </button>
         </div>
           
@@ -181,18 +181,18 @@ const CampaignCard = ({ campaign }) => {
 
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Agregar Nota</Modal.Title>
+          <Modal.Title>Actualizar campaña</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmitNote}>
             <Form.Group controlId="formNote">
-              <Form.Label>Nota</Form.Label>
+              <Form.Label>Descripicion</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Escribe una actualización..."
+                placeholder="Escriba lo que ha pasado recientemente en su campaña"
                 required
               />
             </Form.Group>
@@ -206,7 +206,7 @@ const CampaignCard = ({ campaign }) => {
               disabled={isSubmitting}
               className="mt-3"
             >
-              {isSubmitting ? "Enviando..." : "Agregar Nota"}
+              {isSubmitting ? "Actualizando..." : "Actualizar"}
             </Button>
           </Form>
         </Modal.Body>

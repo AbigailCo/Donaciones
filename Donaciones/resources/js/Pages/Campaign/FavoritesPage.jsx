@@ -19,12 +19,12 @@ const FavoritesPage = ({ favorites, auth }) => {
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Mis favoritos" />
-      <div className="d-flex h-100">
-        <div className="w-1/5">
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
-        <div className="flex-1 mt-12 mx-4">
-          <h1 className="mt-4 text-center">Mis Favoritos</h1>
+        <div className="flex-1 mx-4">
+          <h3 className="text-center">Mis Favoritos</h3>
           {favorites.length > 0 ? (
             <Grid container spacing={3}>
               {favorites.map((favorite) => (

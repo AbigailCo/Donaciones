@@ -48,22 +48,43 @@ export default function EditCampaign({ auth }) {
     <AuthenticatedLayout user={auth.user}>
       <Head title="Editar campaña" />
 
-      <div className="d-flex h-100">
-        <div className="w-1/5">
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
-        <div className="flex-1 mt-12 mx-4">
-          <h1 className="mt-4 text-center">Panel de edicion</h1>
-          <EditImagesCampaign campaignId={campaign.id}/>
-          <EditYoutubeLink campaign={campaign}/>
-          <div style={{ marginTop: "15px" }}>
-            <form onSubmit={handleSubmit} className="space-y-7 ">
+
+        <div className="flex-1 mx-4  ">
+          <h3 className="text-center">Panel de Edición</h3>
+
+          {/* Panel de Edición */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 w-full mt-0">
+            {/* Sección de imágenes */}
+            <div className="bg-white shadow-sm rounded-md p-3">
+              <h4 className="text-base font-medium text-center mb-3">
+                Editar Imágenes
+              </h4>
+              <EditImagesCampaign campaignId={campaign.id} />
+            </div>
+
+            {/* Sección de enlace de YouTube */}
+            <div className="bg-white shadow-sm rounded-md p-3">
+              <h4 className="text-base font-medium text-center mb-3">
+                Editar enlace de YouTube
+              </h4>
+              <EditYoutubeLink campaign={campaign} />
+            </div>
+          </div>
+
+          {/* Formulario de edición */}
+          <div className="bg-white shadow-md rounded-md p-6 ">
+            <form onSubmit={handleSubmit} className="space-y-6">
+         
               <div>
                 <label
                   htmlFor="title"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Titulo
+                  Título
                 </label>
                 <input
                   type="text"
@@ -79,7 +100,7 @@ export default function EditCampaign({ auth }) {
                   htmlFor="description"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Descripcion
+                  Descripción
                 </label>
                 <textarea
                   id="description"
@@ -131,7 +152,6 @@ export default function EditCampaign({ auth }) {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       </div>
