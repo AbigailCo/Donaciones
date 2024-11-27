@@ -11,11 +11,11 @@ export default function CampaignGeneral({ auth }) {
     <AuthenticatedLayout user={auth.user}>
       <Head title="Estadísticas de Campañas" />
 
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div className="w-1/5">
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
-        <div style={{ width: "80%", padding: "0 20px", marginTop: "50px" }}>
+        <div className="flex-1 mx-4">
           <div className="bg-gradient-to-r from-blue-500 to-fuchsia-500 shadow-lg rounded-lg overflow-hidden mb-6">
             <div className="p-6 text-center text-white">
               <h1 className="text-3xl font-bold">

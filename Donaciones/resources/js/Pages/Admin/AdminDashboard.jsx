@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import Sidebar from '../../Components/Dashboard/Sidebar.jsx';
-import { Head } from '@inertiajs/react';
-import { toast } from 'react-toastify'; // Importa toast
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Sidebar from "../../Components/Dashboard/Sidebar.jsx";
+import { Head } from "@inertiajs/react";
+import { toast } from "react-toastify"; // Importa toast
 
 const AdminDashboard = ({ auth }) => {
   //console.log("Auth data:", auth);
@@ -16,50 +16,60 @@ const AdminDashboard = ({ auth }) => {
   const [usersCurrentPage, setUsersCurrentPage] = useState(1);
   const [usersLastPage, setUsersLastPage] = useState(1);
 
- // Función para asignar rol de administrador
- const assignAdmin = (userId) => {
-  if (window.confirm("¿Estás seguro de que quieres asignar este usuario como administrador?")) {
-    axios
-      .put(`/admin/users/${userId}/assign-admin`)
-      .then((response) => {
-        toast.success("Rol de administrador asignado correctamente.");
-        // Actualiza el estado de los usuarios
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === userId ? { ...user, role: 'admin' } : user
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error al asignar rol de admin:", error);
-        toast.error(
-          error.response?.data?.error || "Ocurrió un error al asignar el rol de administrador."
-        );
-      });
-  }
-};
-// Función para quitar rol de administrador
-const removeAdmin = (userId) => {
-  if (window.confirm("¿Estás seguro de que quieres quitar el rol de administrador a este usuario?")) {
-    axios
-      .put(`/admin/users/${userId}/remove-admin`)
-      .then((response) => {
-        toast.success("Rol de administrador eliminado correctamente.");
-        // Actualizo el estado de los usuarios
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === userId ? { ...user, role: 'user' } : user
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error al quitar rol de admin:", error);
-        toast.error(
-          error.response?.data?.error || "Ocurrió un error al quitar el rol de administrador."
-        );
-      });
-  }
-};
+  // Función para asignar rol de administrador
+  const assignAdmin = (userId) => {
+    if (
+      window.confirm(
+        "¿Estás seguro de que quieres asignar este usuario como administrador?"
+      )
+    ) {
+      axios
+        .put(`/admin/users/${userId}/assign-admin`)
+        .then((response) => {
+          toast.success("Rol de administrador asignado correctamente.");
+          // Actualiza el estado de los usuarios
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === userId ? { ...user, role: "admin" } : user
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error al asignar rol de admin:", error);
+          toast.error(
+            error.response?.data?.error ||
+              "Ocurrió un error al asignar el rol de administrador."
+          );
+        });
+    }
+  };
+  // Función para quitar rol de administrador
+  const removeAdmin = (userId) => {
+    if (
+      window.confirm(
+        "¿Estás seguro de que quieres quitar el rol de administrador a este usuario?"
+      )
+    ) {
+      axios
+        .put(`/admin/users/${userId}/remove-admin`)
+        .then((response) => {
+          toast.success("Rol de administrador eliminado correctamente.");
+          // Actualizo el estado de los usuarios
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === userId ? { ...user, role: "user" } : user
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error al quitar rol de admin:", error);
+          toast.error(
+            error.response?.data?.error ||
+              "Ocurrió un error al quitar el rol de administrador."
+          );
+        });
+    }
+  };
 
   // Paginado de campañas
   useEffect(() => {
@@ -118,16 +128,13 @@ const removeAdmin = (userId) => {
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="AdminPanel" />
-      
-      <div className="d-flex h-100" >
-        {/* Sidebar ocupa 25% del ancho */}
-        <div className="w-1/4">
+
+      <div className="d-flex h-100 mt-12">
+        <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
-
-        {/* Contenido principal con margen izquierdo */}
-        <div className="w-3/4 ml-4 py-4 bg-light mt-10">
-          <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
+        <div className="flex-1 mx-4">
+          <h3 className="text-center">Panel de Administración</h3>
 
           {/* Campañas */}
           <h2 className="text-xl font-semibold mb-4">Campañas</h2>
@@ -143,7 +150,9 @@ const removeAdmin = (userId) => {
             <tbody>
               {campaigns.map((campaign) => (
                 <tr key={campaign.id}>
-                  <td className="py-2 px-4 border-b text-center">{campaign.id}</td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {campaign.id}
+                  </td>
                   <td className="py-2 px-4 border-b">{campaign.title}</td>
                   <td className="py-2 px-4 border-b">
                     {campaign.user ? campaign.user.name : "Sin usuario"}
@@ -164,15 +173,23 @@ const removeAdmin = (userId) => {
           {/* Paginación para campañas */}
           <div className="mt-4 flex justify-center items-center">
             <button
-              onClick={() => setCampaignsCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() =>
+                setCampaignsCurrentPage((prev) => Math.max(prev - 1, 1))
+              }
               disabled={campaignsCurrentPage === 1}
               className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
             >
               Anterior
             </button>
-            <span>Página {campaignsCurrentPage} de {campaignsLastPage}</span>
+            <span>
+              Página {campaignsCurrentPage} de {campaignsLastPage}
+            </span>
             <button
-              onClick={() => setCampaignsCurrentPage((prev) => Math.min(prev + 1, campaignsLastPage))}
+              onClick={() =>
+                setCampaignsCurrentPage((prev) =>
+                  Math.min(prev + 1, campaignsLastPage)
+                )
+              }
               disabled={campaignsCurrentPage === campaignsLastPage}
               className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
             >
@@ -180,8 +197,8 @@ const removeAdmin = (userId) => {
             </button>
           </div>
 
-         {/* Usuarios */}
-         <div>
+          {/* Usuarios */}
+          <div>
             <h2 className="text-xl font-semibold mb-4">Usuarios</h2>
             <table className="min-w-full bg-white border border-gray-300">
               <thead>
@@ -195,44 +212,53 @@ const removeAdmin = (userId) => {
               </thead>
               <tbody>
                 {users.map((user) => {
-                   console.log(user);
+                  console.log(user);
                   const createdAt = new Date(user.created_at);
-                  const formattedDate = createdAt.toLocaleDateString('es-ES');
-                  const formattedTime = createdAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                  const formattedDate = createdAt.toLocaleDateString("es-ES");
+                  const formattedTime = createdAt.toLocaleTimeString("es-ES", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
                   return (
                     <tr key={user.id}>
-                      <td className="py-2 px-4 border-b text-center">{user.id}</td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {user.id}
+                      </td>
                       <td className="py-2 px-4 border-b">{user.name}</td>
                       <td className="py-2 px-4 border-b">{user.email}</td>
-                      <td className="py-2 px-4 border-b">{user.role ? user.role : "Sin rol asignado"}</td>
+                      <td className="py-2 px-4 border-b">
+                        {user.role ? user.role : "Sin rol asignado"}
+                      </td>
                       <td className="py-2 px-4 border-b text-center">
-  <td className="py-2 px-4 border-b text-center text-center">
-  {user.role === 'admin' ? (
-    <>
-      <span className="text-green-500 text-sm">Administrador</span>
-      <button
-        onClick={() => removeAdmin(user.id)}
-        className="bg-yellow-500 text-white text-sm px-2 py-1 rounded hover:bg-yellow-600 ml-1"
-      >
-        Quitar Admin
-      </button>
-    </>
-  ) : (
-    <button
-      onClick={() => assignAdmin(user.id)}
-      className="bg-blue-500 text-white text-sm px-2 py-1 rounded hover:bg-blue-600"
-    >
-      Asignar Admin
-    </button>
-  )}
-  <button
-    onClick={() => deleteUser(user.id)}
-    className="bg-red-500 text-white text-sm px-2 py-1 rounded hover:bg-red-600 ml-1"
-  >
-    Eliminar
-  </button>
-</td>
-</td>
+                        <td className="py-2 px-4 border-b text-center text-center">
+                          {user.role === "admin" ? (
+                            <>
+                              <span className="text-green-500 text-sm">
+                                Administrador
+                              </span>
+                              <button
+                                onClick={() => removeAdmin(user.id)}
+                                className="bg-yellow-500 text-white text-sm px-2 py-1 rounded hover:bg-yellow-600 ml-1"
+                              >
+                                Quitar Admin
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => assignAdmin(user.id)}
+                              className="bg-blue-500 text-white text-sm px-2 py-1 rounded hover:bg-blue-600"
+                            >
+                              Asignar Admin
+                            </button>
+                          )}
+                          <button
+                            onClick={() => deleteUser(user.id)}
+                            className="bg-red-500 text-white text-sm px-2 py-1 rounded hover:bg-red-600 ml-1"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </td>
                     </tr>
                   );
                 })}
@@ -242,15 +268,23 @@ const removeAdmin = (userId) => {
             {/* Paginación para usuarios */}
             <div className="mt-4 flex justify-center items-center">
               <button
-                onClick={() => setUsersCurrentPage((prev) => Math.max(prev - 1, 1))}
+                onClick={() =>
+                  setUsersCurrentPage((prev) => Math.max(prev - 1, 1))
+                }
                 disabled={usersCurrentPage === 1}
                 className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
               >
                 Anterior
               </button>
-              <span>Página {usersCurrentPage} de {usersLastPage}</span>
+              <span>
+                Página {usersCurrentPage} de {usersLastPage}
+              </span>
               <button
-                onClick={() => setUsersCurrentPage((prev) => Math.min(prev + 1, usersLastPage))}
+                onClick={() =>
+                  setUsersCurrentPage((prev) =>
+                    Math.min(prev + 1, usersLastPage)
+                  )
+                }
                 disabled={usersCurrentPage === usersLastPage}
                 className="bg-gray-300 px-4 py-2 mx-2 rounded disabled:opacity-50"
               >

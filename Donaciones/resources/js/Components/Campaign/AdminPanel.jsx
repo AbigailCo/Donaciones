@@ -25,7 +25,7 @@ const AdminPanel = () => {
             fontWeight: "bold",
           }}
         >
-          Ver estadisticas globales
+          Vaer panel de adminisador
         </a>
         <i className="fas fa-angle-right"></i>
       </div>
