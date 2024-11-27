@@ -48,7 +48,7 @@ const ImageUpload = ({ register, errors, setImageFiles }) => {
   
   return (
     <div>
-      <Form.Label>Subir Imágenes:</Form.Label>
+      <Form.Label className='mr-4'>Subir Imágenes</Form.Label>
       <Button variant="secondary" onClick={handleAddMoreImages}>
         + Imágenes
       </Button>

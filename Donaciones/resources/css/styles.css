@@ -83,7 +83,16 @@
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
+.react-joyride__overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.react-joyride__tooltip {
+  max-width: 500px;
+  margin: 0 auto;
+}
 *,
 *::before,
 *::after {

@@ -10,6 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MapboxMap from "@/Components/Campaign/MapboxMap";
 import AliasCvuCbu from "../AliasCvuCbu";
+import Joyride from "react-joyride";
 
 const CreateCampaign = () => {
   const {
@@ -20,6 +21,7 @@ const CreateCampaign = () => {
   } = useForm();
 
   const navigate = useNavigate();
+  const [tourIsOpen, setTourIsOpen] = useState(false);
   const [videoLink, setVideoLink] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -35,6 +37,57 @@ const CreateCampaign = () => {
   const handleFieldChange = ({ field, value }) => {
     setDonationField({ field, value });
   };
+  const steps = [
+    {
+      target: ".step-1", // Selecciona el elemento donde deseas iniciar
+      content:
+        "Escribe el nombre de tu campaña. Las personas podran buscarte mas facil de esta manera.",
+    },
+    {
+      target: ".step-2",
+      content:
+        "Asignale una categoria a tu campaña. De esta manera los donadores que tengan mas afinidad con una causa la encontraran mas rapido.",
+    },
+    {
+      target: ".step-3",
+      content:
+        "Aquí puedes agregar una descripción para tu campaña. Cuenta de que se trata y porque decidiste crearla",
+    },
+    {
+      target: ".step-4",
+      content:
+        "Indica la meta que deseas alcanzar con esta campaña. Cuanto dinero necesitan para poder solucionar la problematica",
+    },
+    {
+      target: ".step-5",
+      content:
+        "Selecciona un metodo para recibir las donaciones a la campaña. Comprueba con el boton 'Depositar en la cuenta' si tu metodo es valido",
+    },
+    {
+      target: ".step-6",
+      content: "Selecciona las fechas de inicio y fin de tu campaña.",
+    },
+    {
+      target: ".step-7",
+      content:
+        "Agregale imagenes a tu campaña para que llegue a mas donadores. Las imagenes son optativas y puedes agregar mas de una si lo deseas.",
+    },
+    {
+      target: ".step-8",
+      content:
+        "Seleccionar un link de un video de YOUTUBE que haga referencia a la campaña para que tus donadores puedan obtener mas detalles",
+    },
+    {
+      target: ".step-9",
+      content:
+        "Selecciona la direccion donde se ubica la campaña. Puedes arrastrar el mapa hasta la ubicacion moviendo el marcador celeste y haciendo zoom o si lo deseas podrias tambien buscar la direccion en la barra de busqueda. Ejemplo: Universidad Nacional del Comahue, Buenos Aires 1400, Neuquén, Neuquén Q8300, Argentina",
+    },
+    {
+      target: ".step-10",
+      content:
+        "Haz clic en 'Guardar' una vez que hayas completado toda la informacion.",
+    },
+  ];
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -112,14 +165,62 @@ const CreateCampaign = () => {
 
   return (
     <div className="container-fluid px-4">
+      <Joyride
+        styles={{
+          tooltip: {
+            maxWidth: "400px", // Ajusta el tamaño de la tarjeta si es necesario
+          },
+        }}
+        locale={{
+          back: "Volver",
+          next: "Siguiente",
+          skip: "Omitir",
+          last: "Finalizar",
+        }}
+        steps={steps}
+        run={tourIsOpen}
+        continuous={true}
+        showSkipButton={true}
+        showStepsProgress={true}
+        callback={(data) => {
+          if (data.status === "finished" || data.status === "skipped") {
+            setTourIsOpen(false);
+          }
+        }}
+        disableScrolling={true}
+      />
       <h2 className="mt-4 text-center">Crear campaña</h2>
       <h6 className="mb-4 text-center">da comienzo a una nueva campaña</h6>
+      <div
+      className="mb-4"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Button
+          onClick={() => setTourIsOpen(true)}
+          style={{
+            background: "linear-gradient(90deg, #7eb8fc, #fc6fe7)",
+            border: "none",
+            color: "#000000",
+            fontWeight: "bold",
+            padding: "10px 20px",
+            borderRadius: "30px",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            transition: "transform 0.2s, box-shadow 0.2s",
+          }}
+        >
+          Iniciar Tutorial
+        </Button>
+      </div>
 
       <Card>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Card.Body className="text-bg-light">
             <Row className="g-4">
-              <Col md={6}>
+              <Col md={6} className="step-1">
                 <Form.Label>Título</Form.Label>
                 <Form.Control
                   type="text"
@@ -131,7 +232,7 @@ const CreateCampaign = () => {
                 </Form.Control.Feedback>
               </Col>
 
-              <Col md={6}>
+              <Col md={6} className="step-2">
                 <Form.Label>Categoría</Form.Label>
                 <Form.Control
                   as="select"
@@ -152,7 +253,7 @@ const CreateCampaign = () => {
                 </Form.Control.Feedback>
               </Col>
 
-              <Col xs={12}>
+              <Col xs={12} className="step-2">
                 <Form.Label>Descripción</Form.Label>
                 <Form.Control
                   as="textarea"
@@ -167,7 +268,7 @@ const CreateCampaign = () => {
                 </Form.Control.Feedback>
               </Col>
 
-              <Col md={6}>
+              <Col md={6} className="step-4">
                 <Form.Label>Meta</Form.Label>
                 <Form.Control
                   type="number"
@@ -179,8 +280,15 @@ const CreateCampaign = () => {
                   {errors.goal?.message}
                 </Form.Control.Feedback>
               </Col>
-              <AliasCvuCbu onFieldChange={handleFieldChange} />
-              <Col md={6}>
+              <Col md={6} className="step-5">
+              <AliasCvuCbu
+                className="step-5"
+                onFieldChange={handleFieldChange}
+              />
+                
+              </Col>
+              
+              <Col md={6} className="step-6">
                 <Form.Label>Fecha de inicio</Form.Label>
                 <Form.Control
                   type="date"
@@ -208,7 +316,7 @@ const CreateCampaign = () => {
                 </Form.Control.Feedback>
               </Col>
 
-              <Col md={6}>
+              <Col md={6} className="step-7">
                 <ImageUpload
                   register={register}
                   errors={errors}
@@ -216,7 +324,7 @@ const CreateCampaign = () => {
                 />
               </Col>
 
-              <Col md={6}>
+              <Col md={6} className="step-8">
                 <YouTubeLinkInput
                   register={register}
                   errors={errors}
@@ -224,7 +332,13 @@ const CreateCampaign = () => {
                 />
               </Col>
 
-              <div>
+              <div className="step-9">
+                <h6 className="text-2xl font-semibold text-center  mt-6 mb-4">
+                 Donde se encuentra la campaña
+                </h6>
+                <h6 className="font-semibold text-center  mt-6 mb-4">
+                 puedes escribir la dirección o acercar, alejar y arrastrar el mapa, asegurate de que el marcador celeste este en la ubicacion que corresponde a tu campaña
+                </h6>
                 <MapboxMap setCoordinates={setCoordinates} />
               </div>
 
@@ -232,8 +346,8 @@ const CreateCampaign = () => {
             </Row>
           </Card.Body>
 
-          <Card.Footer className="text-center">
-            <Button type="submit" variant="primary">
+          <Card.Footer className="text-center ">
+            <Button className="step-10" type="submit" variant="primary">
               Guardar
             </Button>
           </Card.Footer>

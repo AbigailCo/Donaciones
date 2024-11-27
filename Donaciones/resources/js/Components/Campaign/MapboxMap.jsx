@@ -81,11 +81,7 @@ const MapboxMap = ({ setCoordinates }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-center text-blue-600 mt-6 mb-4">
-        <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
-          Arrastra el marcador o busca una ubicación
-        </span>
-      </h2>
+     
 
       {/* Campo de búsqueda */}
       <div style={{ marginBottom: "20px", position: "relative" }}>
@@ -96,7 +92,7 @@ const MapboxMap = ({ setCoordinates }) => {
             setSearchAddress(e.target.value);
             handleSearch(e.target.value);
           }}
-          placeholder="Ingresa una dirección"
+          placeholder="Busca una direccion ejemplo: Buenos Aires, Neuquén"
           className="w-full px-4 py-2 border rounded"
         />
         {/* Sugerencias */}
