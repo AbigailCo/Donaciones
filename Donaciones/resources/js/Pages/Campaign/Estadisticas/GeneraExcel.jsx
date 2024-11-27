@@ -36,42 +36,74 @@ const fetchData = async () => {
       const campaignsSheet = XLSX.utils.json_to_sheet(campaigns);
       XLSX.utils.sheet_add_aoa(campaignsSheet, [
         [
-          "ID",
+          "Nombre de Categoría",
           "Título",
           "Descripción",
           "Meta",
           "Total Donado",
           "Fecha de Inicio",
           "Fecha de Fin",
-          "ID Usuario",
+          "Usuario creador",
           "Enlace YouTube",
-          "Fecha Creación",
-          "Fecha Actualización",
-          "Fecha Eliminación",
-          "Nombre de Categoría",
           "Latitud",
           "Longitud",
-          "Dirección",
         ],
       ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, campaignsSheet, "Todas las campañas");
 
       // Estadísticas generales
       const estadisSheet = XLSX.utils.json_to_sheet([estadisGenerales]); // Es un objeto
+      XLSX.utils.sheet_add_aoa(estadisSheet, [
+        [
+          "Total de campañas",
+          "Activas",
+          "Inactivas",
+          "Completas",
+          "Incompletas",
+        ],
+      ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, estadisSheet, "Estados de campañas");
   
       // Correlación de donaciones
-      const donationSheet = XLSX.utils.json_to_sheet(donationCorrelation); // Es un array
+      const donationSheet = XLSX.utils.json_to_sheet(donationCorrelation); 
+      XLSX.utils.sheet_add_aoa(donationSheet, [
+        [
+          "n° Orden",
+          "Nombre del usuario",
+          "Cant. donaciones",
+          "Total donado",
+        ],
+      ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, donationSheet, "Usuarios mas generosos");
   
       // Métricas de campañas
       const campaignDataSheet = XLSX.utils.json_to_sheet(metrics.campaignData);
+      XLSX.utils.sheet_add_aoa(campaignDataSheet, [
+        [
+          "Nombre campaña",
+          "Alcance",
+          "Total donado",
+        ],
+      ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, campaignDataSheet, "Campañas");
   
       const donationsOverTimeSheet = XLSX.utils.json_to_sheet(metrics.donationsOverTime);
+      XLSX.utils.sheet_add_aoa(donationsOverTimeSheet, [
+        [
+          "Fecha",
+          "Total donado",
+        ],
+      ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, donationsOverTimeSheet, "Donaciones por Fecha");
   
       const campaignStatsSheet = XLSX.utils.json_to_sheet(metrics.campaignStats);
+      XLSX.utils.sheet_add_aoa(campaignStatsSheet, [
+        [
+          "Nombre del creador",
+          "Campañas activas",
+          "Total donado",
+        ],
+      ], { origin: "A1" });
       XLSX.utils.book_append_sheet(workbook, campaignStatsSheet, "Estadísticas de Usuarios");
   
       // Paso 4: Descargar el archivo Excel

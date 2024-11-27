@@ -521,7 +521,6 @@ public function myCampaigns()
             ->map(function ($user) {
                 return [
                     'user_name' => $user->name,
-                    'user_id' => $user->id,
                     'total_campaigns' => $user->campaigns_count,
                     'total_donations' => $user->donations_sum_amount,
                 ];
@@ -538,26 +537,22 @@ public function myCampaigns()
     public function exportAllCampaigns()
     {
         // Obtener todas las campañas con el nombre de la categoría
-        $campaigns = Campaign::with('category:id,name')
+        $campaigns = Campaign::with('category:id,name', 'user:id,name')
             ->get()
             ->map(function ($campaign) {
                 return [
-                    'id' => $campaign->id,
+                    'category_name' => $campaign->category->name ?? null,
                     'title' => $campaign->title,
                     'description' => $campaign->description,
                     'goal' => $campaign->goal,
                     'total_donated' => $campaign->total_donated,
                     'start_date' => $campaign->start_date,
                     'end_date' => $campaign->end_date,
-                    'user_id' => $campaign->user_id,
+                    'user_name' => $campaign->user->name ?? null,
                     'youtube_link' => $campaign->youtube_link,
-                    'created_at' => $campaign->created_at,
-                    'updated_at' => $campaign->updated_at,
-                    'deleted_at' => $campaign->deleted_at,
-                    'category_name' => $campaign->category->name ?? null, // Nombre de la categoría o null
                     'latitude' => $campaign->latitude,
                     'longitude' => $campaign->longitude,
-                    'address' => $campaign->address,
+                   
                 ];
             });
 

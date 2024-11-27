@@ -17,15 +17,15 @@ const EstaGeneral = ({ data }) => {
       <BarChart
         data={data}
         margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
-        barSize={40} // Tamaño fijo para las barras
-        barCategoryGap="20%" // Espaciado uniforme entre categorías
-        barGap={2} // Espaciado entre barras dentro del mismo grupo
+        barSize={40} 
+        barCategoryGap="20%" 
+        barGap={2}
       >
         <CartesianGrid strokeDasharray="5 5" stroke="#ccc" />
         <XAxis 
           dataKey="name" 
           tick={{ fontSize: 16 }} 
-          padding={{ left: 20, right: 20 }} // Espacio adicional en los extremos
+          padding={{ left: 20, right: 20 }}
         />
         <YAxis tick={{ fontSize: 16 }} />
         <Tooltip cursor={{ fill: "#f5f5f5" }} />
