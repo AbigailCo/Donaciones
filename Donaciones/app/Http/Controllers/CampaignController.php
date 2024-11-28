@@ -428,7 +428,7 @@ public function myCampaigns()
 
             if ($donor) {
                 // Envio notificación al donante (correo y base de datos)
-                $donor->notify(new CampaignUpdated($note, $campaign->title));
+                $donor->notify(new CampaignUpdated($note, $campaign->title, $campaign->id));
             }
         }
 

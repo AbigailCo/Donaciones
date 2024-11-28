@@ -13,11 +13,13 @@ class CampaignUpdated extends Notification implements ShouldQueue
 
     protected $note;
     protected $campaignTitle;
+    protected $campaignId;
 
-    public function __construct($note, $campaignTitle)
+    public function __construct($note, $campaignTitle,  $campaignId)
     {
         $this->note = $note;
         $this->campaignTitle = $campaignTitle;
+        $this->campaignId = $campaignId;
     }
 
     public function via($notifiable)
@@ -33,14 +35,19 @@ class CampaignUpdated extends Notification implements ShouldQueue
             'campaign_title' => $this->campaignTitle,
         ];
     }
-
+    
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting('Hola!')
-                    ->line("La campaña '{$this->campaignTitle}' ha sido actualizada.")
-                    ->line("Nota: {$this->note->note}")
-                    ->action('Ver Campaña', url("/campaigns/{$notifiable->id}"))
-                    ->line('¡Gracias por tu apoyo!');
+            ->subject("Actualización en la campaña: {$this->campaignTitle}")
+            ->greeting("¡Hola, {$notifiable->name}!") 
+            ->line("Te informamos que la campaña **'{$this->campaignTitle}'** ha sido actualizada con nuevos avances.")
+            ->line("**Actualizacion:** {$this->note->note}")
+            ->action('Ver campaña', url("/campaigns/{$this->campaignId}"))           
+            ->line("Agradecemos tu interés en esta campaña y tu continuo apoyo.")
+            ->salutation('Saludos, el equipo de Dar Vuelve')
+            ->line("Si tienes problemas para hacer clic en el botón 'Ver campaña', copia y pega la siguiente URL en tu navegador:")
+            ->line(url("/campaigns/{$this->campaignId}"));
     }
+
 }

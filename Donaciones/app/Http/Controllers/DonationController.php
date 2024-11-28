@@ -27,25 +27,21 @@ class DonationController extends Controller
             'user_id' => auth()->id(),
             'amount' => $request->input('amount'),
             'payment_status' => 'paid',
-            'email_notification_sent' => false, // Inicialmente se establece en false
+            'email_notification_sent' => false,
         ]);
-    
-        // Obtener la campaña relacionada
+
         $campaign = Campaign::find($request->input('campaign_id'));
         $campaign->total_donated += $donation->amount;
         $campaign->save();
-    
-        // Obtener al creador de la campaña
-        $campaignCreator = $campaign->creator; // Asume que Campaign tiene una relación 'creator'
+        $donorName = auth()->user()->name;
+      
+        $campaignCreator = $campaign->user; 
     
         if ($campaignCreator) {
             // Enviar notificación al creador de la campaña
-            $campaignCreator->notify(new DonationReceived($donation->amount, $campaign->title));
-    
-            // Enviar correo al creador de la campaña
+            $campaignCreator->notify(new DonationReceived($donation->amount, $campaign->title, $donorName, $campaign->id));
+
             try {
-                //si descomento esto se envia doble mail
-               // Mail::to($campaignCreator->email)->send(new CampaignUpdateNotification($campaign));
             } catch (\Exception $e) {
                 Log::error('Error al enviar correo al creador de la campaña: ' . $e->getMessage());
             }

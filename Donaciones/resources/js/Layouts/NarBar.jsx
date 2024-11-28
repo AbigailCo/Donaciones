@@ -4,7 +4,7 @@ import Logo from "@/Components/Logo";
 
 
 const NavBar = ({ auth }) => {
-    console.log({ auth });
+    
     return (
         <nav className="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
             <div className="container px-5">

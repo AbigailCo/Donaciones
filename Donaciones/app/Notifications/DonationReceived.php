@@ -13,11 +13,15 @@ class DonationReceived extends Notification implements ShouldQueue
 
     protected $amount;
     protected $campaignTitle;
+    protected $donador;
+    protected $campaignId;
 
-    public function __construct($amount, $campaignTitle)
+    public function __construct($amount, $campaignTitle, $donador, $campaignId)
     {
         $this->amount = $amount;
         $this->campaignTitle = $campaignTitle;
+        $this->donador = $donador;
+        $this->campaignId = $campaignId;
     }
 
     public function via($notifiable)
@@ -37,13 +41,15 @@ class DonationReceived extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting('Hola!')
-                    ->line('Has recibido una nueva donación.')
-                    ->action('Ver Donación', url('/donations'))
-                    ->line('¡Gracias por tu apoyo!');
+            ->subject('¡Has recibido una nueva donación!')
+            ->greeting("¡Hola, {$notifiable->name}!")
+            ->line("Nos complace informarte que has recibido una nueva donación en tu campaña {$this->campaignTitle}")
+            ->line("**Donación recibida:** {$this->amount}")
+            ->line("**Donante:** {$this->donador}") 
+            ->action('Ver campaña', url("/campaigns/{$this->campaignId}"))
+            ->line("Si tienes problemas para hacer clic en el botón 'Ver campaña', copia y pega la siguiente URL en tu navegador:")
+            ->line(url("/campaigns/{$this->campaignId}"))
+            ->line("Gracias por confiar en nuestra plataforma para alcanzar tus objetivos.")
+            ->salutation('Saludos, el equipo de DarVuelve');
     }
-
-    // aca se puede implementar tomail
 }
-
-
