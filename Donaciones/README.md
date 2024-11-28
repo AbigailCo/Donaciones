@@ -31,18 +31,20 @@ Este proyecto ha sido desarrollado utilizando **Laravel** para el backend y **Re
 
 ### Historias de Usuario (User Stories)
 
-1. **HU1 - Registrar Usuario**: Como **Donante**, quiero registrarme con mi correo electrónico o redes sociales, para acceder a la plataforma y hacer donaciones. (Prioridad: ALTA)
-2. **HU2 - Crear Campaña de Donación**: Como **Creador de Campañas**, quiero crear una nueva campaña con un título, descripción, objetivo de recaudación y fechas de inicio y fin, para poder atraer donantes. (Prioridad: ALTA)
-3. **HU3 - Ver Inicio**: Como **Donante**, quiero explorar una lista de campañas activas, para encontrar una campaña que me interese y contribuir. (Prioridad: ALTA)
-4. **HU4 - Donar a Campaña**: Como **Donante**, quiero realizar una donación a una campaña de forma segura, para contribuir al objetivo de la campaña. (Prioridad: ALTA)
-5. **HU5 - Login**: Como **Donante**, quiero loguearme, para iniciar sesión en mi perfil. (Prioridad: ALTA)
-6. **HU6 - Buscar Campaña**: Como **Donante**, quiero buscar campañas por palabras clave, para encontrar rápidamente campañas relacionadas con mis intereses. (Prioridad: ALTA)
-7. **HU7 - Ver Detalles de Campaña Creada**: Como **Creador de Campañas**, quiero ver un resumen del progreso de mis campañas, para hacer seguimiento y ajustar cambios. (Prioridad: MEDIA)
-8. **HU8 - Recibir Notificaciones**: Como **Donante**, quiero recibir notificaciones sobre el progreso de las campañas a las que he donado, para mantenerme informado sobre su impacto. (Prioridad: MEDIA)
-9. **HU9 - Dejar Comentarios**: Como **Donante**, quiero dejar comentarios o sugerencias en las campañas a las que dono, para dar retroalimentación a los creadores. (Prioridad: MEDIA/BAJA)
-10. **HU10 - Ver Mapa Interactivo de Campañas**: Como **Donante**, quiero ver la ubicación de los proyectos financiados en un mapa interactivo, para conocer su impacto geográfico. (Prioridad: MEDIA/BAJA)
-11. **HU11 - Guardar Favoritos**: Como **Donante**, quiero guardar campañas que me interesen en una lista de favoritos, para poder revisarlas y donar más tarde. (Prioridad: MEDIA/BAJA)
-12. **HU12 - Visualizar Información y Uso de Plataforma**: Como **Usuario**, quiero ver estadísticas globales de la plataforma, para ver campañas completadas, en curso, sus donantes y avances estadísticos. (Prioridad: BAJA)
+1. **HU1 - Registrar Usuario**: Como **Donante**, quiero registrarme con mi correo electrónico o redes sociales, para acceder a la plataforma y hacer donaciones.
+   ![image](https://github.com/user-attachments/assets/0e73e147-ec69-4004-b29a-44a658d8572f)
+
+3. **HU2 - Crear Campaña de Donación**: Como **Creador de Campañas**, quiero crear una nueva campaña con un título, descripción, objetivo de recaudación y fechas de inicio y fin, para poder atraer donantes. (Prioridad: ALTA)
+4. **HU3 - Ver Inicio**: Como **Donante**, quiero explorar una lista de campañas activas, para encontrar una campaña que me interese y contribuir. (Prioridad: ALTA)
+5. **HU4 - Donar a Campaña**: Como **Donante**, quiero realizar una donación a una campaña de forma segura, para contribuir al objetivo de la campaña. (Prioridad: ALTA)
+6. **HU5 - Login**: Como **Donante**, quiero loguearme, para iniciar sesión en mi perfil. (Prioridad: ALTA)
+7. **HU6 - Buscar Campaña**: Como **Donante**, quiero buscar campañas por palabras clave, para encontrar rápidamente campañas relacionadas con mis intereses. (Prioridad: ALTA)
+8. **HU7 - Ver Detalles de Campaña Creada**: Como **Creador de Campañas**, quiero ver un resumen del progreso de mis campañas, para hacer seguimiento y ajustar cambios. (Prioridad: MEDIA)
+9. **HU8 - Recibir Notificaciones**: Como **Donante**, quiero recibir notificaciones sobre el progreso de las campañas a las que he donado, para mantenerme informado sobre su impacto. (Prioridad: MEDIA)
+10. **HU9 - Dejar Comentarios**: Como **Donante**, quiero dejar comentarios o sugerencias en las campañas a las que dono, para dar retroalimentación a los creadores. (Prioridad: MEDIA/BAJA)
+11. **HU10 - Ver Mapa Interactivo de Campañas**: Como **Donante**, quiero ver la ubicación de los proyectos financiados en un mapa interactivo, para conocer su impacto geográfico. (Prioridad: MEDIA/BAJA)
+12. **HU11 - Guardar Favoritos**: Como **Donante**, quiero guardar campañas que me interesen en una lista de favoritos, para poder revisarlas y donar más tarde. (Prioridad: MEDIA/BAJA)
+13. **HU12 - Visualizar Información y Uso de Plataforma**: Como **Usuario**, quiero ver estadísticas globales de la plataforma, para ver campañas completadas, en curso, sus donantes y avances estadísticos. (Prioridad: BAJA)
 
 ## Cómo Ejecutar el Proyecto
 
