@@ -13,11 +13,7 @@ const ImageUpload = ({ register, errors, setImageFiles }) => {
     
     // Actualiza el estado de imageFiles
     setImageFilesState((prev) => [...prev, ...files]);
-    setImageFiles((prev) => [...prev, ...files]); // Actualiza el estado de archivos en el componente padre
-
-    useEffect(() => {
-      console.log('Estado de imageFiles después de agregar:', imageFiles);
-    }, [imageFiles]);
+    setImageFiles((prev) => [...prev, ...files]); 
   };
 
   const handleAddMoreImages = () => {
@@ -32,10 +28,9 @@ const ImageUpload = ({ register, errors, setImageFiles }) => {
   const handleRemoveImage = () => {
     setImageFilesState((prev) => {
       const updatedFiles = prev.filter((file, index) => index !== imageToRemove);
-      console.log('Archivos de imagen después de eliminar:', updatedFiles); // Verifica los archivos después de eliminar
       return updatedFiles;
     });
-    setImageFiles((prev) => prev.filter((_, index) => index !== imageToRemove)); // Actualiza el estado en el componente padre
+    setImageFiles((prev) => prev.filter((_, index) => index !== imageToRemove)); 
     setShowModal(false);
   };
 
@@ -43,9 +38,6 @@ const ImageUpload = ({ register, errors, setImageFiles }) => {
     setImageToRemove(index);
     setShowModal(true);
   };
-
-  console.log('Estado de imageFiles:', imageFiles);
-  
   return (
     <div>
       <Form.Label className='mr-4'>Subir Imágenes</Form.Label>

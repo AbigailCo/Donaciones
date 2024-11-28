@@ -438,15 +438,17 @@ public function myCampaigns()
 
     public function getNotes($campaign_id)
     {
+        // Obtener las notas relacionadas con las imágenes y ordenarlas descendentemente
         $notes = Note::with('images')
             ->where('campaign_id', $campaign_id)
+            ->orderBy('created_at', 'desc') // Ordenar antes de obtener los datos
             ->get()
             ->map(function ($note) {
                 // Formatear la fecha de creación
-                $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // o cualquier formato que prefieras
+                $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // Ajusta el formato según lo necesites
                 return $note;
             });
-
+    
         return response()->json($notes);
     }
 

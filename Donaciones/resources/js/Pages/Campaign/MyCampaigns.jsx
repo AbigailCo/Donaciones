@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography, Button } from "@mui/material";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import CampaignCard from "../../Components/Campaign/CampaignCard";
+import CampaignCard from "@/Components/Campaign/CampaignCard";
 import { Head, usePage, Link } from "@inertiajs/react";
 import Sidebar from "@/Components/Dashboard/Sidebar";
 

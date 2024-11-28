@@ -7,8 +7,9 @@ import Carousel from "react-bootstrap/Carousel";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FavoriteButton from "./FavoriteButton";
-import ImageUpload from "../ImageUpload";
+
 import FotoPerfil from "./FotoPerfil";
+import ActualizarCampaign from "./ActualizarCampaign";
 
 const getYouTubeId = (url) => {
   if (!url) return null;
@@ -22,51 +23,10 @@ const CampaignCard = ({ campaign }) => {
   /*   const youtubeId = getYouTubeId(campaign.youtube_link); */
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Estado para el popup
-  const [showModal, setShowModal] = useState(false);
-  const [note, setNote] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Manejar abrir/cerrar el modal
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
   const handleEditCampaign = () => {
     router.visit(`/campaigns/${campaign.id}/edit`);
   };
 
-  const handleSubmitNote = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const formData = new FormData();
-    formData.append("note", note);
-
-    // Agregar las imágenes al FormData
-    imageFiles.forEach((file) => {
-      formData.append("images[]", file);
-    });
-
-    try {
-      // Enviar la solicitud con FormData
-      await axios.post(`/campaigns/${campaign.id}/notes`, formData, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Nota guardada exitosamente");
-      setNote("");
-      setImageFiles([]);
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error al agregar la nota:", error);
-      toast.error("La nota no fue creada");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -87,7 +47,6 @@ const CampaignCard = ({ campaign }) => {
 
   return (
     <Card style={{ cursor: "pointer", marginBottom: "20px" }}>
-
       <div>
         <FotoPerfil campaign={campaign} />
       </div>
@@ -141,7 +100,7 @@ const CampaignCard = ({ campaign }) => {
 
       {auth.user && auth.user.id !== campaign.user_id && (
         <div className="flex justify-center items-center h-full ">
-          <button
+          <div
             onClick={() => handleToggleFavorite()}
             aria-label={
               isFavorite ? "Eliminar de favoritos" : "Agregar a favoritos"
@@ -156,61 +115,26 @@ const CampaignCard = ({ campaign }) => {
               isFavorite={isFavorite}
               onToggle={handleToggleFavorite}
             />
-          </button>
+          </div>
         </div>
       )}
       {auth.user && auth.user.id === campaign.user_id && (
         <>
-        <div className="flex justify-center items-center h-full">
-        <button
-            onClick={handleEditCampaign}
-            className="flex justify-center items-center h-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
-          >
-            Editar campaña
-          </button>
-          <button
-            onClick={handleShowModal}
-            className="flex justify-center items-center h-full bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
-          >
-            Actualizar campaña
-          </button>
-        </div>
-          
+          <div className="flex justify-center items-center h-full">
+            <button
+              onClick={handleEditCampaign}
+              className="flex justify-center items-center h-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-1 px-2 rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300"
+            >
+              Editar campaña
+            </button>
+            <ActualizarCampaign campaign={
+              campaign
+            }/>
+          </div>
         </>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Actualizar campaña</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmitNote}>
-            <Form.Group controlId="formNote">
-              <Form.Label>Descripicion</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Escriba lo que ha pasado recientemente en su campaña"
-                required
-              />
-            </Form.Group>
-
-            {/* Componente ImageUpload */}
-            <ImageUpload setImageFiles={setImageFiles} errors={{}} />
-
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-3"
-            >
-              {isSubmitting ? "Actualizando..." : "Actualizar"}
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+      
     </Card>
   );
 };

@@ -17,9 +17,9 @@ class SendCampaignUpdateNotification
         foreach ($donations as $donation) {
             if (!$donation->email_notification_sent) { // Verifica si ya se envió el correo
                 try {
-                   // Mail::to($donation->user->email)->send(new CampaignUpdateNotification($campaign));
-                    $donation->email_notification_sent = true; // Marca como enviado
-                    $donation->save(); // Guarda el estado de la donación
+                
+                    $donation->email_notification_sent = true; 
+                    $donation->save(); 
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo: ' . $e->getMessage());
                 }

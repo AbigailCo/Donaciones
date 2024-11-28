@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { usePage, router } from "@inertiajs/react";
-import CampaignVideo from "../../Components/Campaign/CampaignVideo";
+import CampaignVideo from "@/Components/Campaign/CampaignVideo";
 import axios from "axios";
 import { initMercadoPago } from "@mercadopago/sdk-react";
 import {
@@ -10,18 +10,14 @@ import {
   TextField,
   Button,
   Typography,
-  Drawer,
 } from "@mui/material";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import CarouselComponent from "../../Components/Campaign/CarouselComponent";
-import ProgressChart from "../../Components/Campaign/ProgressChart";
-import CampaignComments from "../../Components/Campaign/CampaignComments";
+import CarouselComponent from "@/Components/Campaign/CarouselComponent";
+import CampaignComments from "@/Components/Campaign/CampaignComments";
 import MapCampaign from "@/Components/Campaign/MapCampaign";
-import FavoriteButton from '@/Components/Campaign/FavoriteButton';
-import CampaignNotes from "../../Components/Campaign/CampaignNotes";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { FaFacebookF, FaTwitter, FaWhatsapp } from "react-icons/fa";
+import CampaignNotes from "@/Components/Campaign/CampaignNotes";
+import ActualizarCampaign from "@/Components/Campaign/ActualizarCampaign";
+import DrawerDetalles from "@/Components/Campaign/DrawerDetalles";
 
 const CampaignDetails = () => {
   const { auth, campaign } = usePage().props;
@@ -29,21 +25,6 @@ const CampaignDetails = () => {
   const [error, setError] = useState(null);
   const [donationAmount, setDonationAmount] = useState("");
   const [donations, setDonations] = useState([]);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const selectedField = campaign.alias ? "alias" : campaign.cvu ? "cvu" : campaign.cbu ? "cbu" : null;
-  
-  // Función para obtener el valor según el campo seleccionado
-  const getFieldValue = () => {
-    if (selectedField === "alias") return campaign.alias;
-    if (selectedField === "cvu") return campaign.cvu;
-    if (selectedField === "cbu") return campaign.cbu;
-    return null;
-  };
-
-  const formatFecha = (fecha) => {
-    const localDate = new Date(fecha + "T00:00:00"); // forzamos a tratarlo como local
-    return localDate.toLocaleDateString("es-ES");
-  };
 
   const totalDonado = donations.reduce(
     (acc, donation) => acc + parseFloat(donation.amount),
@@ -60,8 +41,6 @@ const CampaignDetails = () => {
     return matches ? matches[1] : null;
   };
   const youtubeId = getYouTubeId(campaign.youtube_link);
-  
-
 
   useEffect(() => {
     initMercadoPago("TEST-ca5184c7-731c-4a71-9887-b5a5e97cd506");
@@ -77,6 +56,7 @@ const CampaignDetails = () => {
       "MercadoPago",
       `width=${width},height=${height},top=${top},left=${left}`
     );
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -87,60 +67,39 @@ const CampaignDetails = () => {
   }, [campaign.id]);
 
   const handleDonation = () => {
-
     if (!donationAmount) {
-        setError('Por favor, ingresa un monto.');
-        console.log('Monto no ingresado.'); // Log adicional
-        return;
+      setError("Por favor, ingresa un monto.");
+      console.log("Monto no ingresado."); // Log adicional
+      return;
     }
 
-    console.log('Monto a donar:', donationAmount); // Verificar el valor del monto
+    console.log("Monto a donar:", donationAmount); // Verificar el valor del monto
 
-    axios.post('/donations', {
+    axios
+      .post("/donations", {
         amount: parseFloat(donationAmount),
         campaign_id: campaign.id,
         user_id: auth.user.id,
-        payment_status: 'pending',
-    })
-    .then(response => {
-        console.log('Donación registrada:', response.data);
-      
-        return axios.post(`/campaigns/${campaign.id}/payment-preference`, { amount: donationAmount });
-    })
-    .then(response => {
-        // Abrir la URL de pago en un popup
-        console.log("Init Point URL:", response.data.init_point);
+        payment_status: "pending",
+      })
+      .then((response) => {
+        console.log("Donación registrada:", response.data);
+
+        return axios.post(`/campaigns/${campaign.id}/payment-preference`, {
+          amount: donationAmount,
+        });
+      })
+      .then((response) => {
+
         openPopup(response.data.init_point);
-    
-    })
-    .catch(error => {
-        console.error('Error al procesar la donación:', error);
-        console.log('Error Response:', error.response); // Log de la respuesta de error
-        setError('No se pudo completar la donación.');
-    });
-};
-
-
-  const handleEditClick = () => {
-    router.visit(`/campaigns/${campaign.id}/edit`);
-  };
-  useEffect(() => {
-    const fetchFavoriteStatus = async () => {
-      try {
-        const response = await axios.get(`/favorites/${campaign.id}`);
-        setIsFavorite(response.data.isFavorite);
-      } catch (error) {
-        console.error("Error fetching favorite status:", error);
-      }
-    };
-
-    fetchFavoriteStatus();
-  }, [campaign.id]);
-  const handleToggleFavorite = (newStatus) => {
-    setIsFavorite(newStatus);
+      })
+      .catch((error) => {
+        console.error("Error al procesar la donación:", error);
+        console.log("Error Response:", error.response); // Log de la respuesta de error
+        setError("No se pudo completar la donación.");
+      });
   };
 
-  // Ajustes de estilo de contenedor
   const containerStyle = {
     display: "flex",
     justifyContent: "center",
@@ -148,202 +107,19 @@ const CampaignDetails = () => {
     backgroundColor: "#f5f5f5",
   };
 
-  // Estilo para la Card al 80% del ancho y centrado
   const cardStyle = {
-    maxWidth: "80%", // Siempre al 80% del ancho de la pantalla
+    maxWidth: "80%",
     width: "80%",
     boxShadow: 3,
     borderRadius: 2,
   };
 
-  // Estilo para el Drawer
-  const drawerStyle = {
-    width: 300,
-    flexShrink: 0,
-    "& .MuiDrawer-paper": {
-      width: 300,
-      boxSizing: "border-box",
-      padding: "20px",
-      marginTop: "108px",
-      height: "calc(100vh - 100px)",
-      overflow: "auto",
-    },
-  };
   return (
     <div>
       {auth.user ? (
         <AuthenticatedLayout user={auth.user}>
           <Box sx={{ ...containerStyle, marginTop: "24px" }}>
-          <ToastContainer position="top-right" autoClose={3000} />
-           {/* Panel Lateral */}
-<Drawer
-  sx={drawerStyle}
-  variant="permanent"
-  anchor="left"
->
-  <div>
-    {/* Botón de Editar Campaña */}
-    {auth.user && auth.user.id === campaign.user_id && (
-      <Box margin='30px' textAlign="center" mt={3}>
-        <Button variant="contained" onClick={handleEditClick}>
-          Editar campaña
-        </Button>
-      </Box>
-    )}
-
-    {/* Box: ¿Cómo donar? */}
-    <Box
-      sx={{
-        mb: 4,
-        p: 3,
-        backgroundColor: "#ffffff",
-        border: "1px solid #e0e0e0",
-        borderRadius: 4,
-        boxShadow: 1,
-        alignItems: "center",
-      }}
-    >
-      <Typography
-        variant="h6"
-        color="primary"
-        sx={{ fontWeight: "bold" }}
-      >
-        <strong>¿Cómo donar?</strong>
-      </Typography>
-      <Box sx={{ textAlign: "left" }}>
-        {selectedField === "alias" && (
-          <span>
-            <strong>Alias:</strong> {getFieldValue()}
-          </span>
-        )}
-        {selectedField === "cvu" && (
-          <span>
-            <strong>CVU:</strong> {getFieldValue()}
-          </span>
-        )}
-        {selectedField === "cbu" && (
-          <span>
-            <strong>CBU:</strong> {getFieldValue()}
-          </span>
-        )}
-      </Box>
-    </Box>
-
-    {/* Box: Meta */}
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        mb: 4,
-        p: 3,
-        backgroundColor: "#ffffff",
-        border: "1px solid #e0e0e0",
-        borderRadius: 4,
-        boxShadow: 1,
-        alignItems: "center",
-      }}
-    >
-      <Typography
-        variant="h6"
-        color="primary"
-        sx={{ fontWeight: "bold" }}
-      >
-        <strong>Meta:</strong> ${campaign.goal}
-      </Typography>
-      <Box sx={{ textAlign: "right" }}>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Fecha de comienzo:</strong>
-          <br />
-          {formatFecha(campaign.start_date)}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Fecha de finalización:</strong>
-          <br />
-          {formatFecha(campaign.end_date)}
-
-        </Typography>
-      </Box>
-    </Box>
-
-    {/* Box: Agregar a Favoritos */}
-    {auth.user && auth.user.id !== campaign.user_id && (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          color: 'black',
-          padding: '16px',
-          borderRadius: '8px',
-          borderColor: '#f6ff00',
-          boxShadow: 3,
-          maxWidth: '250px',
-          margin: 'auto',
-        }}
-      >
-        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-          Agregar a favoritos
-        </Typography>
-        <FavoriteButton
-          campaignId={campaign.id}
-          isFavorite={isFavorite}
-          onToggle={handleToggleFavorite}
-        />
-      </Box>
-    )}
-
-    {/* Box: Redes Sociales */}
-    <Box
-      sx={{
-        mb: 4,
-        p: 3,
-        backgroundColor: "#ffffff",
-        border: "1px solid #e0e0e0",
-        borderRadius: 4,
-        boxShadow: 1,
-        alignItems: "center",
-        textAlign: "center",
-        marginTop: '24px',
-      }}
-    >
-      <Typography
-        variant="h6"
-        color="primary"
-        sx={{ fontWeight: "bold", mb: 2 }}
-      >
-        Comparte esta campaña
-      </Typography>
-      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-        <a
-          href={`https://www.facebook.com/sharer/sharer.php?u=https://www.tusitio.com/campaign/${campaign.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <FaFacebookF size={32} color="#4267B2" />
-        </a>
-        <a
-          href={`https://api.whatsapp.com/send?text=¡Mira esta campaña! https://www.tusitio.com/campaign/${campaign.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <FaWhatsapp size={32} color="#25D366" />
-        </a>
-        <a
-          href={`https://twitter.com/intent/tweet?text=¡Apoya esta campaña!&url=https://www.tusitio.com/campaign/${campaign.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <FaTwitter size={32} color="#1DA1F2" />
-        </a>
-      </Box>
-    </Box>
-   
-
-    {/* Gráfico de progreso */}
-    <ProgressChart campaign={campaign} donations={donations} />
-  </div>
-</Drawer>
-
+            <DrawerDetalles campaign={campaign} auth={auth} />
             <Card sx={cardStyle}>
               <CarouselComponent images={campaign.images} />
               <CardContent>
@@ -363,17 +139,14 @@ const CampaignDetails = () => {
                   {campaign.description}
                 </Typography>
 
-
                 {auth.user &&
                   auth.user.id !== campaign.user_id &&
-                  // Verificamos si la campaña ha cerrado o si ha alcanzado la meta
-
                   (estaCerrada ? (
                     <Typography
                       variant="body1"
                       align="center"
                       sx={{
-                        background: "linear-gradient(90deg, #ff0000, #ff7043)", // Rojo para "cerrada"
+                        background: "linear-gradient(90deg, #ff0000, #ff7043)",
                         border: "none",
                         color: "#ffffff",
                         fontWeight: "bold",
@@ -385,60 +158,66 @@ const CampaignDetails = () => {
                     >
                       ¡La campaña ha cerrado! Gracias por tu apoyo.
                     </Typography>
-                  ) : // Si la campaña no está cerrada, mostramos si aún se puede donar o si la meta ha sido alcanzada
-                    totalDonado < campaign.goal ? (
-                      <Box
-                        sx={{
-                          mb: 4,
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 3,
-                        }}
+                  ) : totalDonado < campaign.goal ? (
+                    <Box
+                      sx={{
+                        mb: 4,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                      }}
+                    >
+                      <TextField
+                        label="Monto a donar"
+                        variant="filled"
+                        fullWidth
+                        value={donationAmount}
+                        onChange={(e) => setDonationAmount(e.target.value)}
+                        placeholder="Ingresa el monto a donar"
+                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleDonation}
                       >
-                        <TextField
-                          label="Monto a donar"
-                          variant="filled"
-                          fullWidth
-                          value={donationAmount}
-                          onChange={(e) => setDonationAmount(e.target.value)}
-                          placeholder="Ingresa el monto a donar"
-                        />
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          onClick={handleDonation}
-                        >
-                          Donar a esta campaña
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Typography
-                        variant="body1"
-                        align="center"
-                        sx={{
-                          background: "linear-gradient(90deg, #4a90e2, #ff00d9)", // Colores para meta alcanzada
-                          border: "none",
-                          color: "#000000",
-                          fontWeight: "bold",
-                          padding: "10px 20px",
-                          borderRadius: "30px",
-                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
-                          transition: "transform 0.2s, box-shadow 0.2s",
-                        }}
-                      >
-                        ¡La meta ha sido alcanzada! Gracias por tu apoyo.
-                      </Typography>
-                    ))}
-
+                        Donar a esta campaña
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Typography
+                      variant="body1"
+                      align="center"
+                      sx={{
+                        background: "linear-gradient(90deg, #4a90e2, #ff00d9)", 
+                        border: "none",
+                        color: "#000000",
+                        fontWeight: "bold",
+                        padding: "10px 20px",
+                        borderRadius: "30px",
+                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+                        transition: "transform 0.2s, box-shadow 0.2s",
+                      }}
+                    >
+                      ¡La meta ha sido alcanzada! Gracias por tu apoyo.
+                    </Typography>
+                  ))}
                 {error && <Typography color="error">{error}</Typography>}
-                {/* Aquí se agrega el componente CampaignNotes */}
+                {auth.user && auth.user.id === campaign.user_id && (
+                  <Box margin="30px" textAlign="center" mt={3}>
+                    <ActualizarCampaign campaign={campaign} />
+                  </Box>
+                )}
                 <CampaignNotes campaignId={campaign.id} />
-                <CampaignComments campaign={campaign} currentUser={auth.user} />
+                {auth.user && auth.user.id !== campaign.user_id && (
+                  <CampaignComments
+                    campaign={campaign}
+                    currentUser={auth.user}
+                  />
+                )}
+
                 <CampaignVideo youtubeId={youtubeId} />
                 <MapCampaign campaign={campaign} />
-
-                
               </CardContent>
             </Card>
           </Box>

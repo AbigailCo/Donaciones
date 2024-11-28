@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Campaign;
@@ -17,6 +18,20 @@ class CampaignFactory extends Factory
         // Coordenadas aleatorias en Argentina
         $latitude = $this->faker->latitude(-55, -22); // Latitud dentro de Argentina
         $longitude = $this->faker->longitude(-73, -53); // Longitud dentro de Argentina
+        // Selección de uno de los tres campos (alias, cvu, cbu)
+        $type = $this->faker->randomElement(['alias', 'cvu', 'cbu']);
+
+        $alias = null;
+        $cvu = null;
+        $cbu = null;
+
+        if ($type === 'alias') {
+            $alias = $this->faker->lexify('??????????????????'); // Generar una cadena de caracteres aleatoria sin separadores
+        } elseif ($type === 'cvu') {
+            $cvu = $this->faker->numerify(str_repeat('#', 22)); // Generar un CVU de 22 dígitos
+        } else {
+            $cbu = $this->faker->numerify(str_repeat('#', 22)); // Generar un CBU de 22 dígitos
+        }
 
         // Relacionar títulos, descripciones y videos con categorías
         $categories = [
@@ -145,16 +160,16 @@ class CampaignFactory extends Factory
         $description = $categoryData['description'][array_search($title, $categoryData['title'])];
 
         // Lógica para determinar si la campaña está cerrada
-        $isClosed = $this->faker->boolean(30); // 30% de probabilidad de que la campaña esté cerrada
+        $isClosed = $this->faker->boolean(10); // 30% de probabilidad de que la campaña esté cerrada
 
         // Si está cerrada, la fecha de cierre debe ser antes de la fecha actual
-        $endDate = $isClosed 
-            ? $this->faker->dateTimeBetween('-2 months', '-1 day') 
-            : $this->faker->dateTimeBetween('now', '+2 months'); 
+        $endDate = $isClosed
+            ? $this->faker->dateTimeBetween('-2 months', '-1 day')
+            : $this->faker->dateTimeBetween('now', '+2 months');
 
         // Definir el total_donated: Puede ser un valor cercano o mayor al goal
         $goal = $this->faker->numberBetween(1000, 50000);
-        $totalDonated = $this->faker->boolean(50) // 50% de probabilidad de que el donativo sea mayor al goal
+        $totalDonated = $this->faker->boolean(20) // 50% de probabilidad de que el donativo sea mayor al goal
             ? $this->faker->numberBetween($goal, $goal + 20000) // Supera el goal
             : $this->faker->numberBetween($goal - 10000, $goal + 5000); // Casi llega o lo supera levemente
 
@@ -164,12 +179,15 @@ class CampaignFactory extends Factory
             'goal' => $goal,
             'start_date' => $this->faker->dateTimeBetween('-2 month', 'now'),
             'end_date' => $endDate,
-            'user_id' => User::inRandomOrder()->first()->id, 
+            'user_id' => User::inRandomOrder()->first()->id,
             'youtube_link' => $this->faker->randomElement($categoryData['youtube_links']),
             'category_id' => Category::firstWhere('name', $selectedCategory)?->id,
             'latitude' => $latitude,
             'longitude' => $longitude,
             'total_donated' => $totalDonated, // Agregar el monto donado
+            'alias' => $alias,
+            'cvu' => $cvu,
+            'cbu' => $cbu,
         ];
     }
 

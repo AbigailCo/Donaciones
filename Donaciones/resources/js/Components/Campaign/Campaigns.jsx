@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CampaignCard from './CampaignCard';
 import { Grid, Button, Typography } from '@mui/material';
-import CampaignSearch from './CampaignSearch';
+
 
 const Campaigns = () => {
     const [campaigns, setCampaigns] = useState([]);

@@ -7,7 +7,6 @@ export default function FotoPerfil({ campaign }) {
         const fetchCreatorData = async () => {
             try {
                 const response = await axios.get(`/userCreador/${campaign.id}`);
-                console.log("este es el response", response.data);
                 setCreator(response.data.user);
             } catch (error) {
                 console.error("Error al obtener el creador:", error);
