@@ -31,20 +31,60 @@ Este proyecto ha sido desarrollado utilizando **Laravel** para el backend y **Re
 
 ### Historias de Usuario (User Stories)
 
-1. **HU1 - Registrar Usuario**: Como **Donante**, quiero registrarme con mi correo electrónico o redes sociales, para acceder a la plataforma y hacer donaciones.
+**HU1 - Registrar Usuario**: Como **Donante**, quiero registrarme con mi correo electrónico o redes sociales, para acceder a la plataforma y hacer donaciones.
+
    ![image](https://github.com/user-attachments/assets/0e73e147-ec69-4004-b29a-44a658d8572f)
 
-3. **HU2 - Crear Campaña de Donación**: Como **Creador de Campañas**, quiero crear una nueva campaña con un título, descripción, objetivo de recaudación y fechas de inicio y fin, para poder atraer donantes. (Prioridad: ALTA)
-4. **HU3 - Ver Inicio**: Como **Donante**, quiero explorar una lista de campañas activas, para encontrar una campaña que me interese y contribuir. (Prioridad: ALTA)
-5. **HU4 - Donar a Campaña**: Como **Donante**, quiero realizar una donación a una campaña de forma segura, para contribuir al objetivo de la campaña. (Prioridad: ALTA)
-6. **HU5 - Login**: Como **Donante**, quiero loguearme, para iniciar sesión en mi perfil. (Prioridad: ALTA)
-7. **HU6 - Buscar Campaña**: Como **Donante**, quiero buscar campañas por palabras clave, para encontrar rápidamente campañas relacionadas con mis intereses. (Prioridad: ALTA)
-8. **HU7 - Ver Detalles de Campaña Creada**: Como **Creador de Campañas**, quiero ver un resumen del progreso de mis campañas, para hacer seguimiento y ajustar cambios. (Prioridad: MEDIA)
-9. **HU8 - Recibir Notificaciones**: Como **Donante**, quiero recibir notificaciones sobre el progreso de las campañas a las que he donado, para mantenerme informado sobre su impacto. (Prioridad: MEDIA)
-10. **HU9 - Dejar Comentarios**: Como **Donante**, quiero dejar comentarios o sugerencias en las campañas a las que dono, para dar retroalimentación a los creadores. (Prioridad: MEDIA/BAJA)
-11. **HU10 - Ver Mapa Interactivo de Campañas**: Como **Donante**, quiero ver la ubicación de los proyectos financiados en un mapa interactivo, para conocer su impacto geográfico. (Prioridad: MEDIA/BAJA)
-12. **HU11 - Guardar Favoritos**: Como **Donante**, quiero guardar campañas que me interesen en una lista de favoritos, para poder revisarlas y donar más tarde. (Prioridad: MEDIA/BAJA)
-13. **HU12 - Visualizar Información y Uso de Plataforma**: Como **Usuario**, quiero ver estadísticas globales de la plataforma, para ver campañas completadas, en curso, sus donantes y avances estadísticos. (Prioridad: BAJA)
+**HU2 - Crear Campaña de Donación**: Como **Creador de Campañas**, quiero crear una nueva campaña con un título, descripción, objetivo de recaudación y fechas de inicio y fin, para poder atraer donantes.
+
+   ![image](https://github.com/user-attachments/assets/54e38852-003b-4d75-b7d1-07ab9521d697)
+
+**HU3 - Ver Inicio**: Como **Donante**, quiero explorar una lista de campañas activas, para encontrar una campaña que me interese y contribuir.
+
+![image](https://github.com/user-attachments/assets/38c04f21-b2ec-45fd-8be5-818576abed7f)
+
+
+**HU4 - Donar a Campaña**: Como **Donante**, quiero realizar una donación a una campaña de forma segura, para contribuir al objetivo de la campaña. 
+
+![image](https://github.com/user-attachments/assets/ffc4334a-a93c-464b-b341-a53b5c1e1766)
+
+**HU5 - Buscar Campaña**: Como **Donante**, quiero buscar campañas por palabras clave, para encontrar rápidamente campañas relacionadas con mis intereses. 
+
+![image](https://github.com/user-attachments/assets/bfa629a5-03aa-42e2-b3af-ed63e3beac80)
+
+**HU7 - Ver Detalles de Campaña Creada**: Como **Creador de Campañas**, quiero ver un resumen del progreso de mis campañas, para hacer seguimiento y ajustar cambios.
+
+![image](https://github.com/user-attachments/assets/bc354e1f-6439-4e61-85e9-a89681066ee3)
+
+
+**HU8 - Recibir Notificaciones**: Como **Donante**, quiero recibir notificaciones sobre el progreso de las campañas a las que he donado, para mantenerme informado sobre su impacto.
+
+![image](https://github.com/user-attachments/assets/dabe61b2-ee5b-4e8e-aada-d2d6e71b792d)
+
+
+**HU9 - Dejar Comentarios**: Como **Donante**, quiero dejar comentarios o sugerencias en las campañas a las que dono, para dar retroalimentación a los creadores. 
+
+![image](https://github.com/user-attachments/assets/856638eb-3a8b-41ca-9fe4-8b404a2f2eb8)
+
+
+ **HU10 - Ver Mapa Interactivo de Campañas**: Como **Donante**, quiero ver la ubicación de los proyectos financiados en un mapa interactivo, para conocer su impacto geográfico.
+
+![image](https://github.com/user-attachments/assets/5ba64f4e-1016-4360-b230-38df3c0a41a4)
+
+ 
+ **HU11 - Guardar Favoritos**: Como **Donante**, quiero guardar campañas que me interesen en una lista de favoritos, para poder revisarlas y donar más tarde.
+
+![image](https://github.com/user-attachments/assets/dcf81fea-7c0f-4d8a-bde9-fbeabe4eab58)
+
+ 
+**HU12 - Visualizar Información y Uso de Plataforma**: Como **Usuario**, quiero ver estadísticas globales de la plataforma, para ver campañas completadas, en curso, sus donantes y avances estadísticos.
+
+![image](https://github.com/user-attachments/assets/235f53ae-8804-4866-b270-eff9539d087b)
+
+**HU13 - Panel de Administrador**: Como **Administrador**, quiero poder deshabilitar campañas y usuarios que incumplan alguna regla de la plataforma.
+
+![image](https://github.com/user-attachments/assets/e03cc7c0-7a09-4379-8be9-efcb2e092e0a)
+
 
 ## Cómo Ejecutar el Proyecto
 
