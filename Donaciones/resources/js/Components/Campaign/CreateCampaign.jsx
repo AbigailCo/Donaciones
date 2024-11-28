@@ -190,7 +190,7 @@ const CreateCampaign = () => {
         disableScrolling={true}
       />
       <h2 className="mt-4 text-center">Crear campaña</h2>
-      <h6 className="mb-4 text-center">da comienzo a una nueva campaña</h6>
+      <h6 className="mb-4 text-center">Inicia una nueva campaña</h6>
       <div
         className="mb-4"
         style={{

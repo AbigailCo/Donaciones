@@ -16,6 +16,57 @@ const AdminDashboard = ({ auth }) => {
   const [usersCurrentPage, setUsersCurrentPage] = useState(1);
   const [usersLastPage, setUsersLastPage] = useState(1);
 
+  const toggleCampaignStatus = (id, status) => {
+    const isActive = status === "active";
+    const action = isActive ? "deshabilitar" : "habilitar";
+
+    if (window.confirm(`¿Estás seguro de que quieres ${action} esta campaña?`)) {
+        axios
+        .put(`/admin/campaigns/${id}/status/${isActive ? "disabled" : "active"}`)
+            .then(() => {
+                setCampaigns((prevCampaigns) =>
+                    prevCampaigns.map((campaign) =>
+                        campaign.id === id
+                            ? { ...campaign, status: isActive ? "disabled" : "active" }
+                            : campaign
+                    )
+                );
+                toast.success(`Campaña ${isActive ? "deshabilitada" : "habilitada"} correctamente.`);
+            })
+            .catch((error) => {
+                console.error(`Error al ${action} la campaña:`, error);
+                toast.error(`Ocurrió un error al ${action} la campaña.`);
+            });
+    }
+};
+
+
+const toggleUserStatus = (id, status) => {
+  const isActive = status === "active";
+  const action = isActive ? "deshabilitar" : "habilitar";
+
+  if (window.confirm(`¿Estás seguro de que quieres ${action} este usuario?`)) {
+    axios.put(`/admin/users/${id}/status/${isActive ? "disabled" : "active"}`)
+          .then(() => {
+              setUsers((prevUsers) =>
+                  prevUsers.map((user) =>
+                      user.id === id
+                          ? { ...user, status: isActive ? "disabled" : "active" }
+                          : user
+                  )
+              );
+              toast.success(`Usuario ${isActive ? "deshabilitado" : "habilitado"} correctamente.`);
+          })
+          .catch((error) => {
+              console.error(`Error al ${action} el usuario:`, error);
+              toast.error(`Ocurrió un error al ${action} el usuario.`);
+          });
+  }
+};
+
+
+
+
   // Función para asignar rol de administrador
   const assignAdmin = (userId) => {
     if (
@@ -83,23 +134,9 @@ const AdminDashboard = ({ auth }) => {
       .catch((error) => console.error("Error cargando campañas:", error));
   }, [campaignsCurrentPage]);
 
-  const deleteCampaign = (id) => {
-    if (window.confirm("¿Estás seguro de que quieres eliminar esta campaña?")) {
-      axios
-        .delete(`/admin/campaigns/${id}`)
-        .then(() => {
-          setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
-          toast.success("Campaña eliminada correctamente."); 
-        })
-        .catch((error) => {
-          console.error("Error al eliminar campaña:", error);
-          toast.error("Ocurrió un error al eliminar la campaña."); 
-        });
-    }
-  };
-
   // Paginado de usuarios
   useEffect(() => {
+    
     axios
       .get(`/admin/users?page=${usersCurrentPage}`)
       .then((response) => {
@@ -110,20 +147,7 @@ const AdminDashboard = ({ auth }) => {
       .catch((error) => console.error("Error cargando usuarios:", error));
   }, [usersCurrentPage]);
 
-  const deleteUser = (id) => {
-    if (window.confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-      axios
-        .delete(`/admin/users/${id}`)
-        .then(() => {
-          setUsers(users.filter((user) => user.id !== id));
-          toast.success("Usuario eliminado correctamente."); 
-        })
-        .catch((error) => {
-          console.error("Error al eliminar usuario:", error);
-          toast.error("Ocurrió un error al eliminar el usuario."); 
-        });
-    }
-  };
+  
 
   return (
     <AuthenticatedLayout user={auth.user}>
@@ -158,12 +182,17 @@ const AdminDashboard = ({ auth }) => {
                     {campaign.user ? campaign.user.name : "Sin usuario"}
                   </td>
                   <td className="py-2 px-4 border-b text-center">
-                    <button
-                      onClick={() => deleteCampaign(campaign.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                    >
-                      Eliminar
-                    </button>
+                  
+                  <button
+                  onClick={() => toggleCampaignStatus(campaign.id, campaign.status)}
+                  className={`px-4 py-2 rounded ${
+                      campaign.status === "active"
+                          ? "bg-red-500 hover:bg-red-600 text-white"
+                          : "bg-green-500 hover:bg-green-600 text-white"
+                  }`}
+              >
+                  {campaign.status === "active" ? "Deshabilitar" : "Habilitar"}
+                  </button>
                   </td>
                 </tr>
               ))}
@@ -212,7 +241,6 @@ const AdminDashboard = ({ auth }) => {
               </thead>
               <tbody>
                 {users.map((user) => {
-                  console.log(user);
                   const createdAt = new Date(user.created_at);
                   const formattedDate = createdAt.toLocaleDateString("es-ES");
                   const formattedTime = createdAt.toLocaleTimeString("es-ES", {
@@ -252,10 +280,10 @@ const AdminDashboard = ({ auth }) => {
                             </button>
                           )}
                           <button
-                            onClick={() => deleteUser(user.id)}
-                            className="bg-red-500 text-white text-sm px-2 py-1 rounded hover:bg-red-600 ml-1"
+                            onClick={() => toggleUserStatus(user.id, user.status)}
+                            className={`text-sm px-2 py-1 rounded ${user.status === "active" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"} text-white`}
                           >
-                            Eliminar
+                            {user.status === "active" ? "Deshabilitar" : "Habilitar"}
                           </button>
                         </td>
                       </td>

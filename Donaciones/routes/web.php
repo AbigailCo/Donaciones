@@ -184,14 +184,20 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
 
     // Rutas para campañas en el panel de administración
     Route::get('/admin/campaigns', [CampaignController::class, 'getCampaigns']);
-    Route::delete('/admin/campaigns/{id}', [CampaignController::class, 'destroy']);
+   // Route::delete('/admin/campaigns/{id}', [CampaignController::class, 'destroy']);
 
     // Rutas para usuarios en el panel de administración
     Route::get('/admin/users', [AdminController::class, 'getUsers']);
-    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
+    //Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
     Route::put('/admin/users/{id}/assign-admin', [AdminController::class, 'assignAdmin']);
     Route::put('/admin/users/{id}/remove-admin', [AdminController::class, 'removeAdmin']);
-  //  Route::get('/AdminPanel', [AdminController::class, 'index'])->name('AdminPanel');
+    // Para habilitar o deshabilitar campañas
+    Route::put('/admin/campaigns/{id}/status/{status}', [CampaignController::class, 'updateStatus']);
+
+    // Para habilitar o deshabilitar usuarios
+    Route::put('/admin/users/{id}/status/{status}', [AdminController::class, 'updateStatus']);
+
+  
 
 
 

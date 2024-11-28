@@ -8,16 +8,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle($request, Closure $next)
-{
-    if (auth()->check() && auth()->user()->role === 'admin') {
-        return $next($request);
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            
+            // Verificar si es administrador y si está habilitado
+            if ($user->role === 'admin' && $user->status === 'active') {
+                return $next($request);
+            }
+
+            // Usuario deshabilitado
+            if ($user->status !== 'active') {
+                auth()->logout(); 
+                return redirect('/')->with('error', 'Tu cuenta está deshabilitada.');
+            }
+        }
+
+        return redirect('/')->with('error', 'No tienes acceso a esta sección.');
     }
-    return redirect('/')->with('error', 'No tienes acceso a esta sección.');
-}
 }

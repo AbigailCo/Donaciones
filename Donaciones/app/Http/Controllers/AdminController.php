@@ -30,7 +30,7 @@ class AdminController extends Controller
 
     public function getUsers()
 {
-    $users = User::select('id', 'name', 'email', 'role', 'created_at') 
+    $users = User::select('id', 'name', 'email', 'role', 'created_at', 'status') 
                   ->latest()
                   ->paginate(5);
 
@@ -115,6 +115,25 @@ public function removeAdmin($id)
         'message' => 'El rol de administrador ha sido removido.',
         'user' => $user,
     ]);
+}
+
+
+public function updateStatus($id, $status)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    if (!in_array($status, ['active', 'disabled'])) {
+        return response()->json(['message' => 'Estado no válido'], 400);
+    }
+
+    $user->status = $status;
+    $user->save();
+
+    return response()->json(['message' => 'Estado del usuario actualizado', 'user' => $user], 200);
 }
 
 

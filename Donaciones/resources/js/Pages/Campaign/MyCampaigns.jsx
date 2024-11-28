@@ -15,6 +15,9 @@ const MyCampaigns = ({ campaigns, auth }) => {
     );
   }
 
+  // Filtrar campañas activas (no deshabilitadas)
+  const activeCampaigns = campaigns.filter(campaign => campaign.status !== "disabled");
+
   return (
     <AuthenticatedLayout user={auth.user}>
       <Head title="Mis campañas" />
@@ -22,7 +25,6 @@ const MyCampaigns = ({ campaigns, auth }) => {
         <div className="w-1/7">
           <Sidebar auth={auth} />
         </div>
-
 
         <div className="flex-1 mx-4">
           <h3 className="text-center">Mis campañas</h3>
@@ -50,9 +52,9 @@ const MyCampaigns = ({ campaigns, auth }) => {
               </Button>
             </Link>
           </div>
-          {campaigns.length > 0 ? (
+          {activeCampaigns.length > 0 ? (
             <Grid container spacing={3}>
-              {campaigns.map((campaign) => (
+              {activeCampaigns.map((campaign) => (
                 <Grid item xs={12} sm={6} md={4} key={campaign.id}>
                   <CampaignCard campaign={campaign} />
                 </Grid>

@@ -27,18 +27,18 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 class CampaignController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Campaign::with(['images', 'category']);
+{
+    $query = Campaign::with(['images', 'category'])
+        ->where('status', 'active'); 
 
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        // Ordeno las campañas por la fecha de creación, de más recientes a más antiguas
-        $campaigns = $query->orderBy('created_at', 'desc')->paginate(9);
-
-        return response()->json($campaigns);
+    if ($request->has('category_id')) {
+        $query->where('category_id', $request->category_id);
     }
+
+    $campaigns = $query->orderBy('created_at', 'desc')->paginate(9);
+
+    return response()->json($campaigns);
+}
 
     public function getCreator($id)
     {
@@ -53,17 +53,17 @@ class CampaignController extends Controller
 
     public function count()
     {
-        $campaignsCount = Campaign::count(); // Corregido
+        $campaignsCount = Campaign::count(); 
         return response()->json(['count' => $campaignsCount]);
     }
 
 
     public function countUserCampaigns()
     {
-        $userId = auth()->id(); // Obtiene el ID del usuario logueado
-        $userCampaignsCount = Campaign::where('user_id', $userId)->count(); // Cuenta las campañas del usuario
+        $userId = auth()->id(); 
+        $userCampaignsCount = Campaign::where('user_id', $userId)->count(); 
 
-        return response()->json(['count' => $userCampaignsCount]); // Retorna la cuenta en formato JSON
+        return response()->json(['count' => $userCampaignsCount]); 
     }
 
     public function countUserFavorites()
@@ -278,9 +278,9 @@ class CampaignController extends Controller
 
     return response()->json(['message' => 'Campaña actualizada exitosamente.', 'campaign' => $campaign]);
 }
+
     public function destroy($id)
 {
-    // Encuentra la campaña y elimínala
     $campaign = Campaign::findOrFail($id);
     $campaign->delete(); 
 
@@ -307,7 +307,6 @@ public function myCampaigns()
         $campaign = Campaign::findOrFail($id);
 
         $amount = $request->input('amount'); // Recibir el monto que el usuario quiere donar
-        \Log::info("Generando preferencia para campaña: {$id} con monto: {$request->amount}");
 
         $preferenceData = [
             'items' => [
@@ -445,7 +444,7 @@ public function myCampaigns()
             ->get()
             ->map(function ($note) {
                 // Formatear la fecha de creación
-                $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); // Ajusta el formato según lo necesites
+                $note->created_at_formatted = $note->created_at->format('d/m/Y H:i'); 
                 return $note;
             });
     
@@ -567,10 +566,34 @@ public function myCampaigns()
     public function getCampaigns()
     {
         $campaigns = Campaign::with('user:id,name') 
-                              ->select('id', 'title', 'user_id', 'created_at') 
+                              ->select('id', 'title', 'user_id', 'created_at', 'status') 
                               ->orderBy('created_at', 'desc') 
                               ->paginate(5); // Paginación
     
         return response()->json($campaigns);
     }
+
+    public function updateStatus($id, $status)
+{
+    $campaign = Campaign::find($id);
+
+    if (!$campaign) {
+        return response()->json(['message' => 'Campaña no encontrada'], 404);
+    }
+
+    if (!in_array($status, ['active', 'disabled'])) {
+        return response()->json(['message' => 'Estado no válido'], 400);
+    }
+
+    $campaign->status = $status;
+    $campaign->save();
+
+    return response()->json(['message' => 'Estado de la campaña actualizado', 'campaign' => $campaign], 200);
+}
+
+
+
+    
+
+
 }
