@@ -26,7 +26,7 @@ class DonationReceived extends Notification implements ShouldQueue
 
     public function via($notifiable)
     {
-        return ['database', 'mail']; // Ajusta los canales que necesites
+        return ['database', 'mail']; 
     }
 
     public function toArray($notifiable)
